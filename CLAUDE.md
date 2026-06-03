@@ -30,6 +30,17 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
 
+## Design System
+
+- Whenever creating or changing any UI, page, component, layout, visual state, or frontend styling, you MUST first inspect the relevant design guide in `design/**/DESIGN.md`.
+- The active design guide is `design/clarity_learning/DESIGN.md` unless the user explicitly points to another design folder.
+- Implement designs using the tokens and rules from the design guide: colors, typography, spacing, rounded corners, grid/container behavior, elevation, component states, and brand/style direction.
+- Do not invent a new visual language when a design token or component rule exists. If an exact token is unavailable, choose the closest value that preserves the guide's Modern / Corporate, Trusted Mentor style.
+- Keep UI changes consistent with the guide's Clarity Learning palette: Royal Blue for primary actions/navigation, Teal for progress/success/interactive learning elements, Amber for notifications or gamification, and Slate neutrals for hierarchy and borders.
+- Use Inter typography, the 8px spacing rhythm, the 1280px desktop container, 24px desktop gutters, 16px mobile margins, and the documented rounded shape scale unless existing code requires a compatible equivalent.
+- Cards, buttons, inputs, chips, progress indicators, hover states, and focus states must follow the component guidance in the design guide.
+- Before finalizing frontend work, review the changed UI against the design guide and adjust any mismatched colors, spacing, typography, radius, or component behavior.
+
 ## Verification Scripts
 
 - Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.
