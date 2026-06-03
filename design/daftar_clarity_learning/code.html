@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Join EduMentor - Start Your Learning Journey</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed": "#2a1700",
+                    "inverse-on-surface": "#eaf1ff",
+                    "primary-fixed-dim": "#b8c4ff",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "surface-container-high": "#dce9ff",
+                    "on-primary": "#ffffff",
+                    "primary": "#00288e",
+                    "on-surface": "#0b1c30",
+                    "primary-fixed": "#dde1ff",
+                    "on-primary-fixed": "#001453",
+                    "secondary-container": "#86f2e4",
+                    "background": "#f8f9ff",
+                    "error-container": "#ffdad6",
+                    "surface-container-low": "#eff4ff",
+                    "surface-container": "#e5eeff",
+                    "on-secondary-fixed": "#00201d",
+                    "primary-container": "#1e40af",
+                    "surface-bright": "#f8f9ff",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "on-primary-fixed-variant": "#173bab",
+                    "on-surface-variant": "#444653",
+                    "outline": "#757684",
+                    "on-secondary-container": "#006f66",
+                    "inverse-surface": "#213145",
+                    "on-background": "#0b1c30",
+                    "tertiary": "#4c2e00",
+                    "inverse-primary": "#b8c4ff",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#3755c3",
+                    "secondary": "#006a61",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#ffddb8",
+                    "surface-container-highest": "#d3e4fe",
+                    "outline-variant": "#c4c5d5",
+                    "surface-dim": "#cbdbf5",
+                    "surface": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#005049",
+                    "surface-variant": "#d3e4fe",
+                    "on-error": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "secondary-fixed": "#89f5e7",
+                    "on-primary-container": "#a8b8ff",
+                    "tertiary-container": "#6b4200",
+                    "on-tertiary-container": "#ffa929",
+                    "secondary-fixed-dim": "#6bd8cb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "48px",
+                    "gutter": "24px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "container-max": "1280px"
+            },
+            "fontFamily": {
+                    "display-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .form-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- Header / TopAppBar (Simplified for Transactional Page) -->
+<header class="w-full top-0 sticky bg-surface-container-lowest border-b border-outline-variant shadow-sm z-50">
+<div class="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="font-headline-md text-headline-md text-primary cursor-pointer">
+                EduMentor
+            </div>
+<div class="flex items-center gap-4">
+<span class="font-label-md text-label-md text-on-surface-variant hidden md:inline">Already have an account?</span>
+<a class="text-primary font-bold font-label-md text-label-md hover:underline" href="#">Log In</a>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center py-12 px-margin-mobile md:px-margin-desktop">
+<div class="max-w-container-max w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<!-- Left Side: Supportive Illustration & Content -->
+<div class="hidden lg:flex flex-col gap-8 pr-gutter">
+<div>
+<h1 class="font-display-lg text-display-lg text-primary mb-4">Start your journey to mastery today.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Join over 50,000 students worldwide and gain access to expert-led courses designed to help you succeed in your career.</p>
+</div>
+<div class="relative rounded-xl overflow-hidden aspect-video form-shadow">
+<img alt="Students collaborating" class="w-full h-full object-cover" data-alt="A diverse group of motivated young adults collaborating in a bright, modern educational workspace. The environment is filled with natural light, featuring clean white surfaces and primary blue accents. One student is using a laptop showing educational charts, while others are engaged in encouraging conversation. The atmosphere is professional, professional, and full of academic energy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUiIP_0IsLzjyeH2-fw-lzWRWMsGYTP1osjkIi6iNoq-4F0m-l79FEOy6Mv0UN6lfMqnVT58KcGIFsg0nLOz_2otCqEIQBe7SVvTtVESpbZXYtE-mL273DDZSd00yD2iGVotH-Q-m4uvL4jdVk3oShHph534mQ2ywlEgoPPWjQrlGqjviMUv-IK49Zstg6Xr3n4ar5-nv5n3f6m8XSxarTicStxaUeue9eF1cXOvTNRfKjGYw_QJyqAZE5PbCW2P_fVJ8lK2iQUQI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex items-start gap-3 p-4 bg-surface-container rounded-xl border border-outline-variant">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Certified Learning</p>
+<p class="text-sm text-on-surface-variant">Industry recognized certificates.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 p-4 bg-surface-container rounded-xl border border-outline-variant">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">group</span>
+<div>
+<p class="font-label-md text-label-md font-bold text-on-surface">Active Community</p>
+<p class="text-sm text-on-surface-variant">Learn with peers globally.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side: Registration Form -->
+<div class="w-full max-w-lg mx-auto">
+<div class="bg-surface-container-lowest p-8 md:p-10 rounded-[1.5rem] border border-outline-variant form-shadow">
+<div class="mb-8">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Create Account</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Enter your details to get started with your learning path.</p>
+</div>
+<form class="flex flex-col gap-6" id="registrationForm">
+<!-- Full Name -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface ml-1" for="fullName">Full Name</label>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none" id="fullName" name="fullName" placeholder="John Doe" required="" type="text"/>
+</div>
+</div>
+<!-- Email -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface ml-1" for="email">Email Address</label>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none" id="email" name="email" placeholder="john@example.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface ml-1" for="password">Password</label>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+<p class="text-[12px] text-on-surface-variant ml-1">Must be at least 8 characters long.</p>
+</div>
+<!-- Confirm Password -->
+<div class="flex flex-col gap-2">
+<label class="font-label-md text-label-md text-on-surface ml-1" for="confirmPassword">Confirm Password</label>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none" id="confirmPassword" name="confirmPassword" placeholder="••••••••" required="" type="password"/>
+</div>
+</div>
+<!-- Terms & Conditions -->
+<div class="flex items-start gap-3 py-2">
+<input class="mt-1 w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer" id="terms" name="terms" required="" type="checkbox"/>
+<label class="font-label-md text-label-md text-on-surface-variant cursor-pointer" for="terms">
+                                I agree to the <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+                            </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full py-4 bg-primary text-on-primary font-bold rounded-xl hover:bg-primary-container transition-all active:scale-[0.98] shadow-md flex justify-center items-center gap-2" type="submit">
+                            Sign Up
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</form>
+<div class="mt-8 pt-8 border-t border-outline-variant">
+<p class="text-center text-sm text-on-surface-variant mb-4">Or sign up with</p>
+<div class="flex gap-4">
+<button class="flex-1 py-3 border border-outline-variant rounded-xl flex justify-center items-center gap-2 hover:bg-surface-container-low transition-colors">
+<img alt="Google" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwqkMvfxGUTBZFmC26CDagUGjQof15f-9Nzzfgn0Bju5uoOS4Md7k9fBl_1IZIhDwJ9r-iPSCt8_Wv1pUeDWKLu2wHQxm72l8nsr1OM6fMOZ9mo0oDoTRFM5uPF4j1babNFPaphKk0jyTfBEgir00-r6ZDoE4ZKiWPD1NAfvJQXsF4RQSES-4KmjC-59QNNdwi12_pOIIJLTCiUKa2D8MJmHf1ZssSskXmnjyrjOm6JRupBLsMJhl6eVBwFw13XOx9KBRBiOxv9mI"/>
+<span class="font-label-md text-label-md">Google</span>
+</button>
+<button class="flex-1 py-3 border border-outline-variant rounded-xl flex justify-center items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[#1877F2]" style="font-variation-settings: 'FILL' 1;">social_leaderboard</span>
+<span class="font-label-md text-label-md">Facebook</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Encouraging Message for Mobile -->
+<p class="lg:hidden text-center mt-8 font-body-md text-on-surface-variant">
+                    You're just one step away from joining our vibrant community of learners!
+                </p>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full py-base bg-surface-container-highest border-t border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop py-8 max-w-container-max mx-auto gap-4">
+<div class="font-headline-md text-headline-md text-primary">EduMentor</div>
+<div class="flex gap-6">
+<a class="font-label-md text-label-md text-on-surface-variant hover:underline" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:underline" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:underline" href="#">Help Center</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:underline" href="#">Contact Us</a>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant">© 2024 EduMentor Learning. All rights reserved.</p>
+</div>
+</footer>
+<script>
+        // Form Submission Interaction
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            
+            // Visual feedback
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> Processing...';
+            btn.disabled = true;
+            btn.classList.add('opacity-80');
+
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Success!';
+                btn.classList.remove('bg-primary');
+                btn.classList.add('bg-secondary');
+                
+                // Redirection simulation or success message
+                setTimeout(() => {
+                    alert('Welcome Alex! Your account has been created successfully. Redirecting to your learning dashboard...');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    btn.classList.remove('bg-secondary', 'opacity-80');
+                    btn.classList.add('bg-primary');
+                }, 1500);
+            }, 2000);
+        });
+
+        // Simple Password Toggle
+        const toggleBtn = document.querySelector('button[type="button"]');
+        const passInput = document.getElementById('password');
+        toggleBtn.addEventListener('click', () => {
+            const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passInput.setAttribute('type', type);
+            toggleBtn.querySelector('span').textContent = type === 'password' ? 'visibility' : 'visibility_off';
+        });
+    </script>
+</body></html>

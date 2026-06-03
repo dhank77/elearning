@@ -1,104 +1,149 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html class="light" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'Laravel') }} - Login</title>
+        <title>Login | {{ config('app.name', 'EduMentor') }}</title>
         @fonts
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="min-h-screen bg-slate-950 text-slate-900 antialiased">
-        <main class="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,#2563eb_0,#0f172a_42%,#020617_78%)] px-6 py-10">
-            <div class="grid w-full max-w-5xl overflow-hidden rounded-lg border border-white/15 bg-white shadow-2xl shadow-blue-950/40 lg:grid-cols-[0.95fr_1.05fr]">
-                <section class="hidden bg-blue-700 p-10 text-white lg:flex lg:flex-col lg:justify-between">
-                    <a href="{{ url('/') }}" class="flex items-center gap-3">
-                        <span class="flex size-10 items-center justify-center rounded-lg bg-white text-lg font-bold text-blue-700">E</span>
-                        <span class="font-semibold">{{ config('app.name', 'Laravel') }}</span>
-                    </a>
+    <body class="flex min-h-screen flex-col bg-background font-body-md text-on-background antialiased">
+        <main class="relative flex flex-grow items-center justify-center overflow-hidden p-margin-mobile md:p-margin-desktop">
+            <div class="pointer-events-none absolute right-[-10%] top-[-10%] h-[500px] w-[500px] rounded-full bg-primary-fixed opacity-20 blur-[100px]"></div>
+            <div class="pointer-events-none absolute bottom-[-5%] left-[-5%] h-[400px] w-[400px] rounded-full bg-secondary-container opacity-20 blur-[80px]"></div>
 
-                    <div>
-                        <p class="mb-4 inline-flex rounded-lg bg-white/15 px-3 py-1 text-sm font-medium text-blue-50">Selamat datang kembali</p>
-                        <h1 class="text-4xl font-bold leading-tight">Lanjutkan progres belajar Anda.</h1>
-                        <p class="mt-5 leading-7 text-blue-100">Masuk untuk membuka dashboard, melihat kursus aktif, dan menjaga ritme belajar tetap konsisten.</p>
+            <div class="relative z-10 grid w-full max-w-container-max grid-cols-1 overflow-hidden rounded-[32px] border border-outline-variant bg-surface-container-lowest shadow-[0px_4px_40px_rgba(0,0,0,0.06)] lg:grid-cols-2">
+                <section class="relative hidden flex-col justify-center overflow-hidden bg-primary-container p-16 lg:flex">
+                    <div class="relative z-20">
+                        <h1 class="mb-6 font-display-lg text-display-lg font-bold text-on-primary">Unlock Your Potential.</h1>
+                        <p class="mb-12 max-w-md font-body-lg text-body-lg text-on-primary-container">
+                            Join over 50,000 students worldwide and master the skills of tomorrow with our industry-leading mentors.
+                        </p>
+                        <div class="flex items-center gap-4">
+                            <div class="flex -space-x-3">
+                                <img alt="Student" class="h-10 w-10 rounded-full border-2 border-on-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOAzztqkoqk38kK4XnnWWclvgfP9zQ88V7GPw9_X36HvXG4LrnvSG3-Y0eufrIeU_gLFlIdj-bpgCVP-xOfY2GGHllg1bc65gyRU1BGG0V89bR9NjRMzOL_IZJWTl36zulCTs9DV7qmvi8i4yKZb7fD4IfkkC6JHfLDqD6JWwhXh6fC8j6Yg1Lvu00unKk3nXhFQeqC96ZViRWXd10RK8IB7nKQznlqom2wu5U_lG6t4o4icnJWzKisk8HWdBXZ0sRk8zNLeHZVQw">
+                                <img alt="Student" class="h-10 w-10 rounded-full border-2 border-on-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMfGrlsf0Rhg5yFLxS0P-klE3F-6SwfmCxYMQjqOQDoaIdq7b-IeIvF76UXGbtr59u6Y9KdjAKfsX7jzXZAwdnpqIfoAlYJCgv0RJySfb9W9lMNE2_-YkAc7hvx_dMDcibN-uviSNjG1ADJtQwd3Z44gbQXwQdn4ybUdFsDJfYCTbyq2JSl3jevRFZqYa6UBQ8uj-0Z3-SHV9z1o7yaGqqWFfSbxGmvBFzQYIhXOaVxvFKUzWcEJHlVBIjYWf_-oXS_nexUd-dqNM">
+                                <img alt="Student" class="h-10 w-10 rounded-full border-2 border-on-primary object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgMl-k2Xr7Tu0RfCRZZHsBVBmWsITzg8PUvhOb-DlONVhE96qgWqNkubT3sNhQfocTj-qGJj4L__VviZ-90_biG57IlDtRRKQX05hsJratt73y7MV46ZKWnd1irgaFxecqyJxKqgcZy6MDknIPmji1GYdQfR8NkGgf1osJAFtwyfZkkfxnWTo4bmnye-YscbzNjAqp0m09ZbowlAilGYUIJbeMTZ2q16mQwtaCETwkNUvFz9bxaagleP8lY-N9QTASCrF6v1QVuhA">
+                            </div>
+                            <span class="font-label-md text-label-md text-on-primary">Joined by 12k+ this month</span>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-3 text-sm">
-                        <div class="rounded-lg bg-white/10 p-4">
-                            <p class="text-blue-100">Kelas aktif</p>
-                            <p class="mt-2 text-2xl font-bold">12</p>
-                        </div>
-                        <div class="rounded-lg bg-cyan-300 p-4 text-slate-950">
-                            <p class="text-slate-700">Progress</p>
-                            <p class="mt-2 text-2xl font-bold">72%</p>
-                        </div>
+                    <div class="pointer-events-none absolute bottom-0 right-0 flex h-full w-full items-end justify-end p-8 opacity-10">
+                        <span class="material-symbols-outlined translate-x-32 translate-y-32 text-[400px] text-on-primary" style="font-variation-settings: 'FILL' 1;">school</span>
                     </div>
                 </section>
 
-                <section class="p-6 sm:p-10">
-                    <div class="mb-8 lg:hidden">
-                        <a href="{{ url('/') }}" class="flex items-center gap-3">
-                            <span class="flex size-10 items-center justify-center rounded-lg bg-blue-600 text-lg font-bold text-white">E</span>
-                            <span class="font-semibold text-slate-950">{{ config('app.name', 'Laravel') }}</span>
+                <section class="flex flex-col justify-center p-8 md:p-16">
+                    <div class="mb-10">
+                        <a href="{{ url('/') }}" class="mb-8 flex items-center gap-2">
+                            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-on-primary">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+                            </span>
+                            <span class="font-headline-md text-headline-md text-primary">{{ config('app.name', 'EduMentor') }}</span>
                         </a>
+                        <h2 class="mb-2 font-headline-lg text-headline-lg text-on-surface md:text-headline-lg-mobile lg:text-headline-lg">Welcome Back</h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant">Please enter your details to access your learning dashboard.</p>
                     </div>
 
-                    <div class="mb-8">
-                        <p class="text-sm font-medium text-blue-600">Login akun</p>
-                        <h2 class="mt-2 text-3xl font-bold text-slate-950">Masuk ke dashboard</h2>
-                        <p class="mt-2 text-sm text-slate-500">Gunakan email dan password yang sudah terdaftar.</p>
+                    <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <button type="button" class="flex items-center justify-center gap-3 rounded-xl border border-outline-variant px-6 py-3 transition-all duration-200 hover:bg-surface-container-low active:scale-95">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.64l-3.57-2.77c-1.01.69-2.39 1.1-3.71 1.1-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+                                <path d="M5.84 14.16c-.22-.66-.35-1.36-.35-2.08s.13-1.42.35-2.08V7.16H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.84l3.66-2.84z" fill="#FBBC05"></path>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.16l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+                            </svg>
+                            <span class="font-label-md text-label-md text-on-surface">Google</span>
+                        </button>
+                        <button type="button" class="flex items-center justify-center gap-3 rounded-xl border border-outline-variant px-6 py-3 transition-all duration-200 hover:bg-surface-container-low active:scale-95">
+                            <svg class="h-5 w-5" fill="#1877F2" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path>
+                            </svg>
+                            <span class="font-label-md text-label-md text-on-surface">Facebook</span>
+                        </button>
                     </div>
 
-                    <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                    <div class="relative mb-8 flex items-center">
+                        <div class="grow border-t border-outline-variant"></div>
+                        <span class="mx-4 shrink-0 font-label-md text-label-md uppercase text-outline">or email</span>
+                        <div class="grow border-t border-outline-variant"></div>
+                    </div>
+
+                    <form method="POST" action="{{ route('login') }}" class="space-y-6">
                         @csrf
 
-                        <div>
-                            <label for="email" class="block text-sm font-semibold text-slate-700">Email</label>
-                            <input
-                                id="email"
-                                type="email"
-                                name="email"
-                                value="{{ old('email') }}"
-                                required
-                                autofocus
-                                autocomplete="email"
-                                class="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                            />
+                        <div class="space-y-2">
+                            <label for="email" class="ml-1 block font-label-md text-label-md text-on-surface-variant">Email Address</label>
+                            <div class="group relative">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline transition-colors group-focus-within:text-primary">mail</span>
+                                <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" placeholder="alex@example.com" class="w-full rounded-xl border border-outline-variant bg-surface py-4 pl-12 pr-4 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20">
+                            </div>
                             @error('email')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="ml-1 text-sm text-error">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div>
-                            <label for="password" class="block text-sm font-semibold text-slate-700">Password</label>
-                            <input
-                                id="password"
-                                type="password"
-                                name="password"
-                                required
-                                autocomplete="current-password"
-                                class="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                            />
+                        <div class="space-y-2">
+                            <label for="password" class="ml-1 block font-label-md text-label-md text-on-surface-variant">Password</label>
+                            <div class="group relative">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline transition-colors group-focus-within:text-primary">lock</span>
+                                <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="••••••••" class="w-full rounded-xl border border-outline-variant bg-surface py-4 pl-12 pr-12 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20">
+                                <button class="absolute right-4 top-1/2 -translate-y-1/2 text-outline transition-colors hover:text-on-surface" type="button" data-password-toggle="password" aria-label="Toggle password visibility">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
                             @error('password')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="ml-1 text-sm text-error">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="flex items-center gap-3">
-                            <input id="remember" type="checkbox" name="remember" class="size-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-                            <label for="remember" class="text-sm text-slate-600">Remember me</label>
+                        <div class="flex items-center justify-between gap-4 py-1">
+                            <label for="remember" class="group flex cursor-pointer items-center gap-2">
+                                <span class="relative flex items-center">
+                                    <input id="remember" name="remember" type="checkbox" class="peer h-5 w-5 appearance-none rounded border-2 border-outline-variant bg-surface transition-all checked:border-primary checked:bg-primary">
+                                    <span class="material-symbols-outlined absolute left-1/2 top-1/2 text-[16px] font-bold text-on-primary opacity-0 -translate-x-1/2 -translate-y-1/2 peer-checked:opacity-100" style="font-variation-settings: 'wght' 700;">check</span>
+                                </span>
+                                <span class="font-label-md text-label-md text-on-surface-variant transition-colors group-hover:text-on-surface">Remember me</span>
+                            </label>
+                            <a class="font-label-md text-label-md font-bold text-primary hover:underline" href="#">Forgot password?</a>
                         </div>
 
-                        <button type="submit" class="w-full rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100">
-                            Log in
+                        <button class="mt-2 w-full rounded-xl bg-primary py-4 font-bold text-on-primary shadow-lg shadow-primary/20 transition-all duration-300 hover:bg-primary-container hover:shadow-xl hover:shadow-primary/30 active:scale-[0.98]" type="submit">
+                            Sign In
                         </button>
-
-                        <p class="text-center text-sm text-slate-500">
-                            Don't have an account?
-                            <a href="{{ route('register') }}" class="font-semibold text-blue-600 hover:text-blue-700">Register</a>
-                        </p>
                     </form>
+
+                    <p class="mt-8 text-center font-body-md text-body-md text-on-surface-variant">
+                        Don't have an account?
+                        <a class="font-bold text-secondary hover:underline" href="{{ route('register') }}">Create an account</a>
+                    </p>
                 </section>
             </div>
         </main>
+
+        <footer class="mx-auto flex w-full max-w-container-max flex-col items-center justify-between gap-4 border-t border-outline-variant px-margin-mobile py-8 md:flex-row md:px-margin-desktop">
+            <p class="font-label-md text-label-md text-on-surface-variant">© 2024 {{ config('app.name', 'EduMentor') }} Learning. All rights reserved.</p>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a class="font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary" href="#">Privacy Policy</a>
+                <a class="font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary" href="#">Terms of Service</a>
+                <a class="font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary" href="#">Help Center</a>
+            </div>
+        </footer>
+
+        <script>
+            document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const input = document.getElementById(button.dataset.passwordToggle);
+                    const nextType = input.type === 'password' ? 'text' : 'password';
+
+                    input.type = nextType;
+                    button.querySelector('.material-symbols-outlined').textContent = nextType === 'password' ? 'visibility' : 'visibility_off';
+                });
+            });
+        </script>
     </body>
 </html>

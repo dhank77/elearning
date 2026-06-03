@@ -1,131 +1,165 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html class="light" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'Laravel') }} - Register</title>
+        <title>Join {{ config('app.name', 'EduMentor') }} - Start Your Learning Journey</title>
         @fonts
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="min-h-screen bg-slate-950 text-slate-900 antialiased">
-        <main class="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,#2563eb_0,#0f172a_42%,#020617_78%)] px-6 py-10">
-            <div class="grid w-full max-w-5xl overflow-hidden rounded-lg border border-white/15 bg-white shadow-2xl shadow-blue-950/40 lg:grid-cols-[1.05fr_0.95fr]">
-                <section class="p-6 sm:p-10">
-                    <div class="mb-8">
-                        <a href="{{ url('/') }}" class="flex items-center gap-3">
-                            <span class="flex size-10 items-center justify-center rounded-lg bg-blue-600 text-lg font-bold text-white">E</span>
-                            <span class="font-semibold text-slate-950">{{ config('app.name', 'Laravel') }}</span>
-                        </a>
+    <body class="flex min-h-screen flex-col bg-background font-body-md text-on-background antialiased">
+        <header class="sticky top-0 z-50 w-full border-b border-outline-variant bg-surface-container-lowest shadow-sm">
+            <div class="mx-auto flex h-16 max-w-container-max items-center justify-between px-margin-mobile md:px-margin-desktop">
+                <a href="{{ url('/') }}" class="font-headline-md text-headline-md text-primary">
+                    {{ config('app.name', 'EduMentor') }}
+                </a>
+                <div class="flex items-center gap-4">
+                    <span class="hidden font-label-md text-label-md text-on-surface-variant md:inline">Already have an account?</span>
+                    <a class="font-label-md text-label-md font-bold text-primary hover:underline" href="{{ route('login') }}">Log In</a>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex flex-grow items-center justify-center px-margin-mobile py-12 md:px-margin-desktop">
+            <div class="grid w-full max-w-container-max grid-cols-1 items-center gap-12 lg:grid-cols-2">
+                <section class="hidden flex-col gap-8 pr-gutter lg:flex">
+                    <div>
+                        <h1 class="mb-4 font-display-lg text-display-lg font-bold text-primary">Start your journey to mastery today.</h1>
+                        <p class="font-body-lg text-body-lg text-on-surface-variant">Join over 50,000 students worldwide and gain access to expert-led courses designed to help you succeed in your career.</p>
                     </div>
 
-                    <div class="mb-8">
-                        <p class="text-sm font-medium text-blue-600">Buat akun baru</p>
-                        <h1 class="mt-2 text-3xl font-bold text-slate-950">Mulai belajar hari ini</h1>
-                        <p class="mt-2 text-sm text-slate-500">Daftar untuk mengakses dashboard dan mengatur progres belajar Anda.</p>
+                    <div class="form-shadow relative aspect-video overflow-hidden rounded-xl">
+                        <img alt="Students collaborating" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUiIP_0IsLzjyeH2-fw-lzWRWMsGYTP1osjkIi6iNoq-4F0m-l79FEOy6Mv0UN6lfMqnVT58KcGIFsg0nLOz_2otCqEIQBe7SVvTtVESpbZXYtE-mL273DDZSd00yD2iGVotH-Q-m4uvL4jdVk3oShHph534mQ2ywlEgoPPWjQrlGqjviMUv-IK49Zstg6Xr3n4ar5-nv5n3f6m8XSxarTicStxaUeue9eF1cXOvTNRfKjGYw_QJyqAZE5PbCW2P_fVJ8lK2iQUQI">
+                        <div class="absolute inset-0 bg-gradient-to-t from-primary/40 to-transparent"></div>
                     </div>
 
-                    <form method="POST" action="{{ route('register') }}" class="space-y-5">
-                        @csrf
-
-                        <div>
-                            <label for="name" class="block text-sm font-semibold text-slate-700">Name</label>
-                            <input
-                                id="name"
-                                type="text"
-                                name="name"
-                                value="{{ old('name') }}"
-                                required
-                                autofocus
-                                autocomplete="name"
-                                class="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                            />
-                            @error('name')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="email" class="block text-sm font-semibold text-slate-700">Email</label>
-                            <input
-                                id="email"
-                                type="email"
-                                name="email"
-                                value="{{ old('email') }}"
-                                required
-                                autocomplete="email"
-                                class="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                            />
-                            @error('email')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="grid gap-5 sm:grid-cols-2">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-start gap-3 rounded-xl border border-outline-variant bg-surface-container p-4">
+                            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
                             <div>
-                                <label for="password" class="block text-sm font-semibold text-slate-700">Password</label>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    required
-                                    autocomplete="new-password"
-                                    class="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                                />
-                                @error('password')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="font-label-md text-label-md font-bold text-on-surface">Certified Learning</p>
+                                <p class="text-sm text-on-surface-variant">Industry recognized certificates.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 rounded-xl border border-outline-variant bg-surface-container p-4">
+                            <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">group</span>
+                            <div>
+                                <p class="font-label-md text-label-md font-bold text-on-surface">Active Community</p>
+                                <p class="text-sm text-on-surface-variant">Learn with peers globally.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="mx-auto w-full max-w-lg">
+                    <div class="form-shadow rounded-[1.5rem] border border-outline-variant bg-surface-container-lowest p-8 md:p-10">
+                        <div class="mb-8">
+                            <h2 class="mb-2 font-headline-lg text-headline-lg text-on-surface">Create Account</h2>
+                            <p class="font-body-md text-body-md text-on-surface-variant">Enter your details to get started with your learning path.</p>
+                        </div>
+
+                        <form method="POST" action="{{ route('register') }}" class="flex flex-col gap-6">
+                            @csrf
+
+                            <div class="flex flex-col gap-2">
+                                <label class="ml-1 font-label-md text-label-md text-on-surface" for="name">Full Name</label>
+                                <input id="name" name="name" type="text" value="{{ old('name') }}" placeholder="John Doe" required autofocus autocomplete="name" class="w-full rounded-xl border border-outline-variant bg-surface px-4 py-3 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary">
+                                @error('name')
+                                    <p class="ml-1 text-sm text-error">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <div>
-                                <label for="password_confirmation" class="block text-sm font-semibold text-slate-700">Confirm Password</label>
-                                <input
-                                    id="password_confirmation"
-                                    type="password"
-                                    name="password_confirmation"
-                                    required
-                                    autocomplete="new-password"
-                                    class="mt-2 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-950 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"
-                                />
+                            <div class="flex flex-col gap-2">
+                                <label class="ml-1 font-label-md text-label-md text-on-surface" for="email">Email Address</label>
+                                <input id="email" name="email" type="email" value="{{ old('email') }}" placeholder="john@example.com" required autocomplete="email" class="w-full rounded-xl border border-outline-variant bg-surface px-4 py-3 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary">
+                                @error('email')
+                                    <p class="ml-1 text-sm text-error">{{ $message }}</p>
+                                @enderror
                             </div>
-                        </div>
 
-                        <button type="submit" class="w-full rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100">
-                            Register
-                        </button>
-
-                        <p class="text-center text-sm text-slate-500">
-                            Already have an account?
-                            <a href="{{ route('login') }}" class="font-semibold text-blue-600 hover:text-blue-700">Log in</a>
-                        </p>
-                    </form>
-                </section>
-
-                <section class="hidden bg-blue-700 p-10 text-white lg:flex lg:flex-col lg:justify-between">
-                    <div class="rounded-lg bg-white/10 p-5">
-                        <p class="text-sm text-blue-100">Rencana belajar</p>
-                        <div class="mt-5 space-y-3">
-                            <div class="flex items-center justify-between rounded-lg bg-white px-4 py-3 text-slate-950">
-                                <span class="text-sm font-semibold">Laravel Dasar</span>
-                                <span class="text-xs font-semibold text-blue-700">Mulai</span>
+                            <div class="flex flex-col gap-2">
+                                <label class="ml-1 font-label-md text-label-md text-on-surface" for="password">Password</label>
+                                <div class="relative">
+                                    <input id="password" name="password" type="password" placeholder="••••••••" required autocomplete="new-password" class="w-full rounded-xl border border-outline-variant bg-surface px-4 py-3 pr-12 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary">
+                                    <button class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant transition-colors hover:text-primary" type="button" data-password-toggle="password" aria-label="Toggle password visibility">
+                                        <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                    </button>
+                                </div>
+                                <p class="ml-1 text-[12px] text-on-surface-variant">Must be at least 6 characters long.</p>
+                                @error('password')
+                                    <p class="ml-1 text-sm text-error">{{ $message }}</p>
+                                @enderror
                             </div>
-                            <div class="flex items-center justify-between rounded-lg bg-cyan-300 px-4 py-3 text-slate-950">
-                                <span class="text-sm font-semibold">UI Interaktif</span>
-                                <span class="text-xs font-semibold text-cyan-900">Baru</span>
+
+                            <div class="flex flex-col gap-2">
+                                <label class="ml-1 font-label-md text-label-md text-on-surface" for="password_confirmation">Confirm Password</label>
+                                <input id="password_confirmation" name="password_confirmation" type="password" placeholder="••••••••" required autocomplete="new-password" class="w-full rounded-xl border border-outline-variant bg-surface px-4 py-3 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary">
                             </div>
-                            <div class="flex items-center justify-between rounded-lg bg-white/10 px-4 py-3">
-                                <span class="text-sm font-semibold">Project Akhir</span>
-                                <span class="text-xs font-semibold text-blue-100">Siap</span>
+
+                            <label class="flex items-start gap-3 py-2 font-label-md text-label-md text-on-surface-variant" for="terms">
+                                <input id="terms" name="terms" type="checkbox" required class="mt-1 h-5 w-5 cursor-pointer rounded border-outline-variant text-primary focus:ring-primary">
+                                <span>I agree to the <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.</span>
+                            </label>
+
+                            <button class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-4 font-bold text-on-primary shadow-md transition-all hover:bg-primary-container active:scale-[0.98]" type="submit">
+                                Sign Up
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </button>
+                        </form>
+
+                        <div class="mt-8 border-t border-outline-variant pt-8">
+                            <p class="mb-4 text-center text-sm text-on-surface-variant">Or sign up with</p>
+                            <div class="flex gap-4">
+                                <button type="button" class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-outline-variant py-3 transition-colors hover:bg-surface-container-low">
+                                    <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+                                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.64l-3.57-2.77c-1.01.69-2.39 1.1-3.71 1.1-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+                                        <path d="M5.84 14.16c-.22-.66-.35-1.36-.35-2.08s.13-1.42.35-2.08V7.16H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.84l3.66-2.84z" fill="#FBBC05"></path>
+                                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.16l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+                                    </svg>
+                                    <span class="font-label-md text-label-md">Google</span>
+                                </button>
+                                <button type="button" class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-outline-variant py-3 transition-colors hover:bg-surface-container-low">
+                                    <span class="material-symbols-outlined text-[#1877F2]" style="font-variation-settings: 'FILL' 1;">social_leaderboard</span>
+                                    <span class="font-label-md text-label-md">Facebook</span>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div>
-                        <p class="mb-4 inline-flex rounded-lg bg-white/15 px-3 py-1 text-sm font-medium text-blue-50">Akun gratis</p>
-                        <h2 class="text-4xl font-bold leading-tight">Bangun kebiasaan belajar yang konsisten.</h2>
-                        <p class="mt-5 leading-7 text-blue-100">Satu akun untuk menyimpan progres, kursus, dan aktivitas belajar Anda.</p>
-                    </div>
+                    <p class="mt-8 text-center font-body-md text-on-surface-variant lg:hidden">
+                        You're just one step away from joining our vibrant community of learners!
+                    </p>
                 </section>
             </div>
         </main>
+
+        <footer class="w-full border-t border-outline-variant bg-surface-container-highest py-base">
+            <div class="mx-auto flex max-w-container-max flex-col items-center justify-between gap-4 px-margin-mobile py-8 md:flex-row md:px-margin-desktop">
+                <div class="font-headline-md text-headline-md text-primary">{{ config('app.name', 'EduMentor') }}</div>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a class="font-label-md text-label-md text-on-surface-variant hover:underline" href="#">Privacy Policy</a>
+                    <a class="font-label-md text-label-md text-on-surface-variant hover:underline" href="#">Terms of Service</a>
+                    <a class="font-label-md text-label-md text-on-surface-variant hover:underline" href="#">Help Center</a>
+                    <a class="font-label-md text-label-md text-on-surface-variant hover:underline" href="#">Contact Us</a>
+                </div>
+                <p class="font-label-md text-label-md text-on-surface-variant">© 2024 {{ config('app.name', 'EduMentor') }} Learning. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <script>
+            document.querySelectorAll('[data-password-toggle]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const input = document.getElementById(button.dataset.passwordToggle);
+                    const nextType = input.type === 'password' ? 'text' : 'password';
+
+                    input.type = nextType;
+                    button.querySelector('.material-symbols-outlined').textContent = nextType === 'password' ? 'visibility' : 'visibility_off';
+                });
+            });
+        </script>
     </body>
 </html>
