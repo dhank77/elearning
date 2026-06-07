@@ -34,14 +34,35 @@
                 {{ $actionLabel }}
             </button>
         @endif
-        <div class="mt-6 flex items-center gap-3 border-t border-outline-variant pt-6">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full border border-outline-variant bg-primary-fixed font-bold text-primary">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+        <details class="group relative mt-6 border-t border-outline-variant pt-6">
+            <summary class="flex cursor-pointer list-none items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-primary/20 [&::-webkit-details-marker]:hidden">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-outline-variant bg-primary-fixed font-bold text-primary">
+                    {{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate font-label-md text-label-md font-bold">{{ auth()->user()->name }}</p>
+                    <p class="truncate text-[12px] text-on-surface-variant">Administrator</p>
+                </div>
+                <span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform group-open:rotate-180">expand_more</span>
+            </summary>
+
+            <div class="absolute bottom-full left-0 right-0 z-50 mb-3 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest py-2 shadow-lg shadow-on-surface/5">
+                <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-3 font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary">
+                    <span class="material-symbols-outlined text-[20px]">account_circle</span>
+                    Profil
+                </a>
+                <a href="{{ route('profile.password.edit') }}" class="flex items-center gap-3 px-4 py-3 font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary">
+                    <span class="material-symbols-outlined text-[20px]">lock_reset</span>
+                    Ubah Password
+                </a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="flex w-full items-center gap-3 px-4 py-3 text-left font-label-md text-label-md text-error transition-colors hover:bg-error-container/30" type="submit">
+                        <span class="material-symbols-outlined text-[20px]">logout</span>
+                        Logout
+                    </button>
+                </form>
             </div>
-            <div class="min-w-0 flex-1">
-                <p class="truncate font-label-md text-label-md font-bold">{{ auth()->user()->name }}</p>
-                <p class="truncate text-[12px] text-on-surface-variant">Administrator</p>
-            </div>
-        </div>
+        </details>
     </div>
 </aside>
