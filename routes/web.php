@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
@@ -12,6 +13,10 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+    
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('categories', CategoryController::class)->except(['show']);
     Route::get('users', [UserController::class, 'index'])->name('users.index');
 });
 
