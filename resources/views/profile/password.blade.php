@@ -4,13 +4,24 @@
 @section('bodyClass', 'min-h-screen bg-background font-body-md text-on-surface antialiased')
 
 @section('body')
-    @if (auth()->user()->role === 'admin')
+    @php
+        $isAdmin = auth()->user()->role === 'admin';
+    @endphp
+
+    @if ($isAdmin)
         <x-admin.sidebar active="profile" />
         <x-admin.header placeholder="Cari..." show-admin-label />
+    @else
+        <x-user.header />
     @endif
 
-    <main class="min-h-screen {{ auth()->user()->role === 'admin' ? 'pt-16 lg:ml-64' : '' }}">
-        <div class="mx-auto max-w-[1280px] p-margin-mobile md:p-margin-desktop">
+    @unless ($isAdmin)
+        <div class="mx-auto flex max-w-container-max">
+            <x-user.sidebar active="profile" />
+    @endunless
+
+    <main class="min-h-screen {{ $isAdmin ? 'pt-16 lg:ml-64' : 'min-w-0 flex-1' }}">
+        <div class="{{ $isAdmin ? 'mx-auto max-w-[1280px]' : '' }} p-margin-mobile md:p-margin-desktop">
             <div class="mb-8">
                 <a href="{{ route('profile.edit') }}" class="mb-4 inline-flex items-center gap-2 font-label-md text-label-md font-bold text-primary">
                     <span class="material-symbols-outlined text-[20px]">arrow_back</span>
@@ -73,4 +84,8 @@
             </section>
         </div>
     </main>
+
+    @unless ($isAdmin)
+        </div>
+    @endunless
 @endsection

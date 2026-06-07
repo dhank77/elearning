@@ -3,7 +3,8 @@
 @php
     $navItems = [
         ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'href' => route('dashboard')],
-        ['key' => 'categories', 'label' => 'Master Data', 'icon' => 'database', 'href' => route('categories.index')],
+        ['key' => 'categories', 'label' => 'Kategori', 'icon' => 'database', 'href' => route('categories.index')],
+        ['key' => 'coupons', 'label' => 'Kupon', 'icon' => 'sell', 'href' => route('coupons.index')],
         ['key' => 'users', 'label' => 'Users', 'icon' => 'group', 'href' => route('users.index')],
         ['key' => 'courses', 'label' => 'Courses', 'icon' => 'school', 'href' => '#'],
         ['key' => 'settings', 'label' => 'Settings', 'icon' => 'settings', 'href' => '#'],
