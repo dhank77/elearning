@@ -1,18 +1,10 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'Laravel') }}</title>
-        @fonts
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="min-h-screen bg-background text-on-background font-body-md antialiased">
+@extends('layouts.app')
+
+@section('title', config('app.name', 'EduMentor'))
+@section('bodyClass', 'min-h-screen bg-background font-body-md text-on-background antialiased')
+
+@section('body')
         <main class="min-h-screen flex flex-col relative overflow-hidden">
-            {{-- Decorative Background --}}
             <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-primary-fixed opacity-20 rounded-full blur-[120px] pointer-events-none"></div>
             <div class="absolute bottom-[-5%] left-[-5%] w-[400px] h-[400px] bg-secondary-container opacity-20 rounded-full blur-[80px] pointer-events-none"></div>
             <div class="absolute top-[40%] left-[30%] w-[300px] h-[300px] bg-tertiary-fixed opacity-10 rounded-full blur-[100px] pointer-events-none"></div>
@@ -171,14 +163,7 @@
             </section>
 
             {{-- Footer --}}
-            <footer class="w-full py-8 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
-                <p class="font-label-md text-label-md text-on-surface-variant">&copy; {{ now()->year }} {{ config('app.name', 'EduMentor') }}. All rights reserved.</p>
-                <div class="flex gap-6">
-                    <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
-                    <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
-                    <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Help Center</a>
-                </div>
-            </footer>
+
+            <x-shared.footer />
         </main>
-    </body>
-</html>
+@endsection

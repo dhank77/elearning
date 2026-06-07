@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<html class="light" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ config('app.name', 'EduMentor') }} - Student Dashboard</title>
-        @fonts
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="overflow-x-hidden bg-background font-body-md text-on-background antialiased">
+@extends('layouts.app')
+
+@section('title', config('app.name', 'EduMentor') . ' - Student Dashboard')
+@section('bodyClass', 'overflow-x-hidden bg-background font-body-md text-on-background antialiased')
+
+@section('body')
         <header class="sticky top-0 z-50 w-full border-b border-outline-variant bg-surface-container-lowest shadow-sm">
             <div class="mx-auto flex h-16 max-w-container-max items-center justify-between px-margin-mobile md:px-margin-desktop">
                 <div class="flex items-center gap-8">
@@ -284,19 +277,5 @@
             </main>
         </div>
 
-        <footer class="mt-10 w-full border-t border-outline-variant bg-surface-container-highest py-base">
-            <div class="mx-auto flex max-w-container-max flex-col items-center justify-between px-margin-mobile py-8 md:flex-row md:px-margin-desktop">
-                <div class="mb-4 md:mb-0">
-                    <span class="font-headline-md text-headline-md text-primary">{{ config('app.name', 'EduMentor') }}</span>
-                    <p class="mt-2 text-label-md text-on-surface-variant">© 2024 {{ config('app.name', 'EduMentor') }} Learning. All rights reserved.</p>
-                </div>
-                <div class="flex flex-wrap justify-center gap-6">
-                    <a class="text-label-md text-on-surface-variant hover:underline" href="#">Privacy Policy</a>
-                    <a class="text-label-md text-on-surface-variant hover:underline" href="#">Terms of Service</a>
-                    <a class="text-label-md text-on-surface-variant hover:underline" href="#">Help Center</a>
-                    <a class="text-label-md text-on-surface-variant hover:underline" href="#">Contact Us</a>
-                </div>
-            </div>
-        </footer>
-    </body>
-</html>
+        <x-shared.footer variant="band" show-brand show-contact />
+@endsection

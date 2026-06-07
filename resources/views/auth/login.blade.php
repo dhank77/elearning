@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<html class="light" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Login | {{ config('app.name', 'EduMentor') }}</title>
-        @fonts
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-    </head>
-    <body class="flex min-h-screen flex-col bg-background font-body-md text-on-background antialiased">
+@extends('layouts.app')
+
+@section('title', 'Login | ' . config('app.name', 'EduMentor'))
+@section('bodyClass', 'flex min-h-screen flex-col bg-background font-body-md text-on-background antialiased')
+
+@section('body')
         <main class="relative flex flex-grow items-center justify-center overflow-hidden p-margin-mobile md:p-margin-desktop">
             <div class="pointer-events-none absolute right-[-10%] top-[-10%] h-[500px] w-[500px] rounded-full bg-primary-fixed opacity-20 blur-[100px]"></div>
             <div class="pointer-events-none absolute bottom-[-5%] left-[-5%] h-[400px] w-[400px] rounded-full bg-secondary-container opacity-20 blur-[80px]"></div>
@@ -125,25 +118,5 @@
             </div>
         </main>
 
-        <footer class="mx-auto flex w-full max-w-container-max flex-col items-center justify-between gap-4 border-t border-outline-variant px-margin-mobile py-8 md:flex-row md:px-margin-desktop">
-            <p class="font-label-md text-label-md text-on-surface-variant">© 2024 {{ config('app.name', 'EduMentor') }} Learning. All rights reserved.</p>
-            <div class="flex flex-wrap justify-center gap-6">
-                <a class="font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary" href="#">Privacy Policy</a>
-                <a class="font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary" href="#">Terms of Service</a>
-                <a class="font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary" href="#">Help Center</a>
-            </div>
-        </footer>
-
-        <script>
-            document.querySelectorAll('[data-password-toggle]').forEach((button) => {
-                button.addEventListener('click', () => {
-                    const input = document.getElementById(button.dataset.passwordToggle);
-                    const nextType = input.type === 'password' ? 'text' : 'password';
-
-                    input.type = nextType;
-                    button.querySelector('.material-symbols-outlined').textContent = nextType === 'password' ? 'visibility' : 'visibility_off';
-                });
-            });
-        </script>
-    </body>
-</html>
+        <x-shared.footer variant="contained" />
+@endsection
