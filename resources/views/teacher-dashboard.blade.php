@@ -4,6 +4,10 @@
 @section('bodyClass', 'bg-background font-body-md text-on-background antialiased')
 
 @section('body')
+    @php
+        $defaultCourseCover = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80';
+    @endphp
+
         <aside class="fixed left-0 top-0 z-50 hidden h-screen w-64 flex-col bg-surface-container-lowest px-4 py-6 shadow-sm lg:flex">
             <div class="mb-10 px-2">
                 <h1 class="font-headline-md text-headline-md text-primary">{{ config('app.name', 'Laravel') }}</h1>
@@ -114,9 +118,12 @@
                         </div>
                         <div class="grid grid-cols-1 gap-gutter md:grid-cols-2">
                             @forelse($courses as $course)
+                            @php
+                                $courseCover = $course->cover_image_path ? asset('storage/'.$course->cover_image_path) : $defaultCourseCover;
+                            @endphp
                             <article class="group overflow-hidden rounded-2xl border border-outline-variant/50 bg-surface-container-lowest transition-all duration-300 hover:shadow-xl">
                                 <div class="relative h-40 overflow-hidden bg-surface-container-high">
-                                    <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $course->title }}" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=80">
+                                    <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $course->title }}" src="{{ $courseCover }}">
                                     <span class="absolute left-4 top-4 flex items-center gap-1 rounded-full bg-surface-container-lowest/90 px-3 py-1 text-[12px] font-bold text-primary"><span class="h-2 w-2 rounded-full {{ $course->status === 'published' ? 'bg-secondary' : 'bg-outline' }}"></span>{{ ucfirst($course->status) }}</span>
                                 </div>
                                 <div class="p-6">
