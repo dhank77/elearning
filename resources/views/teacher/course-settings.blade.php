@@ -126,8 +126,8 @@
             </section>
 
             <section class="mt-10 grid grid-cols-1 gap-gutter xl:grid-cols-[380px_minmax(0,1fr)]">
-                <aside>
-                    <h3 class="px-3 text-[30px] font-bold leading-9 text-on-surface">Your Curriculum</h3>
+                <aside class="min-w-0">
+                    <h3 class="px-1 text-headline-md font-bold text-on-surface sm:text-[30px] sm:leading-9">Your Curriculum</h3>
 
                     <div class="mt-6 space-y-5">
                         @forelse ($courses as $course)
@@ -136,7 +136,7 @@
                                 $isActive = $activeCourse?->is($course);
                             @endphp
 
-                            <a class="{{ $isActive ? 'relative overflow-hidden rounded-xl border-2 border-primary bg-surface-container-lowest p-5 shadow-sm' : 'block rounded-xl border border-outline-variant bg-surface-container-lowest p-5 transition-colors hover:border-primary' }}" href="{{ route('teacher.course-settings', array_filter(['course' => $course->id, 'search' => $search])) }}">
+                            <a class="{{ $isActive ? 'relative block w-full overflow-hidden rounded-xl border-2 border-primary bg-surface-container-lowest p-5 shadow-sm' : 'block w-full rounded-xl border border-outline-variant bg-surface-container-lowest p-5 transition-colors hover:border-primary' }}" href="{{ route('teacher.course-settings', array_filter(['course' => $course->id, 'search' => $search])) }}">
                                 @if ($isActive)
                                     <div class="absolute left-0 top-0 h-full w-1.5 bg-primary"></div>
                                 @endif
@@ -150,11 +150,11 @@
                                     <span class="{{ $isActive ? 'text-primary' : 'text-outline' }} material-symbols-outlined text-[22px]">more_vert</span>
                                 </div>
 
-                                <h4 class="{{ $isActive ? 'text-primary' : 'text-on-surface' }} text-[22px] font-medium leading-7">{{ $course->title }}</h4>
+                                <h4 class="{{ $isActive ? 'text-primary' : 'text-on-surface' }} break-words text-body-lg font-semibold sm:text-[22px] sm:leading-7">{{ $course->title }}</h4>
                                 <p class="mt-2 text-body-md text-on-surface">{{ $course->modules->count() }} Modules &bull; {{ $lessonCount }} Lessons</p>
 
                                 @if ($isActive)
-                                    <div class="mt-7 flex items-center gap-3">
+                                    <div class="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
                                         <div class="h-2 flex-1 overflow-hidden rounded-full bg-surface-container-high">
                                             <div class="h-full rounded-full bg-secondary" style="width: {{ $course->completion_percentage }}%"></div>
                                         </div>
