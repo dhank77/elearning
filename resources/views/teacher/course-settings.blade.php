@@ -1,273 +1,309 @@
 @extends('layouts.app')
 
-@section('title', config('app.name', 'EduMentor') . ' - Course Settings')
-@section('bodyClass', 'bg-background font-body-md text-on-background antialiased')
+@section('title', 'Clarity Learning - Course Management')
+@section('bodyClass', 'min-h-screen overflow-x-hidden bg-background font-body-md text-on-background antialiased')
 
 @section('body')
-    <aside class="fixed left-0 top-0 z-50 hidden h-screen w-64 flex-col bg-surface-container-lowest px-4 py-6 shadow-sm lg:flex">
-        <div class="mb-10 px-2">
-            <h1 class="font-headline-md text-headline-md text-primary">{{ config('app.name', 'Laravel') }}</h1>
-            <p class="font-body-md text-body-md text-on-surface-variant opacity-70">Instructor Portal</p>
+    @php
+        $lessonIcons = [
+            'video' => ['icon' => 'play_circle', 'color' => 'text-secondary'],
+            'document' => ['icon' => 'description', 'color' => 'text-primary'],
+            'quiz' => ['icon' => 'quiz', 'color' => 'text-tertiary'],
+        ];
+    @endphp
+
+    <aside class="fixed left-0 top-0 z-50 hidden h-screen w-80 flex-col border-r border-outline-variant/20 bg-surface-container-lowest px-5 py-8 lg:flex">
+        <div class="px-2">
+            <h1 class="font-headline-lg text-[30px] font-bold leading-9 text-primary">Clarity Learning</h1>
+            <p class="mt-1 text-body-md text-on-surface-variant">Instructor Portal</p>
         </div>
 
-        <nav class="flex-1 space-y-2">
-            <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-on-surface-variant transition-colors hover:bg-surface-container" href="{{ route('dashboard') }}">
-                <span class="material-symbols-outlined">dashboard</span>
-                <span class="font-body-md text-body-md">Dashboard</span>
+        <nav class="mt-16 flex flex-1 flex-col gap-5">
+            <a class="flex items-center gap-4 rounded-lg px-5 py-3 text-[22px] text-on-surface-variant transition-colors hover:bg-surface-container" href="{{ route('dashboard') }}">
+                <span class="material-symbols-outlined text-[28px]">dashboard</span>
+                <span class="text-body-lg">Dashboard</span>
             </a>
-            <a class="flex items-center gap-3 rounded-lg border-r-4 border-primary bg-surface-container-low px-4 py-3 font-bold text-primary transition-transform duration-200 active:scale-[0.98]" href="{{ route('teacher.course-settings') }}">
-                <span class="material-symbols-outlined">school</span>
-                <span class="font-body-md text-body-md">My Courses</span>
+            <a class="flex items-center gap-4 rounded-lg border-r-4 border-primary bg-surface-container-low px-5 py-3 font-bold text-primary" href="{{ route('teacher.course-settings') }}">
+                <span class="material-symbols-outlined text-[28px]">school</span>
+                <span class="text-body-lg">My Courses</span>
             </a>
-            <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-on-surface-variant transition-colors hover:bg-surface-container" href="#">
-                <span class="material-symbols-outlined">group</span>
-                <span class="font-body-md text-body-md">Students</span>
+            <a class="flex items-center gap-4 rounded-lg px-5 py-3 text-[22px] text-on-surface-variant transition-colors hover:bg-surface-container" href="#">
+                <span class="material-symbols-outlined text-[28px]">group</span>
+                <span class="text-body-lg">Students</span>
             </a>
-            <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-on-surface-variant transition-colors hover:bg-surface-container" href="#">
-                <span class="material-symbols-outlined">assignment</span>
-                <span class="font-body-md text-body-md">Assignments</span>
+            <a class="flex items-center gap-4 rounded-lg px-5 py-3 text-[22px] text-on-surface-variant transition-colors hover:bg-surface-container" href="#">
+                <span class="material-symbols-outlined text-[28px]">assignment</span>
+                <span class="text-body-lg">Assignments</span>
             </a>
-            <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-on-surface-variant transition-colors hover:bg-surface-container" href="#">
-                <span class="material-symbols-outlined">analytics</span>
-                <span class="font-body-md text-body-md">Analytics</span>
+            <a class="flex items-center gap-4 rounded-lg px-5 py-3 text-[22px] text-on-surface-variant transition-colors hover:bg-surface-container" href="#">
+                <span class="material-symbols-outlined text-[28px]">analytics</span>
+                <span class="text-body-lg">Analytics</span>
+            </a>
+            <a class="flex items-center gap-4 rounded-lg px-5 py-3 text-[22px] text-on-surface-variant transition-colors hover:bg-surface-container" href="#">
+                <span class="material-symbols-outlined text-[28px]">settings</span>
+                <span class="text-body-lg">Settings</span>
             </a>
         </nav>
 
-        <div class="mt-auto px-2">
-            <button class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 font-label-md text-label-md text-on-primary shadow-lg shadow-primary/20 transition-all hover:opacity-90" type="button">
-                <span class="material-symbols-outlined text-[20px]">add</span>
+        <form method="POST" action="{{ route('teacher.course-settings.store') }}">
+            @csrf
+            <button class="mb-2 flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-6 py-4 text-body-lg font-semibold text-on-primary shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 hover:shadow-xl" type="submit">
+                <span class="material-symbols-outlined text-[28px]">add</span>
                 Create New Course
             </button>
-            <div class="mt-6 flex items-center gap-3 rounded-lg bg-surface-container-low p-2">
-                <div class="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary-fixed bg-secondary-container font-bold text-secondary">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                </div>
-                <div class="min-w-0">
-                    <p class="truncate font-label-md text-label-md text-on-surface">{{ auth()->user()->name }}</p>
-                    <p class="truncate text-[12px] text-on-surface-variant">Course Mentor</p>
-                </div>
-            </div>
-        </div>
+        </form>
     </aside>
 
-    <header class="fixed left-0 right-0 top-0 z-40 flex h-16 items-center justify-between border-b border-outline-variant/40 bg-surface px-margin-mobile lg:left-64 lg:px-12">
-        <a class="font-headline-md text-headline-md text-primary lg:hidden" href="{{ route('dashboard') }}">{{ config('app.name', 'Laravel') }}</a>
-        <div class="hidden w-96 items-center rounded-full bg-surface-container px-4 py-2 md:flex">
-            <span class="material-symbols-outlined text-on-surface-variant">search</span>
-            <input class="w-full border-none bg-transparent font-label-md text-label-md placeholder:text-on-surface-variant/50 focus:ring-0" placeholder="Search courses or lessons..." type="text">
-        </div>
-        <div class="ml-auto flex items-center gap-5">
-            <button class="relative text-on-surface-variant transition-colors hover:text-primary" type="button" aria-label="Notifications">
-                <span class="material-symbols-outlined">notifications</span>
-                <span class="absolute right-0 top-0 h-2 w-2 rounded-full border-2 border-surface bg-error"></span>
+    <header class="fixed left-0 right-0 top-0 z-40 flex h-24 items-center bg-background px-margin-mobile lg:left-80 lg:px-10">
+        <a class="font-headline-md text-headline-md text-primary lg:hidden" href="{{ route('dashboard') }}">Clarity Learning</a>
+
+        <form class="hidden h-16 w-[480px] items-center gap-4 rounded-full bg-surface-container-low px-6 md:flex" method="GET" action="{{ route('teacher.course-settings') }}">
+            <span class="material-symbols-outlined text-[30px] text-on-surface-variant">search</span>
+            <input class="w-full border-none bg-transparent text-body-md text-on-surface placeholder:text-on-surface-variant/80 focus:ring-0" name="search" placeholder="Search courses or lessons..." type="search" value="{{ $search }}">
+        </form>
+
+        <div class="ml-auto flex items-center gap-6">
+            <button class="relative text-on-surface transition-colors hover:text-primary" type="button" aria-label="Notifications">
+                <span class="material-symbols-outlined text-[30px]">notifications</span>
+                <span class="absolute right-0 top-1 h-2.5 w-2.5 rounded-full bg-error ring-2 ring-background"></span>
             </button>
-            <button class="text-on-surface-variant transition-colors hover:text-primary" type="button" aria-label="Help">
-                <span class="material-symbols-outlined">help</span>
+            <button class="text-on-surface transition-colors hover:text-primary" type="button" aria-label="Help">
+                <span class="material-symbols-outlined text-[30px]">help</span>
             </button>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="text-on-surface-variant transition-colors hover:text-primary" type="submit" aria-label="Log out">
-                    <span class="material-symbols-outlined">logout</span>
-                </button>
-            </form>
+            <details class="group relative">
+                <summary class="flex cursor-pointer list-none items-center rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 focus:ring-offset-background [&::-webkit-details-marker]:hidden" aria-label="Open account menu">
+                    <span class="flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-outline-variant bg-secondary-container font-bold text-secondary">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </span>
+                </summary>
+
+                <div class="absolute right-0 top-full z-50 mt-3 w-64 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest py-2 shadow-lg shadow-on-surface/5">
+                    <div class="border-b border-outline-variant px-4 py-3">
+                        <p class="truncate font-label-md text-label-md font-bold text-on-surface">{{ auth()->user()->name }}</p>
+                        <p class="truncate text-[12px] text-on-surface-variant">{{ auth()->user()->email }}</p>
+                    </div>
+                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-3 px-4 py-3 font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-low hover:text-primary">
+                        <span class="material-symbols-outlined text-[20px]">account_circle</span>
+                        Profil
+                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="flex w-full items-center gap-3 px-4 py-3 text-left font-label-md text-label-md text-error transition-colors hover:bg-error-container/30" type="submit">
+                            <span class="material-symbols-outlined text-[20px]">logout</span>
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </details>
         </div>
     </header>
 
-    <main class="min-h-screen pt-16 lg:pl-64">
-        <div class="mx-auto max-w-[1280px] space-y-gutter p-margin-mobile md:p-gutter">
-            <section class="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+    <main class="min-h-screen pt-24 lg:pl-80">
+        <div class="mx-auto max-w-[1200px] px-margin-mobile pb-40 md:px-10">
+            <section class="flex flex-col gap-6 pt-5 md:flex-row md:items-end md:justify-between">
                 <div>
-                    <p class="mb-2 inline-flex items-center gap-2 rounded-full bg-secondary-container px-3 py-1 font-label-md text-label-md text-on-secondary-container">
-                        <span class="h-2 w-2 rounded-full bg-secondary"></span>
-                        Active editing
-                    </p>
-                    <h2 class="font-headline-lg text-headline-lg text-on-surface">Course Settings</h2>
-                    <p class="mt-1 font-body-md text-body-md text-on-surface-variant">Kelola identitas, akses, dan status publikasi kursus pengajar.</p>
+                    <h2 class="text-[40px] font-bold leading-[48px] text-on-surface">Course Management</h2>
+                    <p class="mt-1 text-body-lg text-on-surface-variant">Design and refine your learning journeys.</p>
                 </div>
-                <div class="flex flex-col gap-3 sm:flex-row">
-                    <button class="rounded-full border border-outline px-6 py-2.5 font-label-md text-label-md text-on-surface transition-colors hover:bg-surface-container" type="button">Save as Draft</button>
-                    <button class="rounded-full bg-primary px-6 py-2.5 font-label-md text-label-md text-on-primary shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5" type="button">Publish Course</button>
+
+                <div class="flex flex-col gap-4 sm:flex-row">
+                    @if ($activeCourse)
+                        <form method="POST" action="{{ route('teacher.course-settings.draft', $activeCourse) }}">
+                            @csrf
+                            @method('PATCH')
+                            <button class="w-full rounded-full border border-outline px-8 py-3.5 text-body-lg font-medium text-on-surface transition-colors hover:bg-surface-container" type="submit">Save as Draft</button>
+                        </form>
+                        <form method="POST" action="{{ route('teacher.course-settings.publish', $activeCourse) }}">
+                            @csrf
+                            @method('PATCH')
+                            <button class="w-full rounded-full bg-primary px-8 py-3.5 text-body-lg font-medium text-on-primary shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5" type="submit">Publish Course</button>
+                        </form>
+                    @else
+                        <button class="rounded-full border border-outline px-8 py-3.5 text-body-lg font-medium text-outline" type="button" disabled>Save as Draft</button>
+                        <button class="rounded-full bg-outline-variant px-8 py-3.5 text-body-lg font-medium text-on-surface-variant" type="button" disabled>Publish Course</button>
+                    @endif
                 </div>
             </section>
 
-            <section class="grid grid-cols-1 gap-gutter xl:grid-cols-12">
-                <aside class="space-y-4 xl:col-span-4">
-                    <div class="flex items-center justify-between gap-4 px-1">
-                        <h3 class="font-headline-md text-headline-md text-on-surface">Your Curriculum</h3>
-                        <button class="rounded-full border border-outline-variant p-2 text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary" type="button" aria-label="Add course">
-                            <span class="material-symbols-outlined text-[20px]">add</span>
-                        </button>
-                    </div>
+            <section class="mt-10 grid grid-cols-1 gap-gutter xl:grid-cols-[380px_minmax(0,1fr)]">
+                <aside>
+                    <h3 class="px-3 text-[30px] font-bold leading-9 text-on-surface">Your Curriculum</h3>
 
-                    <article class="bento-card relative overflow-hidden rounded-xl border-2 border-primary bg-surface-container-lowest p-4 shadow-sm">
-                        <div class="absolute left-0 top-0 h-full w-1 bg-primary"></div>
-                        <div class="mb-3 flex items-start justify-between gap-3">
-                            <span class="rounded-full bg-primary-fixed px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-on-primary-fixed">Editing</span>
-                            <button class="text-primary" type="button" aria-label="Course options">
-                                <span class="material-symbols-outlined text-[20px]">more_vert</span>
-                            </button>
-                        </div>
-                        <h4 class="font-headline-md text-body-lg font-bold text-primary">Advanced UX Fundamentals</h4>
-                        <p class="mt-1 text-label-md text-on-surface-variant">8 Modules • 24 Lessons • 428 Students</p>
-                        <div class="mt-4 flex items-center gap-3">
-                            <div class="h-2 flex-1 overflow-hidden rounded-full bg-surface-container-high">
-                                <div class="h-full rounded-full bg-secondary" style="width: 75%"></div>
+                    <div class="mt-6 space-y-5">
+                        @forelse ($courses as $course)
+                            @php
+                                $lessonCount = $course->modules->sum(fn ($module) => $module->lessons->count());
+                                $isActive = $activeCourse?->is($course);
+                            @endphp
+
+                            <a class="{{ $isActive ? 'relative overflow-hidden rounded-xl border-2 border-primary bg-surface-container-lowest p-5 shadow-sm' : 'block rounded-xl border border-outline-variant bg-surface-container-lowest p-5 transition-colors hover:border-primary' }}" href="{{ route('teacher.course-settings', array_filter(['course' => $course->id, 'search' => $search])) }}">
+                                @if ($isActive)
+                                    <div class="absolute left-0 top-0 h-full w-1.5 bg-primary"></div>
+                                @endif
+
+                                <div class="mb-4 flex items-center justify-between gap-4">
+                                    @if ($isActive)
+                                        <span class="rounded bg-primary-fixed px-3 py-1 text-[12px] font-bold uppercase tracking-wide text-on-primary-fixed">Active Editing</span>
+                                    @else
+                                        <span class="{{ $course->status === 'published' ? 'bg-secondary-fixed-dim text-on-secondary-fixed' : 'bg-surface-container text-on-surface' }} rounded px-3 py-1 text-[12px] font-bold uppercase">{{ $course->status }}</span>
+                                    @endif
+                                    <span class="{{ $isActive ? 'text-primary' : 'text-outline' }} material-symbols-outlined text-[22px]">more_vert</span>
+                                </div>
+
+                                <h4 class="{{ $isActive ? 'text-primary' : 'text-on-surface' }} text-[22px] font-medium leading-7">{{ $course->title }}</h4>
+                                <p class="mt-2 text-body-md text-on-surface">{{ $course->modules->count() }} Modules &bull; {{ $lessonCount }} Lessons</p>
+
+                                @if ($isActive)
+                                    <div class="mt-7 flex items-center gap-3">
+                                        <div class="h-2 flex-1 overflow-hidden rounded-full bg-surface-container-high">
+                                            <div class="h-full rounded-full bg-secondary" style="width: {{ $course->completion_percentage }}%"></div>
+                                        </div>
+                                        <span class="shrink-0 text-label-md font-bold text-secondary">{{ $course->completion_percentage }}% Complete</span>
+                                    </div>
+                                @else
+                                    <div class="mt-5 flex items-center gap-4">
+                                        <span class="text-label-md text-on-surface-variant">Modified {{ $course->updated_at->diffForHumans() }}</span>
+                                    </div>
+                                @endif
+                            </a>
+                        @empty
+                            <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-5 text-body-md text-on-surface-variant">
+                                No courses found. Create your first course to start building.
                             </div>
-                            <span class="text-[12px] font-bold text-secondary">75%</span>
-                        </div>
-                    </article>
+                        @endforelse
 
-                    <article class="bento-card rounded-xl border border-outline-variant bg-surface-container-lowest p-4">
-                        <h4 class="font-body-lg font-semibold text-on-surface">Introduction to Python</h4>
-                        <p class="mt-1 text-label-md text-on-surface-variant">12 Modules • 48 Lessons</p>
-                        <div class="mt-3 flex items-center gap-3">
-                            <span class="rounded-full bg-surface-container px-3 py-1 text-[10px] font-bold uppercase text-on-surface-variant">Draft</span>
-                            <span class="text-[12px] text-outline">Modified 2 days ago</span>
-                        </div>
-                    </article>
-
-                    <article class="bento-card rounded-xl border border-outline-variant bg-surface-container-lowest p-4">
-                        <h4 class="font-body-lg font-semibold text-on-surface">Digital Marketing 101</h4>
-                        <p class="mt-1 text-label-md text-on-surface-variant">6 Modules • 18 Lessons</p>
-                        <div class="mt-3 flex items-center gap-3">
-                            <span class="rounded-full bg-secondary-container px-3 py-1 text-[10px] font-bold uppercase text-on-secondary-container">Published</span>
-                            <span class="text-[12px] text-outline">Modified 1 week ago</span>
-                        </div>
-                    </article>
+                        <form method="POST" action="{{ route('teacher.course-settings.store') }}">
+                            @csrf
+                            <button class="flex h-28 w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-outline-variant text-on-surface-variant transition-colors hover:border-primary hover:text-primary" type="submit">
+                                <span class="material-symbols-outlined text-[30px]">add_circle</span>
+                                <span class="text-body-lg">Add Another Course</span>
+                            </button>
+                        </form>
+                    </div>
                 </aside>
 
-                <section class="xl:col-span-8">
-                    <div class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
-                        <div class="custom-scrollbar flex overflow-x-auto border-b border-outline-variant px-4">
-                            <button class="shrink-0 px-4 py-4 font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary" type="button">Curriculum</button>
-                            <button class="shrink-0 border-b-2 border-primary px-4 py-4 font-label-md text-label-md font-bold text-primary" type="button">Course Settings</button>
-                            <button class="shrink-0 px-4 py-4 font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary" type="button">Pricing & Coupons</button>
-                            <button class="shrink-0 px-4 py-4 font-label-md text-label-md text-on-surface-variant transition-colors hover:text-primary" type="button">Students List</button>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-0 lg:grid-cols-12">
-                            <form class="space-y-gutter p-6 lg:col-span-8" action="#" method="POST">
-                                @csrf
-                                <section class="space-y-5">
-                                    <div>
-                                        <h3 class="font-headline-md text-headline-md text-on-surface">Course Identity</h3>
-                                        <p class="mt-1 text-label-md text-on-surface-variant">Informasi utama yang muncul di katalog dan halaman detail kursus.</p>
-                                    </div>
-
-                                    <div>
-                                        <label class="mb-2 block font-label-md text-label-md text-on-surface" for="course_title">Course Title</label>
-                                        <input class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20" id="course_title" name="course_title" type="text" value="Advanced UX Fundamentals">
-                                    </div>
-
-                                    <div>
-                                        <label class="mb-2 block font-label-md text-label-md text-on-surface" for="course_subtitle">Subtitle</label>
-                                        <input class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20" id="course_subtitle" name="course_subtitle" type="text" value="Build research-backed interfaces that reduce cognitive load.">
-                                    </div>
-
-                                    <div>
-                                        <label class="mb-2 block font-label-md text-label-md text-on-surface" for="description">Description</label>
-                                        <textarea class="min-h-36 w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20" id="description" name="description">Kursus ini membantu siswa memahami prinsip UX modern, riset pengguna, dan prototyping dengan pendekatan studi kasus.</textarea>
-                                    </div>
-                                </section>
-
-                                <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                    <div>
-                                        <label class="mb-2 block font-label-md text-label-md text-on-surface" for="level">Level</label>
-                                        <select class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20" id="level" name="level">
-                                            <option>Beginner</option>
-                                            <option selected>Intermediate</option>
-                                            <option>Advanced</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="mb-2 block font-label-md text-label-md text-on-surface" for="category">Category</label>
-                                        <select class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20" id="category" name="category">
-                                            <option selected>Design</option>
-                                            <option>Development</option>
-                                            <option>Marketing</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="mb-2 block font-label-md text-label-md text-on-surface" for="language">Language</label>
-                                        <select class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20" id="language" name="language">
-                                            <option selected>Indonesia</option>
-                                            <option>English</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="mb-2 block font-label-md text-label-md text-on-surface" for="duration">Estimated Duration</label>
-                                        <input class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20" id="duration" name="duration" type="text" value="8 weeks">
-                                    </div>
-                                </section>
-
-                                <section class="space-y-4 rounded-xl border border-outline-variant bg-surface-container-low p-5">
-                                    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                                        <div>
-                                            <h3 class="font-body-lg font-bold text-on-surface">Visibility</h3>
-                                            <p class="mt-1 text-label-md text-on-surface-variant">Status ini menentukan apakah kursus tampil di katalog siswa.</p>
-                                        </div>
-                                        <label class="inline-flex cursor-pointer items-center gap-3">
-                                            <input class="peer sr-only" type="checkbox" checked>
-                                            <span class="relative h-7 w-12 rounded-full bg-outline-variant transition-colors after:absolute after:left-1 after:top-1 after:h-5 after:w-5 after:rounded-full after:bg-on-primary after:shadow-sm after:transition-transform peer-checked:bg-secondary peer-checked:after:translate-x-5"></span>
-                                            <span class="font-label-md text-label-md text-secondary">Published</span>
-                                        </label>
-                                    </div>
-                                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                                        <span class="rounded-lg bg-surface-container-lowest px-4 py-3 text-label-md text-on-surface-variant"><strong class="text-on-surface">428</strong> students</span>
-                                        <span class="rounded-lg bg-surface-container-lowest px-4 py-3 text-label-md text-on-surface-variant"><strong class="text-on-surface">4.8</strong> rating</span>
-                                        <span class="rounded-lg bg-surface-container-lowest px-4 py-3 text-label-md text-on-surface-variant"><strong class="text-on-surface">24</strong> lessons</span>
-                                    </div>
-                                </section>
-
-                                <div class="flex flex-col-reverse gap-3 border-t border-outline-variant pt-6 sm:flex-row sm:justify-end">
-                                    <button class="rounded-full border border-primary px-6 py-2.5 font-label-md text-label-md font-bold text-primary transition-colors hover:bg-primary-fixed" type="button">Preview Course</button>
-                                    <button class="rounded-full bg-primary px-8 py-2.5 font-label-md text-label-md font-bold text-on-primary shadow-md shadow-primary/20 transition-all hover:-translate-y-0.5" type="submit">Save Settings</button>
-                                </div>
-                            </form>
-
-                            <aside class="space-y-gutter border-t border-outline-variant bg-surface-container-low p-6 lg:col-span-4 lg:border-l lg:border-t-0">
-                                <section class="rounded-xl border border-outline-variant bg-surface-container-lowest p-5">
-                                    <div class="mb-4 flex items-center justify-between gap-4">
-                                        <h3 class="font-body-lg font-bold text-on-surface">Cover Preview</h3>
-                                        <span class="rounded-full bg-tertiary-fixed px-3 py-1 text-[12px] font-bold text-on-tertiary-fixed">Featured</span>
-                                    </div>
-                                    <div class="overflow-hidden rounded-lg bg-surface-container-high">
-                                        <img class="h-44 w-full object-cover" src="https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&w=900&q=80" alt="Advanced UX course cover">
-                                    </div>
-                                    <button class="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-outline-variant px-4 py-3 font-label-md text-label-md text-on-surface-variant transition-colors hover:border-primary hover:text-primary" type="button">
-                                        <span class="material-symbols-outlined text-[20px]">upload</span>
-                                        Replace Cover
-                                    </button>
-                                </section>
-
-                                <section class="rounded-xl border border-outline-variant bg-surface-container-lowest p-5">
-                                    <h3 class="font-body-lg font-bold text-on-surface">Publish Checklist</h3>
-                                    <div class="mt-4 space-y-3">
-                                        <div class="flex items-center gap-3">
-                                            <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                            <span class="text-label-md text-on-surface">Course identity complete</span>
-                                        </div>
-                                        <div class="flex items-center gap-3">
-                                            <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                                            <span class="text-label-md text-on-surface">Cover image uploaded</span>
-                                        </div>
-                                        <div class="flex items-center gap-3">
-                                            <span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">error</span>
-                                            <span class="text-label-md text-on-surface">Pricing needs review</span>
-                                        </div>
-                                    </div>
-                                </section>
-
-                                <section class="rounded-xl bg-inverse-surface p-5 text-inverse-on-surface">
-                                    <p class="font-label-md text-label-md opacity-80">Last saved</p>
-                                    <p class="mt-1 font-body-lg text-body-lg font-bold">10:45 AM today</p>
-                                    <p class="mt-3 text-label-md text-inverse-on-surface/80">Draft reviewed by curriculum operations.</p>
-                                </section>
-                            </aside>
-                        </div>
+                <section class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
+                    <div class="grid grid-cols-4 border-b border-outline-variant text-center">
+                        <button class="border-b-2 border-primary px-4 py-5 text-body-md font-bold text-primary" type="button">Curriculum</button>
+                        <button class="px-4 py-5 text-body-md text-on-surface transition-colors hover:text-primary" type="button">Course Settings</button>
+                        <button class="px-4 py-5 text-body-md text-on-surface transition-colors hover:text-primary" type="button">Pricing & Coupons</button>
+                        <button class="px-4 py-5 text-body-md text-on-surface transition-colors hover:text-primary" type="button">Students List</button>
                     </div>
+
+                    @if ($activeCourse)
+                        <div class="p-8">
+                            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                <h3 class="text-[30px] font-bold leading-9 text-on-surface">{{ $activeCourse->title }}</h3>
+                                <form method="POST" action="{{ route('teacher.course-settings.modules.store', $activeCourse) }}">
+                                    @csrf
+                                    <button class="inline-flex items-center justify-center gap-3 rounded-full bg-primary-fixed px-6 py-3 text-body-lg font-medium text-primary transition-colors hover:bg-primary-fixed-dim" type="submit">
+                                        <span class="material-symbols-outlined text-[22px]">add</span>
+                                        Add Module
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div class="mt-7 space-y-5">
+                                @forelse ($activeCourse->modules as $module)
+                                    @if ($loop->first)
+                                        <article class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
+                                            <div class="flex items-center gap-5 border-b border-outline-variant bg-surface-container-low px-6 py-5">
+                                                <span class="material-symbols-outlined cursor-grab text-[28px] text-outline">drag_indicator</span>
+                                                <h4 class="min-w-0 flex-1 text-body-lg font-bold text-on-surface">{{ $module->title }}</h4>
+                                                <div class="flex items-center gap-5 text-outline">
+                                                    <button class="transition-colors hover:text-primary" type="button" aria-label="Edit module">
+                                                        <span class="material-symbols-outlined text-[28px]">edit</span>
+                                                    </button>
+                                                    <form method="POST" action="{{ route('teacher.course-settings.modules.destroy', $module) }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="transition-colors hover:text-error" type="submit" aria-label="Delete module">
+                                                            <span class="material-symbols-outlined text-[28px]">delete</span>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                            <div class="space-y-1 px-6 py-4">
+                                                @forelse ($module->lessons as $lesson)
+                                                    @php
+                                                        $lessonStyle = $lessonIcons[$lesson->content_type] ?? $lessonIcons['document'];
+                                                    @endphp
+
+                                                    <div class="group flex items-center gap-5 rounded-lg px-2 py-3">
+                                                        <span class="{{ $lessonStyle['color'] }} material-symbols-outlined text-[30px]">{{ $lessonStyle['icon'] }}</span>
+                                                        <span class="min-w-0 flex-1 text-body-md font-medium text-on-surface">{{ $lesson->title }}</span>
+                                                        <span class="text-label-md text-on-surface-variant">{{ $lesson->metadata }}</span>
+                                                        <form class="hidden group-hover:block" method="POST" action="{{ route('teacher.course-settings.lessons.destroy', $lesson) }}">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="text-label-md font-bold text-error" type="submit">Remove</button>
+                                                        </form>
+                                                    </div>
+                                                @empty
+                                                    <p class="rounded-lg bg-surface-container-low px-4 py-3 text-label-md text-on-surface-variant">No content yet.</p>
+                                                @endforelse
+
+                                                <form method="POST" action="{{ route('teacher.course-settings.lessons.store', $module) }}">
+                                                    @csrf
+                                                    <button class="mt-3 flex w-full items-center justify-center gap-3 rounded-lg border border-dashed border-outline-variant py-3 text-body-md text-on-surface-variant transition-colors hover:border-primary hover:text-primary" type="submit">
+                                                        <span class="material-symbols-outlined text-[20px]">add</span>
+                                                        Add Content
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </article>
+                                    @else
+                                        <article class="flex items-center gap-5 rounded-xl border border-outline-variant bg-surface-container-lowest px-6 py-5">
+                                            <span class="material-symbols-outlined cursor-grab text-[28px] text-outline">drag_indicator</span>
+                                            <h4 class="min-w-0 flex-1 text-body-lg font-bold text-on-surface">{{ $module->title }}</h4>
+                                            <span class="text-label-md text-on-surface-variant">{{ $module->lessons->count() }} Lessons</span>
+                                            <form method="POST" action="{{ route('teacher.course-settings.modules.destroy', $module) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="text-outline transition-colors hover:text-error" type="submit" aria-label="Delete module">
+                                                    <span class="material-symbols-outlined text-[28px]">delete</span>
+                                                </button>
+                                            </form>
+                                            <span class="material-symbols-outlined text-[28px] text-outline">expand_more</span>
+                                        </article>
+                                    @endif
+                                @empty
+                                    <div class="rounded-xl border border-dashed border-outline-variant bg-surface-container-low p-8 text-center">
+                                        <p class="text-body-lg font-bold text-on-surface">No modules yet</p>
+                                        <p class="mt-2 text-body-md text-on-surface-variant">Add a module or generate one to start the curriculum.</p>
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-4 border-t border-outline-variant px-8 py-7 md:flex-row md:items-center md:justify-between">
+                            <p class="text-label-md italic text-on-surface">
+                                Last saved {{ $activeCourse->last_saved_at?->diffForHumans() ?? $activeCourse->updated_at->diffForHumans() }}
+                            </p>
+                            <div class="flex flex-col gap-5 sm:flex-row">
+                                <a class="rounded-full border border-primary px-8 py-3 text-center text-body-md font-bold text-primary transition-colors hover:bg-primary-fixed" href="{{ route('teacher.course-settings', ['course' => $activeCourse, 'preview' => true]) }}">Preview Course</a>
+                                <form method="POST" action="{{ route('teacher.course-settings.modules.generate', $activeCourse) }}">
+                                    @csrf
+                                    <button class="w-full rounded-full bg-primary px-9 py-3 text-body-md font-bold text-on-primary shadow-lg shadow-on-surface/10 transition-all hover:-translate-y-0.5" type="submit">Auto-Generate Module</button>
+                                </form>
+                            </div>
+                        </div>
+                    @else
+                        <div class="p-12 text-center">
+                            <p class="text-[30px] font-bold text-on-surface">No course selected</p>
+                            <p class="mt-2 text-body-md text-on-surface-variant">Create a course or clear your search to continue.</p>
+                        </div>
+                    @endif
                 </section>
             </section>
         </div>
     </main>
+
+    @if (session('success'))
+        <div class="fixed bottom-6 right-10 hidden items-center gap-4 rounded-xl bg-inverse-surface px-8 py-5 text-inverse-on-surface shadow-2xl md:flex">
+            <span class="material-symbols-outlined text-[30px] text-secondary-fixed">check_circle</span>
+            <span class="text-body-md font-medium">{{ session('success') }}</span>
+        </div>
+    @endif
 @endsection
