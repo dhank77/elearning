@@ -186,8 +186,8 @@
                     </div>
                 </aside>
 
-                <section class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
-                    <div class="grid grid-cols-4 border-b border-outline-variant text-center">
+                <section class="rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
+                    <div class="grid grid-cols-4 overflow-hidden rounded-t-xl border-b border-outline-variant text-center">
                         @foreach (['curriculum' => 'Curriculum', 'settings' => 'Course Settings', 'pricing' => 'Pricing & Coupons', 'students' => 'Students List'] as $tabKey => $tabLabel)
                             <button class="tab-btn {{ $activeTab === $tabKey ? 'border-b-2 border-primary font-bold text-primary' : 'text-on-surface' }} px-4 py-5 text-body-md transition-colors hover:text-primary" data-tab="{{ $tabKey }}" type="button">{{ $tabLabel }}</button>
                         @endforeach
@@ -337,7 +337,7 @@
                         </div>
 
                         <div class="tab-panel {{ $activeTab === 'settings' ? '' : 'hidden' }}" data-tab-panel="settings">
-                            <form id="course-settings-form" method="POST" action="{{ route('teacher.course-settings.settings.update', $activeCourse) }}">
+                            <form id="course-settings-form" method="POST" action="{{ route('teacher.course-settings.settings.update', $activeCourse) }}" enctype="multipart/form-data">
                                 @csrf
                                 @method('PATCH')
                                 <div class="p-8 space-y-8">
@@ -354,16 +354,41 @@
                                         @enderror
                                     </label>
 
-                                    <label class="block">
+                                    <div>
                                         <span class="mb-2 block text-label-md font-bold text-on-surface">Course Description</span>
-                                        <div id="quill-editor" class="min-h-[200px] rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md text-on-surface">
-                                            {!! $activeCourse->description ?? '' !!}
+                                        <div class="relative z-10 [&_.ql-picker-options]:z-50 [&_.ql-toolbar]:relative [&_.ql-toolbar]:z-20">
+                                            <div id="quill-editor" class="min-h-[200px] rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md text-on-surface">
+                                                {!! $activeCourse->description ?? '' !!}
+                                            </div>
                                         </div>
-                                        <input type="hidden" name="description" id="description-input">
+                                        <input id="description-input" name="description" type="hidden">
                                         @error('description')
                                             <p class="mt-1 text-label-md text-error">{{ $message }}</p>
                                         @enderror
-                                    </label>
+                                    </div>
+
+                                    <div>
+                                        <span class="mb-2 block text-label-md font-bold text-on-surface">Course Cover</span>
+                                        <div class="grid gap-4 rounded-lg border border-outline-variant bg-surface-container-low p-4 md:grid-cols-[220px_minmax(0,1fr)] md:items-center">
+                                            <div class="aspect-video overflow-hidden rounded-lg border border-outline-variant bg-surface-container-high">
+                                                @if ($activeCourse->cover_image_path)
+                                                    <img class="h-full w-full object-cover" src="{{ asset('storage/'.$activeCourse->cover_image_path) }}" alt="{{ $activeCourse->title }} cover">
+                                                @else
+                                                    <div class="flex h-full w-full items-center justify-center text-on-surface-variant">
+                                                        <span class="material-symbols-outlined text-[40px]">image</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <label class="block">
+                                                <span class="mb-1 block text-label-md font-medium text-on-surface-variant">Upload JPG, PNG, or WebP up to 2 MB.</span>
+                                                <input class="block w-full cursor-pointer rounded-lg border border-outline-variant bg-surface-container-lowest text-label-md text-on-surface file:mr-4 file:border-0 file:bg-primary file:px-4 file:py-2.5 file:text-label-md file:font-bold file:text-on-primary hover:file:opacity-90 focus:border-primary focus:ring-2 focus:ring-primary/20" name="cover_image" type="file" accept="image/jpeg,image/png,image/webp">
+                                                @error('cover_image')
+                                                    <p class="mt-1 text-label-md text-error">{{ $message }}</p>
+                                                @enderror
+                                            </label>
+                                        </div>
+                                    </div>
 
                                     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
                                         <p class="text-label-md italic text-on-surface">
@@ -459,10 +484,27 @@
         });
 
         quill.clipboard.dangerouslyPasteHTML(existingContent);
+        updateDescriptionInput();
+
+        const toolbarEl = editorEl.previousElementSibling;
+        if (toolbarEl) {
+            ['click', 'mousedown'].forEach(eventName => {
+                toolbarEl.addEventListener(eventName, function(event) {
+                    event.stopPropagation();
+                });
+            });
+        }
 
         quill.on('text-change', function() {
-            document.getElementById('description-input').value = quill.root.innerHTML;
+            updateDescriptionInput();
         });
+    }
+
+    function updateDescriptionInput() {
+        const descriptionInput = document.getElementById('description-input');
+        if (descriptionInput && quill) {
+            descriptionInput.value = quill.root.innerHTML;
+        }
     }
 
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -473,6 +515,17 @@
 
     if (activeTab === 'settings') {
         initQuill();
+    }
+
+    const courseSettingsForm = document.getElementById('course-settings-form');
+    if (courseSettingsForm) {
+        courseSettingsForm.addEventListener('submit', function() {
+            if (!quill) {
+                initQuill();
+            }
+
+            updateDescriptionInput();
+        });
     }
 
     document.querySelectorAll('.js-confirm-delete').forEach(form => {

@@ -9,6 +9,7 @@ use App\Models\Lesson;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CourseSettingsController extends Controller
 {
@@ -63,12 +64,24 @@ class CourseSettingsController extends Controller
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
+            'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
-        $course->update([
-            ...$validated,
+        $courseUpdates = [
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
             'last_saved_at' => now(),
-        ]);
+        ];
+
+        if ($request->hasFile('cover_image')) {
+            if ($course->cover_image_path) {
+                Storage::disk('public')->delete($course->cover_image_path);
+            }
+
+            $courseUpdates['cover_image_path'] = $request->file('cover_image')->store('course-covers', 'public');
+        }
+
+        $course->update($courseUpdates);
 
         return redirect()
             ->route('teacher.course-settings', ['course' => $course, 'tab' => 'settings'])

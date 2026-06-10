@@ -3,6 +3,8 @@
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
@@ -99,6 +101,55 @@ test('teachers can move modules', function () {
 
     expect($secondModule->refresh()->position)->toBe(1)
         ->and($firstModule->refresh()->position)->toBe(2);
+});
+
+test('teachers can update course settings with a cover image', function () {
+    Storage::fake('public');
+
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create([
+        'title' => 'Old Course Title',
+        'description' => '<p>Old description</p>',
+    ]);
+
+    $this->actingAs($teacher)
+        ->patch(route('teacher.course-settings.settings.update', $course), [
+            'title' => 'Updated Course Title',
+            'description' => '<p>Updated description</p>',
+            'cover_image' => UploadedFile::fake()->image('cover.png', 1200, 675),
+        ])
+        ->assertRedirect(route('teacher.course-settings', ['course' => $course, 'tab' => 'settings']));
+
+    $course->refresh();
+
+    expect($course->title)->toBe('Updated Course Title')
+        ->and($course->description)->toBe('<p>Updated description</p>')
+        ->and($course->cover_image_path)->not->toBeNull();
+
+    Storage::disk('public')->assertExists($course->cover_image_path);
+});
+
+test('course cover image must be an image file', function () {
+    Storage::fake('public');
+
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create();
+
+    $this->actingAs($teacher)
+        ->from(route('teacher.course-settings', ['course' => $course, 'tab' => 'settings']))
+        ->patch(route('teacher.course-settings.settings.update', $course), [
+            'title' => $course->title,
+            'description' => '<p>Description</p>',
+            'cover_image' => UploadedFile::fake()->create('notes.pdf', 100, 'application/pdf'),
+        ])
+        ->assertRedirect(route('teacher.course-settings', ['course' => $course, 'tab' => 'settings']))
+        ->assertSessionHasErrors('cover_image');
+
+    expect($course->refresh()->cover_image_path)->toBeNull();
 });
 
 test('teachers can update lesson content', function () {
