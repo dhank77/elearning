@@ -13,6 +13,7 @@
             'youtube' => ['icon' => 'play_circle', 'color' => 'text-error'],
         ];
         $activeTab = request()->query('tab', 'curriculum');
+        $openModuleId = request()->integer('open_module') ?: (int) old('module_id');
     @endphp
 
     <aside class="fixed left-0 top-0 z-50 hidden h-screen w-80 flex-col border-r border-outline-variant/20 bg-surface-container-lowest px-5 py-8 lg:flex">
@@ -193,7 +194,7 @@
                     </div>
 
                     @if ($activeCourse)
-                        <div class="tab-panel" data-tab-panel="curriculum">
+                        <div class="tab-panel {{ $activeTab === 'curriculum' ? '' : 'hidden' }}" data-tab-panel="curriculum">
                             <div class="p-8">
                                 <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                     <h3 class="text-[30px] font-bold leading-9 text-on-surface">{{ $activeCourse->title }}</h3>
@@ -208,7 +209,7 @@
 
                                 <div class="mt-7 space-y-5">
                                     @forelse ($activeCourse->modules as $module)
-                                        <details class="group overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest" @if ($loop->first) open @endif>
+                                        <details id="module-{{ $module->id }}" class="group scroll-mt-28 overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest" @if ($openModuleId === $module->id || ($openModuleId === 0 && $loop->first)) open @endif>
                                             <summary class="flex cursor-pointer list-none items-center gap-4 bg-surface-container-low px-6 py-5 [&::-webkit-details-marker]:hidden">
                                                 <span class="material-symbols-outlined cursor-grab text-[28px] text-outline">drag_indicator</span>
                                                 <h4 class="min-w-0 flex-1 text-body-lg font-bold text-on-surface">{{ $module->title }}</h4>
@@ -260,24 +261,25 @@
                                                         @endphp
 
                                                         <div class="rounded-lg border border-outline-variant/70 bg-surface-container-lowest p-4">
-                                                            <div class="mb-3 flex items-center gap-4">
+                                                            <div class="mb-3 flex min-w-0 items-center gap-4">
                                                                 <span class="{{ $lessonStyle['color'] }} material-symbols-outlined text-[28px]">{{ $lessonStyle['icon'] }}</span>
-                                                                <span class="min-w-0 flex-1 text-body-md font-bold text-on-surface">{{ $lesson->title }}</span>
-                                                                <a class="hidden max-w-64 truncate text-label-md text-primary hover:underline sm:inline" href="{{ $lesson->metadata }}" target="_blank" rel="noopener">YouTube Link</a>
+                                                                <span class="min-w-0 flex-1 truncate text-body-md font-bold text-on-surface">{{ $lesson->title }}</span>
+                                                                <a class="hidden max-w-48 shrink-0 truncate text-label-md text-primary hover:underline xl:max-w-64 sm:inline" href="{{ $lesson->metadata }}" target="_blank" rel="noopener">YouTube Link</a>
                                                             </div>
 
-                                                            <form class="grid gap-3 lg:grid-cols-[1fr_1.2fr_auto]" method="POST" action="{{ route('teacher.course-settings.lessons.update', $lesson) }}">
+                                                            <form class="grid min-w-0 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto]" method="POST" action="{{ route('teacher.course-settings.lessons.update', $lesson) }}">
                                                                 @csrf
                                                                 @method('PATCH')
-                                                                <input class="rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="title" type="text" value="{{ $lesson->title }}" aria-label="Content title">
-                                                                <input class="rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="youtube_url" type="url" value="{{ $lesson->metadata }}" placeholder="https://www.youtube.com/watch?v=..." aria-label="YouTube URL">
+                                                                <input name="module_id" type="hidden" value="{{ $module->id }}">
+                                                                <input class="min-w-0 rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="title" type="text" value="{{ $lesson->title }}" aria-label="Content title">
+                                                                <input class="min-w-0 rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="youtube_url" type="url" value="{{ $lesson->metadata }}" placeholder="https://www.youtube.com/watch?v=..." aria-label="YouTube URL">
                                                                 <button class="rounded-lg border border-primary px-4 py-2 text-label-md font-bold text-primary transition-colors hover:bg-primary-fixed" type="submit">Update</button>
                                                             </form>
 
-                                                            <form class="mt-3" method="POST" action="{{ route('teacher.course-settings.lessons.destroy', $lesson) }}">
+                                                            <form class="js-confirm-delete mt-3" method="POST" action="{{ route('teacher.course-settings.lessons.destroy', $lesson) }}" data-confirm-title="Hapus konten YouTube?" data-confirm-text="Konten ini akan dihapus permanen dari modul.">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button class="text-label-md font-bold text-error" type="submit">Remove Content</button>
+                                                                <button class="text-label-md font-bold text-error" type="submit">Hapus Konten</button>
                                                             </form>
                                                         </div>
                                                     @empty
@@ -287,8 +289,23 @@
 
                                                 <form class="mt-5 grid gap-3 rounded-lg border border-dashed border-outline-variant p-4 lg:grid-cols-[1fr_1.2fr_auto]" method="POST" action="{{ route('teacher.course-settings.lessons.store', $module) }}">
                                                     @csrf
-                                                    <input class="rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="title" type="text" placeholder="New content title">
-                                                    <input class="rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="youtube_url" type="url" placeholder="YouTube URL">
+                                                    <input name="module_id" type="hidden" value="{{ $module->id }}">
+                                                    <div>
+                                                        <input class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="title" type="text" placeholder="New content title" value="{{ (int) old('module_id') === $module->id ? old('title') : '' }}">
+                                                        @if ((int) old('module_id') === $module->id)
+                                                            @error('title')
+                                                                <p class="mt-1 text-label-md text-error">{{ $message }}</p>
+                                                            @enderror
+                                                        @endif
+                                                    </div>
+                                                    <div>
+                                                        <input class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="youtube_url" type="url" placeholder="YouTube URL" value="{{ (int) old('module_id') === $module->id ? old('youtube_url') : '' }}">
+                                                        @if ((int) old('module_id') === $module->id)
+                                                            @error('youtube_url')
+                                                                <p class="mt-1 text-label-md text-error">{{ $message }}</p>
+                                                            @enderror
+                                                        @endif
+                                                    </div>
                                                     <button class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-label-md font-bold text-on-primary transition-opacity hover:opacity-90" type="submit">
                                                         <span class="material-symbols-outlined text-[18px]">add</span>
                                                         Add YouTube
@@ -317,22 +334,176 @@
                                     </form>
                                 </div>
                             </div>
-Quill toolbar dengan `data-tab="curriculum"` 的 `.ql-picker-label` 元素, Quill toolbar dropdown 的点击会冒当前 tab button `data-tab="curriculum"` )), 从而触发 tab 刉换`curriculum``)<tool_call>edit<arg_key>filePath</arg_key><arg_value>/Users/hamdaniilham/Laravel/elearning/resources/views/teacher/course-settings.blade.php
-        theme: 'snow',
-        placeholder: 'Write your course description here...',
-        modules: {
-            toolbar: [
-                [{ header: [1, 2, 3, false] }, 'bold', 'italic', 'underline', 'strike'],
-                [{ list: 'ordered' }, { list: 'bullet' }],
-                [{ color: [] }, { background: [] }],
-                ['link', 'image'],
-                ['clean'],
-            ],
-        },
+                        </div>
+
+                        <div class="tab-panel {{ $activeTab === 'settings' ? '' : 'hidden' }}" data-tab-panel="settings">
+                            <form id="course-settings-form" method="POST" action="{{ route('teacher.course-settings.settings.update', $activeCourse) }}">
+                                @csrf
+                                @method('PATCH')
+                                <div class="p-8 space-y-8">
+                                    <div>
+                                        <h3 class="text-[30px] font-bold leading-9 text-on-surface">Course Settings</h3>
+                                        <p class="mt-1 text-body-md text-on-surface-variant">Configure the title and description for your course.</p>
+                                    </div>
+
+                                    <label class="block">
+                                        <span class="mb-2 block text-label-md font-bold text-on-surface">Course Title</span>
+                                        <input class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="title" type="text" value="{{ $activeCourse->title }}">
+                                        @error('title')
+                                            <p class="mt-1 text-label-md text-error">{{ $message }}</p>
+                                        @enderror
+                                    </label>
+
+                                    <label class="block">
+                                        <span class="mb-2 block text-label-md font-bold text-on-surface">Course Description</span>
+                                        <div id="quill-editor" class="min-h-[200px] rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md text-on-surface">
+                                            {!! $activeCourse->description ?? '' !!}
+                                        </div>
+                                        <input type="hidden" name="description" id="description-input">
+                                        @error('description')
+                                            <p class="mt-1 text-label-md text-error">{{ $message }}</p>
+                                        @enderror
+                                    </label>
+
+                                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end">
+                                        <p class="text-label-md italic text-on-surface">
+                                            Last saved {{ $activeCourse->last_saved_at?->diffForHumans() ?? $activeCourse->updated_at->diffForHumans() }}
+                                        </p>
+                                        <button class="rounded-full bg-primary px-9 py-3.5 text-body-lg font-medium text-on-primary shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5" type="submit">Save Settings</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="tab-panel {{ $activeTab === 'pricing' ? '' : 'hidden' }}" data-tab-panel="pricing">
+                            <div class="p-12 text-center">
+                                <p class="text-[30px] font-bold text-on-surface">Pricing & Coupons</p>
+                                <p class="mt-2 text-body-md text-on-surface-variant">This feature will be available soon.</p>
+                            </div>
+                        </div>
+
+                        <div class="tab-panel {{ $activeTab === 'students' ? '' : 'hidden' }}" data-tab-panel="students">
+                            <div class="p-12 text-center">
+                                <p class="text-[30px] font-bold text-on-surface">Students List</p>
+                                <p class="mt-2 text-body-md text-on-surface-variant">This feature will be available soon.</p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="p-12 text-center">
+                            <p class="text-[30px] font-bold text-on-surface">No course selected</p>
+                            <p class="mt-2 text-body-md text-on-surface-variant">Create a course or clear your search to continue.</p>
+                        </div>
+                    @endif
+                </section>
+            </section>
+        </div>
+    </main>
+
+    @if (session('success'))
+        <div class="fixed bottom-6 right-10 hidden items-center gap-4 rounded-xl bg-inverse-surface px-8 py-5 text-inverse-on-surface shadow-2xl md:flex" id="success-toast">
+            <span class="material-symbols-outlined text-[30px] text-secondary-fixed">check_circle</span>
+            <span class="text-body-md font-medium">{{ session('success') }}</span>
+        </div>
+    @endif
+@endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script>
+    const activeTab = '{{ $activeTab }}';
+    let quill = null;
+
+    function switchTab(tabKey) {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('border-b-2', 'border-primary', 'font-bold', 'text-primary');
+        });
+        const activeBtn = document.querySelector('.tab-btn[data-tab="' + tabKey + '"]');
+        if (activeBtn) activeBtn.classList.add('border-b-2', 'border-primary', 'font-bold', 'text-primary');
+
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+            panel.classList.add('hidden');
+        });
+        const activePanel = document.querySelector('[data-tab-panel="' + tabKey + '"]');
+        if (activePanel) activePanel.classList.remove('hidden');
+
+        const url = new URL(window.location);
+        url.searchParams.set('tab', tabKey);
+        window.history.replaceState({}, '', url);
+
+        if (tabKey === 'settings' && !quill) {
+            initQuill();
+        }
+    }
+
+    function initQuill() {
+        const editorEl = document.getElementById('quill-editor');
+        if (!editorEl) return;
+
+        const existingContent = editorEl.innerHTML;
+        editorEl.innerHTML = '';
+
+        quill = new Quill('#quill-editor', {
+            theme: 'snow',
+            placeholder: 'Write your course description here...',
+            modules: {
+                toolbar: [
+                    [{ header: [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+                    [{ color: [] }, { background: [] }],
+                    ['link', 'image'],
+                    ['clean'],
+                ],
+            },
+        });
+
+        quill.clipboard.dangerouslyPasteHTML(existingContent);
+
+        quill.on('text-change', function() {
+            document.getElementById('description-input').value = quill.root.innerHTML;
+        });
+    }
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            switchTab(this.dataset.tab);
+        });
     });
 
-    quill.on('text-change', function() {
-        document.getElementById('description-input').value = quill.root.innerHTML;
+    if (activeTab === 'settings') {
+        initQuill();
+    }
+
+    document.querySelectorAll('.js-confirm-delete').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            if (this.dataset.swalConfirmed === 'true') {
+                return;
+            }
+
+            event.preventDefault();
+
+            Swal.fire({
+                title: this.dataset.confirmTitle ?? 'Apakah Anda yakin?',
+                text: this.dataset.confirmText ?? 'Tindakan ini tidak dapat dibatalkan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Hapus Konten',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                buttonsStyling: false,
+                customClass: {
+                    popup: 'rounded-lg',
+                    confirmButton: 'rounded-lg bg-error px-5 py-2.5 text-label-md font-bold text-on-error transition-opacity hover:opacity-90',
+                    cancelButton: 'mr-3 rounded-lg border border-outline-variant px-5 py-2.5 text-label-md font-bold text-on-surface transition-colors hover:border-primary hover:text-primary',
+                },
+            }).then(result => {
+                if (result.isConfirmed) {
+                    this.dataset.swalConfirmed = 'true';
+                    this.submit();
+                }
+            });
+        });
     });
 
     const successToast = document.getElementById('success-toast');

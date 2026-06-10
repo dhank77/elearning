@@ -224,13 +224,15 @@ class CourseSettingsController extends Controller
         ]);
 
         return redirect()
-            ->route('teacher.course-settings', ['course' => $course])
+            ->route('teacher.course-settings', ['course' => $course, 'open_module' => $module])
+            ->withFragment("module-{$module->id}")
             ->with('success', 'Content added successfully.');
     }
 
     public function updateLesson(Request $request, Lesson $lesson): RedirectResponse
     {
-        $course = $lesson->module->course;
+        $module = $lesson->module;
+        $course = $module->course;
 
         $this->ensureTeacherOwnsCourse($request, $course);
 
@@ -250,7 +252,8 @@ class CourseSettingsController extends Controller
         ]);
 
         return redirect()
-            ->route('teacher.course-settings', ['course' => $course])
+            ->route('teacher.course-settings', ['course' => $course, 'open_module' => $module])
+            ->withFragment("module-{$module->id}")
             ->with('success', 'Content updated successfully.');
     }
 
@@ -273,7 +276,8 @@ class CourseSettingsController extends Controller
 
     public function destroyLesson(Request $request, Lesson $lesson): RedirectResponse
     {
-        $course = $lesson->module->course;
+        $module = $lesson->module;
+        $course = $module->course;
 
         $this->ensureTeacherOwnsCourse($request, $course);
 
@@ -284,7 +288,8 @@ class CourseSettingsController extends Controller
         ]);
 
         return redirect()
-            ->route('teacher.course-settings', ['course' => $course])
+            ->route('teacher.course-settings', ['course' => $course, 'open_module' => $module])
+            ->withFragment("module-{$module->id}")
             ->with('success', 'Content removed successfully.');
     }
 

@@ -122,7 +122,10 @@ test('teachers can update lesson content', function () {
             'title' => 'Updated Lesson',
             'youtube_url' => 'https://youtu.be/dQw4w9WgXcQ',
         ])
-        ->assertRedirect(route('teacher.course-settings', ['course' => $course]));
+        ->assertRedirect(route('teacher.course-settings', [
+            'course' => $course,
+            'open_module' => $module,
+        ]).'#module-'.$module->id);
 
     $lesson->refresh();
 
@@ -146,7 +149,10 @@ test('teachers can add youtube lessons only', function () {
             'title' => 'YouTube Lesson',
             'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         ])
-        ->assertRedirect(route('teacher.course-settings', ['course' => $course]));
+        ->assertRedirect(route('teacher.course-settings', [
+            'course' => $course,
+            'open_module' => $module,
+        ]).'#module-'.$module->id);
 
     $lesson = $module->lessons()->first();
 
@@ -175,4 +181,30 @@ test('teachers cannot add non youtube lesson links', function () {
         ->assertSessionHasErrors('youtube_url');
 
     expect($module->lessons()->count())->toBe(0);
+});
+
+test('teachers return to the opened module after deleting lesson content', function () {
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create();
+    $module = $course->modules()->create([
+        'title' => 'Module',
+        'position' => 1,
+    ]);
+    $lesson = $module->lessons()->create([
+        'title' => 'Lesson to Delete',
+        'content_type' => 'youtube',
+        'metadata' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        'position' => 1,
+    ]);
+
+    $this->actingAs($teacher)
+        ->delete(route('teacher.course-settings.lessons.destroy', $lesson))
+        ->assertRedirect(route('teacher.course-settings', [
+            'course' => $course,
+            'open_module' => $module,
+        ]).'#module-'.$module->id);
+
+    expect($module->lessons()->whereKey($lesson)->exists())->toBeFalse();
 });

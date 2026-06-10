@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -9,12 +10,24 @@ class DashboardController extends Controller
 {
     public function index(): RedirectResponse|View
     {
-        if (auth()->user()->role === 'admin') {
+        $user = auth()->user();
+
+        if ($user->role === 'admin') {
             return redirect()->route('categories.index');
         }
 
-        if (auth()->user()->role === 'teacher') {
-            return view('teacher-dashboard');
+        if ($user->role === 'teacher') {
+            $courses = $user->courses()->withCount('modules')->orderByDesc('created_at')->get();
+            $activeCoursesCount = $user->courses()->where('status', 'published')->count();
+            $totalStudentsCount = User::where('role', 'student')->count();
+            $pendingAssignmentsCount = 0;
+
+            return view('teacher-dashboard', compact(
+                'courses',
+                'activeCoursesCount',
+                'totalStudentsCount',
+                'pendingAssignmentsCount',
+            ));
         }
 
         return view('dashboard');
