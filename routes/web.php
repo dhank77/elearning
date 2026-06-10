@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\CouponController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Profile\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
