@@ -44,9 +44,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $module->lessons()->createMany([
-            ['title' => '1.1 Introduction to Neuro-Design', 'content_type' => 'video', 'metadata' => '12:45 Video', 'position' => 1],
-            ['title' => '1.2 Case Study: Reducing Cognitive Load', 'content_type' => 'document', 'metadata' => 'PDF Resource', 'position' => 2],
-            ['title' => '1.3 Module Quiz: Cognitive Biases', 'content_type' => 'quiz', 'metadata' => '10 Questions', 'position' => 3],
+            ['title' => '1.1 Introduction to Neuro-Design', 'content_type' => 'youtube', 'metadata' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'position' => 1],
+            ['title' => '1.2 Case Study: Reducing Cognitive Load', 'content_type' => 'youtube', 'metadata' => 'https://youtu.be/dQw4w9WgXcQ', 'position' => 2],
+            ['title' => '1.3 Module Recap: Cognitive Biases', 'content_type' => 'youtube', 'metadata' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'position' => 3],
         ]);
 
         $course->modules()->createMany([

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['teacher_id', 'title', 'status', 'completion_percentage', 'last_saved_at'])]
+#[Fillable(['teacher_id', 'title', 'description', 'status', 'completion_percentage', 'last_saved_at'])]
 class Course extends Model
 {
     /** @use HasFactory<CourseFactory> */

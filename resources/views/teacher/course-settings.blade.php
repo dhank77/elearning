@@ -3,13 +3,16 @@
 @section('title', 'Clarity Learning - Course Management')
 @section('bodyClass', 'min-h-screen overflow-x-hidden bg-background font-body-md text-on-background antialiased')
 
+@push('head')
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+@endpush
+
 @section('body')
     @php
         $lessonIcons = [
-            'video' => ['icon' => 'play_circle', 'color' => 'text-secondary'],
-            'document' => ['icon' => 'description', 'color' => 'text-primary'],
-            'quiz' => ['icon' => 'quiz', 'color' => 'text-tertiary'],
+            'youtube' => ['icon' => 'play_circle', 'color' => 'text-error'],
         ];
+        $activeTab = request()->query('tab', 'curriculum');
     @endphp
 
     <aside class="fixed left-0 top-0 z-50 hidden h-screen w-80 flex-col border-r border-outline-variant/20 bg-surface-container-lowest px-5 py-8 lg:flex">
@@ -184,126 +187,157 @@
 
                 <section class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
                     <div class="grid grid-cols-4 border-b border-outline-variant text-center">
-                        <button class="border-b-2 border-primary px-4 py-5 text-body-md font-bold text-primary" type="button">Curriculum</button>
-                        <button class="px-4 py-5 text-body-md text-on-surface transition-colors hover:text-primary" type="button">Course Settings</button>
-                        <button class="px-4 py-5 text-body-md text-on-surface transition-colors hover:text-primary" type="button">Pricing & Coupons</button>
-                        <button class="px-4 py-5 text-body-md text-on-surface transition-colors hover:text-primary" type="button">Students List</button>
+                        @foreach (['curriculum' => 'Curriculum', 'settings' => 'Course Settings', 'pricing' => 'Pricing & Coupons', 'students' => 'Students List'] as $tabKey => $tabLabel)
+                            <button class="tab-btn {{ $activeTab === $tabKey ? 'border-b-2 border-primary font-bold text-primary' : 'text-on-surface' }} px-4 py-5 text-body-md transition-colors hover:text-primary" data-tab="{{ $tabKey }}" type="button">{{ $tabLabel }}</button>
+                        @endforeach
                     </div>
 
                     @if ($activeCourse)
-                        <div class="p-8">
-                            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                                <h3 class="text-[30px] font-bold leading-9 text-on-surface">{{ $activeCourse->title }}</h3>
-                                <form method="POST" action="{{ route('teacher.course-settings.modules.store', $activeCourse) }}">
-                                    @csrf
-                                    <button class="inline-flex items-center justify-center gap-3 rounded-full bg-primary-fixed px-6 py-3 text-body-lg font-medium text-primary transition-colors hover:bg-primary-fixed-dim" type="submit">
-                                        <span class="material-symbols-outlined text-[22px]">add</span>
-                                        Add Module
-                                    </button>
-                                </form>
-                            </div>
+                        <div class="tab-panel" data-tab-panel="curriculum">
+                            <div class="p-8">
+                                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                    <h3 class="text-[30px] font-bold leading-9 text-on-surface">{{ $activeCourse->title }}</h3>
+                                    <form method="POST" action="{{ route('teacher.course-settings.modules.store', $activeCourse) }}">
+                                        @csrf
+                                        <button class="inline-flex items-center justify-center gap-3 rounded-full bg-primary-fixed px-6 py-3 text-body-lg font-medium text-primary transition-colors hover:bg-primary-fixed-dim" type="submit">
+                                            <span class="material-symbols-outlined text-[22px]">add</span>
+                                            Add Module
+                                        </button>
+                                    </form>
+                                </div>
 
-                            <div class="mt-7 space-y-5">
-                                @forelse ($activeCourse->modules as $module)
-                                    @if ($loop->first)
-                                        <article class="overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest">
-                                            <div class="flex items-center gap-5 border-b border-outline-variant bg-surface-container-low px-6 py-5">
+                                <div class="mt-7 space-y-5">
+                                    @forelse ($activeCourse->modules as $module)
+                                        <details class="group overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest" @if ($loop->first) open @endif>
+                                            <summary class="flex cursor-pointer list-none items-center gap-4 bg-surface-container-low px-6 py-5 [&::-webkit-details-marker]:hidden">
                                                 <span class="material-symbols-outlined cursor-grab text-[28px] text-outline">drag_indicator</span>
                                                 <h4 class="min-w-0 flex-1 text-body-lg font-bold text-on-surface">{{ $module->title }}</h4>
-                                                <div class="flex items-center gap-5 text-outline">
-                                                    <button class="transition-colors hover:text-primary" type="button" aria-label="Edit module">
-                                                        <span class="material-symbols-outlined text-[28px]">edit</span>
-                                                    </button>
-                                                    <form method="POST" action="{{ route('teacher.course-settings.modules.destroy', $module) }}">
+                                                <span class="hidden text-label-md text-on-surface-variant sm:inline">{{ $module->lessons->count() }} Lessons</span>
+                                                <span class="material-symbols-outlined text-[28px] text-outline transition-transform group-open:rotate-180">expand_more</span>
+                                            </summary>
+
+                                            <div class="border-t border-outline-variant px-6 py-5">
+                                                <div class="grid gap-3 rounded-lg bg-surface-container-low p-4 lg:grid-cols-[1fr_auto] lg:items-end">
+                                                    <form class="grid gap-3 md:grid-cols-[1fr_auto]" method="POST" action="{{ route('teacher.course-settings.modules.update', $module) }}">
                                                         @csrf
-                                                        @method('DELETE')
-                                                        <button class="transition-colors hover:text-error" type="submit" aria-label="Delete module">
-                                                            <span class="material-symbols-outlined text-[28px]">delete</span>
-                                                        </button>
+                                                        @method('PATCH')
+                                                        <label class="block">
+                                                            <span class="mb-1 block text-label-md font-bold text-on-surface">Module title</span>
+                                                            <input class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="title" type="text" value="{{ $module->title }}">
+                                                        </label>
+                                                        <button class="rounded-lg bg-primary px-5 py-2.5 text-label-md font-bold text-on-primary transition-opacity hover:opacity-90" type="submit">Save</button>
                                                     </form>
-                                                </div>
-                                            </div>
 
-                                            <div class="space-y-1 px-6 py-4">
-                                                @forelse ($module->lessons as $lesson)
-                                                    @php
-                                                        $lessonStyle = $lessonIcons[$lesson->content_type] ?? $lessonIcons['document'];
-                                                    @endphp
-
-                                                    <div class="group flex items-center gap-5 rounded-lg px-2 py-3">
-                                                        <span class="{{ $lessonStyle['color'] }} material-symbols-outlined text-[30px]">{{ $lessonStyle['icon'] }}</span>
-                                                        <span class="min-w-0 flex-1 text-body-md font-medium text-on-surface">{{ $lesson->title }}</span>
-                                                        <span class="text-label-md text-on-surface-variant">{{ $lesson->metadata }}</span>
-                                                        <form class="hidden group-hover:block" method="POST" action="{{ route('teacher.course-settings.lessons.destroy', $lesson) }}">
+                                                    <div class="flex gap-2">
+                                                        <form method="POST" action="{{ route('teacher.course-settings.modules.move', [$module, 'up']) }}">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button class="rounded-lg border border-outline-variant p-2 text-outline transition-colors hover:border-primary hover:text-primary" type="submit" aria-label="Move module up">
+                                                                <span class="material-symbols-outlined text-[22px]">arrow_upward</span>
+                                                            </button>
+                                                        </form>
+                                                        <form method="POST" action="{{ route('teacher.course-settings.modules.move', [$module, 'down']) }}">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button class="rounded-lg border border-outline-variant p-2 text-outline transition-colors hover:border-primary hover:text-primary" type="submit" aria-label="Move module down">
+                                                                <span class="material-symbols-outlined text-[22px]">arrow_downward</span>
+                                                            </button>
+                                                        </form>
+                                                        <form method="POST" action="{{ route('teacher.course-settings.modules.destroy', $module) }}">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button class="text-label-md font-bold text-error" type="submit">Remove</button>
+                                                            <button class="rounded-lg border border-outline-variant p-2 text-outline transition-colors hover:border-error hover:text-error" type="submit" aria-label="Delete module">
+                                                                <span class="material-symbols-outlined text-[22px]">delete</span>
+                                                            </button>
                                                         </form>
                                                     </div>
-                                                @empty
-                                                    <p class="rounded-lg bg-surface-container-low px-4 py-3 text-label-md text-on-surface-variant">No content yet.</p>
-                                                @endforelse
+                                                </div>
 
-                                                <form method="POST" action="{{ route('teacher.course-settings.lessons.store', $module) }}">
+                                                <div class="mt-5 space-y-4">
+                                                    @forelse ($module->lessons as $lesson)
+                                                        @php
+                                                            $lessonStyle = $lessonIcons['youtube'];
+                                                        @endphp
+
+                                                        <div class="rounded-lg border border-outline-variant/70 bg-surface-container-lowest p-4">
+                                                            <div class="mb-3 flex items-center gap-4">
+                                                                <span class="{{ $lessonStyle['color'] }} material-symbols-outlined text-[28px]">{{ $lessonStyle['icon'] }}</span>
+                                                                <span class="min-w-0 flex-1 text-body-md font-bold text-on-surface">{{ $lesson->title }}</span>
+                                                                <a class="hidden max-w-64 truncate text-label-md text-primary hover:underline sm:inline" href="{{ $lesson->metadata }}" target="_blank" rel="noopener">YouTube Link</a>
+                                                            </div>
+
+                                                            <form class="grid gap-3 lg:grid-cols-[1fr_1.2fr_auto]" method="POST" action="{{ route('teacher.course-settings.lessons.update', $lesson) }}">
+                                                                @csrf
+                                                                @method('PATCH')
+                                                                <input class="rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="title" type="text" value="{{ $lesson->title }}" aria-label="Content title">
+                                                                <input class="rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="youtube_url" type="url" value="{{ $lesson->metadata }}" placeholder="https://www.youtube.com/watch?v=..." aria-label="YouTube URL">
+                                                                <button class="rounded-lg border border-primary px-4 py-2 text-label-md font-bold text-primary transition-colors hover:bg-primary-fixed" type="submit">Update</button>
+                                                            </form>
+
+                                                            <form class="mt-3" method="POST" action="{{ route('teacher.course-settings.lessons.destroy', $lesson) }}">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="text-label-md font-bold text-error" type="submit">Remove Content</button>
+                                                            </form>
+                                                        </div>
+                                                    @empty
+                                                        <p class="rounded-lg bg-surface-container-low px-4 py-3 text-label-md text-on-surface-variant">No content yet.</p>
+                                                    @endforelse
+                                                </div>
+
+                                                <form class="mt-5 grid gap-3 rounded-lg border border-dashed border-outline-variant p-4 lg:grid-cols-[1fr_1.2fr_auto]" method="POST" action="{{ route('teacher.course-settings.lessons.store', $module) }}">
                                                     @csrf
-                                                    <button class="mt-3 flex w-full items-center justify-center gap-3 rounded-lg border border-dashed border-outline-variant py-3 text-body-md text-on-surface-variant transition-colors hover:border-primary hover:text-primary" type="submit">
-                                                        <span class="material-symbols-outlined text-[20px]">add</span>
-                                                        Add Content
+                                                    <input class="rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="title" type="text" placeholder="New content title">
+                                                    <input class="rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-label-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="youtube_url" type="url" placeholder="YouTube URL">
+                                                    <button class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-label-md font-bold text-on-primary transition-opacity hover:opacity-90" type="submit">
+                                                        <span class="material-symbols-outlined text-[18px]">add</span>
+                                                        Add YouTube
                                                     </button>
                                                 </form>
                                             </div>
-                                        </article>
-                                    @else
-                                        <article class="flex items-center gap-5 rounded-xl border border-outline-variant bg-surface-container-lowest px-6 py-5">
-                                            <span class="material-symbols-outlined cursor-grab text-[28px] text-outline">drag_indicator</span>
-                                            <h4 class="min-w-0 flex-1 text-body-lg font-bold text-on-surface">{{ $module->title }}</h4>
-                                            <span class="text-label-md text-on-surface-variant">{{ $module->lessons->count() }} Lessons</span>
-                                            <form method="POST" action="{{ route('teacher.course-settings.modules.destroy', $module) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="text-outline transition-colors hover:text-error" type="submit" aria-label="Delete module">
-                                                    <span class="material-symbols-outlined text-[28px]">delete</span>
-                                                </button>
-                                            </form>
-                                            <span class="material-symbols-outlined text-[28px] text-outline">expand_more</span>
-                                        </article>
-                                    @endif
-                                @empty
-                                    <div class="rounded-xl border border-dashed border-outline-variant bg-surface-container-low p-8 text-center">
-                                        <p class="text-body-lg font-bold text-on-surface">No modules yet</p>
-                                        <p class="mt-2 text-body-md text-on-surface-variant">Add a module or generate one to start the curriculum.</p>
-                                    </div>
-                                @endforelse
+                                        </details>
+                                    @empty
+                                        <div class="rounded-xl border border-dashed border-outline-variant bg-surface-container-low p-8 text-center">
+                                            <p class="text-body-lg font-bold text-on-surface">No modules yet</p>
+                                            <p class="mt-2 text-body-md text-on-surface-variant">Add a module or generate one to start the curriculum.</p>
+                                        </div>
+                                    @endforelse
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="flex flex-col gap-4 border-t border-outline-variant px-8 py-7 md:flex-row md:items-center md:justify-between">
-                            <p class="text-label-md italic text-on-surface">
-                                Last saved {{ $activeCourse->last_saved_at?->diffForHumans() ?? $activeCourse->updated_at->diffForHumans() }}
-                            </p>
-                            <div class="flex flex-col gap-5 sm:flex-row">
-                                <a class="rounded-full border border-primary px-8 py-3 text-center text-body-md font-bold text-primary transition-colors hover:bg-primary-fixed" href="{{ route('teacher.course-settings', ['course' => $activeCourse, 'preview' => true]) }}">Preview Course</a>
-                                <form method="POST" action="{{ route('teacher.course-settings.modules.generate', $activeCourse) }}">
-                                    @csrf
-                                    <button class="w-full rounded-full bg-primary px-9 py-3 text-body-md font-bold text-on-primary shadow-lg shadow-on-surface/10 transition-all hover:-translate-y-0.5" type="submit">Auto-Generate Module</button>
-                                </form>
+                            <div class="flex flex-col gap-4 border-t border-outline-variant px-8 py-7 md:flex-row md:items-center md:justify-between">
+                                <p class="text-label-md italic text-on-surface">
+                                    Last saved {{ $activeCourse->last_saved_at?->diffForHumans() ?? $activeCourse->updated_at->diffForHumans() }}
+                                </p>
+                                <div class="flex flex-col gap-5 sm:flex-row">
+                                    <a class="rounded-full border border-primary px-8 py-3 text-center text-body-md font-bold text-primary transition-colors hover:bg-primary-fixed" href="{{ route('teacher.course-settings', ['course' => $activeCourse, 'preview' => true]) }}">Preview Course</a>
+                                    <form method="POST" action="{{ route('teacher.course-settings.modules.generate', $activeCourse) }}">
+                                        @csrf
+                                        <button class="w-full rounded-full bg-primary px-9 py-3 text-body-md font-bold text-on-primary shadow-lg shadow-on-surface/10 transition-all hover:-translate-y-0.5" type="submit">Auto-Generate Module</button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    @else
-                        <div class="p-12 text-center">
-                            <p class="text-[30px] font-bold text-on-surface">No course selected</p>
-                            <p class="mt-2 text-body-md text-on-surface-variant">Create a course or clear your search to continue.</p>
-                        </div>
-                    @endif
-                </section>
-            </section>
-        </div>
-    </main>
+Quill toolbar dengan `data-tab="curriculum"` 的 `.ql-picker-label` 元素, Quill toolbar dropdown 的点击会冒当前 tab button `data-tab="curriculum"` )), 从而触发 tab 刉换`curriculum``)<tool_call>edit<arg_key>filePath</arg_key><arg_value>/Users/hamdaniilham/Laravel/elearning/resources/views/teacher/course-settings.blade.php
+        theme: 'snow',
+        placeholder: 'Write your course description here...',
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, 3, false] }, 'bold', 'italic', 'underline', 'strike'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                [{ color: [] }, { background: [] }],
+                ['link', 'image'],
+                ['clean'],
+            ],
+        },
+    });
 
-    @if (session('success'))
-        <div class="fixed bottom-6 right-10 hidden items-center gap-4 rounded-xl bg-inverse-surface px-8 py-5 text-inverse-on-surface shadow-2xl md:flex">
-            <span class="material-symbols-outlined text-[30px] text-secondary-fixed">check_circle</span>
-            <span class="text-body-md font-medium">{{ session('success') }}</span>
-        </div>
-    @endif
-@endsection
+    quill.on('text-change', function() {
+        document.getElementById('description-input').value = quill.root.innerHTML;
+    });
+
+    const successToast = document.getElementById('success-toast');
+    if (successToast) {
+        setTimeout(() => { successToast.classList.add('hidden'); }, 3000);
+    }
+</script>
+@endpush

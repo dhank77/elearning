@@ -31,12 +31,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('course-settings', [CourseSettingsController::class, 'index'])->name('course-settings');
     Route::post('course-settings', [CourseSettingsController::class, 'store'])->name('course-settings.store');
+    Route::patch('course-settings/{course}/settings', [CourseSettingsController::class, 'updateSettings'])->name('course-settings.settings.update');
     Route::patch('course-settings/{course}/draft', [CourseSettingsController::class, 'saveDraft'])->name('course-settings.draft');
     Route::patch('course-settings/{course}/publish', [CourseSettingsController::class, 'publish'])->name('course-settings.publish');
     Route::post('course-settings/{course}/modules', [CourseSettingsController::class, 'storeModule'])->name('course-settings.modules.store');
     Route::post('course-settings/{course}/modules/generate', [CourseSettingsController::class, 'autoGenerateModule'])->name('course-settings.modules.generate');
+    Route::patch('course-settings/modules/{module}', [CourseSettingsController::class, 'updateModule'])->name('course-settings.modules.update');
+    Route::patch('course-settings/modules/{module}/move/{direction}', [CourseSettingsController::class, 'moveModule'])->name('course-settings.modules.move');
     Route::delete('course-settings/modules/{module}', [CourseSettingsController::class, 'destroyModule'])->name('course-settings.modules.destroy');
     Route::post('course-settings/modules/{module}/lessons', [CourseSettingsController::class, 'storeLesson'])->name('course-settings.lessons.store');
+    Route::patch('course-settings/lessons/{lesson}', [CourseSettingsController::class, 'updateLesson'])->name('course-settings.lessons.update');
     Route::delete('course-settings/lessons/{lesson}', [CourseSettingsController::class, 'destroyLesson'])->name('course-settings.lessons.destroy');
 });
 

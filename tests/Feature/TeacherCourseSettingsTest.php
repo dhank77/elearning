@@ -25,8 +25,8 @@ test('teachers can view course settings', function () {
 
     $module->lessons()->create([
         'title' => '1.1 Dynamic Lesson',
-        'content_type' => 'video',
-        'metadata' => '09:00 Video',
+        'content_type' => 'youtube',
+        'metadata' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         'position' => 1,
     ]);
 
@@ -58,4 +58,121 @@ test('teachers can add modules to their courses', function () {
         ->assertRedirect(route('teacher.course-settings', ['course' => $course]));
 
     expect($course->modules()->count())->toBe(1);
+});
+
+test('teachers can update module titles', function () {
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create();
+    $module = $course->modules()->create([
+        'title' => 'Old Module',
+        'position' => 1,
+    ]);
+
+    $this->actingAs($teacher)
+        ->patch(route('teacher.course-settings.modules.update', $module), [
+            'title' => 'Updated Module',
+        ])
+        ->assertRedirect(route('teacher.course-settings', ['course' => $course]));
+
+    expect($module->refresh()->title)->toBe('Updated Module');
+});
+
+test('teachers can move modules', function () {
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create();
+    $firstModule = $course->modules()->create([
+        'title' => 'First Module',
+        'position' => 1,
+    ]);
+    $secondModule = $course->modules()->create([
+        'title' => 'Second Module',
+        'position' => 2,
+    ]);
+
+    $this->actingAs($teacher)
+        ->patch(route('teacher.course-settings.modules.move', [$secondModule, 'up']))
+        ->assertRedirect(route('teacher.course-settings', ['course' => $course]));
+
+    expect($secondModule->refresh()->position)->toBe(1)
+        ->and($firstModule->refresh()->position)->toBe(2);
+});
+
+test('teachers can update lesson content', function () {
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create();
+    $module = $course->modules()->create([
+        'title' => 'Module',
+        'position' => 1,
+    ]);
+    $lesson = $module->lessons()->create([
+        'title' => 'Old Lesson',
+        'content_type' => 'youtube',
+        'metadata' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        'position' => 1,
+    ]);
+
+    $this->actingAs($teacher)
+        ->patch(route('teacher.course-settings.lessons.update', $lesson), [
+            'title' => 'Updated Lesson',
+            'youtube_url' => 'https://youtu.be/dQw4w9WgXcQ',
+        ])
+        ->assertRedirect(route('teacher.course-settings', ['course' => $course]));
+
+    $lesson->refresh();
+
+    expect($lesson->title)->toBe('Updated Lesson')
+        ->and($lesson->content_type)->toBe('youtube')
+        ->and($lesson->metadata)->toBe('https://youtu.be/dQw4w9WgXcQ');
+});
+
+test('teachers can add youtube lessons only', function () {
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create();
+    $module = $course->modules()->create([
+        'title' => 'Module',
+        'position' => 1,
+    ]);
+
+    $this->actingAs($teacher)
+        ->post(route('teacher.course-settings.lessons.store', $module), [
+            'title' => 'YouTube Lesson',
+            'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        ])
+        ->assertRedirect(route('teacher.course-settings', ['course' => $course]));
+
+    $lesson = $module->lessons()->first();
+
+    expect($lesson->title)->toBe('YouTube Lesson')
+        ->and($lesson->content_type)->toBe('youtube')
+        ->and($lesson->metadata)->toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+});
+
+test('teachers cannot add non youtube lesson links', function () {
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create();
+    $module = $course->modules()->create([
+        'title' => 'Module',
+        'position' => 1,
+    ]);
+
+    $this->actingAs($teacher)
+        ->from(route('teacher.course-settings', ['course' => $course]))
+        ->post(route('teacher.course-settings.lessons.store', $module), [
+            'title' => 'External Lesson',
+            'youtube_url' => 'https://vimeo.com/example',
+        ])
+        ->assertRedirect(route('teacher.course-settings', ['course' => $course]))
+        ->assertSessionHasErrors('youtube_url');
+
+    expect($module->lessons()->count())->toBe(0);
 });
