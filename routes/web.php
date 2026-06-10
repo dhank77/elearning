@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\Teacher\CourseSettingsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +26,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('coupons', CouponController::class)->except(['show']);
     Route::get('users', [UserController::class, 'index'])->name('users.index');
+});
+
+Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+    Route::get('course-settings', CourseSettingsController::class)->name('course-settings');
 });
 
 Route::middleware('guest')->group(function () {
