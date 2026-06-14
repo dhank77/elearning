@@ -97,7 +97,7 @@
                     {{-- About --}}
                     <div class="bento-card rounded-2xl border border-outline-variant bg-surface-container-lowest p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.06)]">
                         <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Tentang Kursus</h2>
-                        <p class="font-body-md text-body-md text-on-surface-variant whitespace-pre-line leading-relaxed">{{ $course->description }}</p>
+                        <p class="font-body-md text-body-md text-on-surface-variant whitespace-pre-line leading-relaxed">{!! $course->description !!}</p>
                     </div>
 
                     {{-- Curriculum --}}

@@ -3,7 +3,8 @@
     "allow": [
       "Agent(Explore)",
       "Bash(vendor/bin/pint *)",
-      "Bash(php *)"
+      "Bash(php *)",
+      "Bash(git stash)"
     ]
   },
   "$version": 4
