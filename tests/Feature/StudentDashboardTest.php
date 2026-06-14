@@ -117,3 +117,40 @@ it('shows teacher dashboard for teacher role', function () {
     $response->assertOk();
     $response->assertViewIs('teacher-dashboard');
 });
+
+it('shows student my-courses page with enrolled courses', function () {
+    $teacher = User::factory()->create(['role' => 'teacher']);
+    $student = User::factory()->create(['role' => 'user']);
+
+    $course = Course::factory()->create([
+        'teacher_id' => $teacher->id,
+        'status' => 'published',
+        'price' => 100000,
+    ]);
+
+    $order = CourseOrder::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'status' => 'paid',
+        'amount' => 100000,
+        'paid_at' => now(),
+    ]);
+
+    $response = $this->actingAs($student)->get(route('student.courses'));
+
+    $response->assertOk();
+    $response->assertViewIs('student.my-courses');
+    $response->assertViewHas('enrolledCourses');
+    $response->assertViewHas('totalSpent', 100000);
+    $response->assertSee($course->title);
+});
+
+it('shows empty state on my-courses when no enrolled courses', function () {
+    $student = User::factory()->create(['role' => 'user']);
+
+    $response = $this->actingAs($student)->get(route('student.courses'));
+
+    $response->assertOk();
+    $response->assertSee('Belum ada kursus yang dibeli');
+    $response->assertSee('Jelajahi Kursus');
+});

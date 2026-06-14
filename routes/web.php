@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CourseOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\StudentCourseController;
 use App\Http\Controllers\Teacher\CourseSettingsController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::post('checkout/{order}/complete', [CourseOrderController::class, 'complete'])->name('checkout.complete');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('my-courses', [StudentCourseController::class, 'index'])->name('student.courses');
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('profile/password', [ProfileController::class, 'editPassword'])->name('profile.password.edit');

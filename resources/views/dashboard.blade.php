@@ -7,7 +7,7 @@
         @php
             $studentNavItems = [
                 ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'href' => route('dashboard')],
-                ['key' => 'courses', 'label' => 'Kursus Saya', 'icon' => 'school', 'href' => '#'],
+                ['key' => 'courses', 'label' => 'Kursus Saya', 'icon' => 'school', 'href' => route('student.courses')],
                 ['key' => 'learning', 'label' => 'Pembelajaran', 'icon' => 'menu_book', 'href' => '#'],
                 ['key' => 'assignments', 'label' => 'Tugas', 'icon' => 'assignment', 'href' => '#'],
                 ['key' => 'grades', 'label' => 'Nilai', 'icon' => 'grade', 'href' => '#'],
@@ -45,7 +45,7 @@
                             <div class="mb-6 flex items-center justify-between gap-4">
                                 <h3 class="font-headline-md text-headline-md text-on-surface">Kursus Saya</h3>
                                 @if($enrolledCourses->count() > 6)
-                                    <a class="text-label-md font-bold text-primary hover:underline" href="#">Lihat Semua</a>
+                                    <a class="text-label-md font-bold text-primary hover:underline" href="{{ route('student.courses') }}">Lihat Semua</a>
                                 @endif
                             </div>
 
