@@ -17,6 +17,8 @@ Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/courses/{course}', [WelcomeController::class, 'show'])->name('courses.show');
 
 Route::middleware('auth')->group(function () {
+    Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+
     Route::post('checkout/{course}', [CourseOrderController::class, 'store'])->name('checkout.store');
     Route::get('checkout/{order}/pay', [CourseOrderController::class, 'pay'])->name('checkout.pay');
     Route::post('checkout/{order}/complete', [CourseOrderController::class, 'complete'])->name('checkout.complete');
