@@ -1,7 +1,14 @@
-@props(['active' => null, 'actionLabel' => null, 'actionIcon' => null])
+@props([
+    'active' => null,
+    'actionLabel' => null,
+    'actionIcon' => null,
+    'navItems' => null,
+    'portalLabel' => 'Admin Console',
+    'userRoleLabel' => 'Administrator',
+])
 
 @php
-    $navItems = [
+    $navItems ??= [
         ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'href' => route('dashboard')],
         ['key' => 'categories', 'label' => 'Kategori', 'icon' => 'database', 'href' => route('categories.index')],
         ['key' => 'coupons', 'label' => 'Kupon', 'icon' => 'sell', 'href' => route('coupons.index')],
@@ -14,7 +21,7 @@
 <aside class="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r border-outline-variant bg-surface p-base lg:flex">
     <div class="px-4 py-6">
         <h1 class="font-headline-md text-headline-md font-bold text-primary">{{ config('app.name', 'EduMentor') }}</h1>
-        <p class="font-label-md text-label-md text-on-surface-variant">Admin Console</p>
+        <p class="font-label-md text-label-md text-on-surface-variant">{{ $portalLabel }}</p>
     </div>
 
     <nav class="custom-scrollbar mt-4 flex-1 space-y-1 overflow-y-auto px-2">
@@ -42,7 +49,7 @@
                 </div>
                 <div class="min-w-0 flex-1">
                     <p class="truncate font-label-md text-label-md font-bold">{{ auth()->user()->name }}</p>
-                    <p class="truncate text-[12px] text-on-surface-variant">Administrator</p>
+                    <p class="truncate text-[12px] text-on-surface-variant">{{ $userRoleLabel }}</p>
                 </div>
                 <span class="material-symbols-outlined text-[20px] text-on-surface-variant transition-transform group-open:rotate-180">expand_more</span>
             </summary>
