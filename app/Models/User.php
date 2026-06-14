@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -28,7 +29,7 @@ class User extends Authenticatable
         return $this->hasMany(CourseOrder::class);
     }
 
-    public function enrolledCourses(): HasMany
+    public function enrolledCourses(): HasManyThrough
     {
         return $this->hasManyThrough(Course::class, CourseOrder::class, 'user_id', 'id', 'id', 'course_id')
             ->where('course_orders.status', 'paid');

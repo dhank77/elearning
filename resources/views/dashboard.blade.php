@@ -30,64 +30,66 @@
         <main class="min-h-screen pt-16 lg:ml-64">
             <div class="mx-auto max-w-[1280px] p-margin-mobile md:p-margin-desktop">
                 <section class="mb-10">
-                    <h1 class="mb-2 font-headline-lg text-headline-lg text-on-surface">Student Dashboard</h1>
-                    <p class="max-w-2xl text-body-lg text-on-surface-variant">Your learning journey is 65% complete this month. You're on a 12-day streak! Keep up the momentum.</p>
+                    <h1 class="mb-2 font-headline-lg text-headline-lg text-on-surface">Selamat Datang, {{ auth()->user()->name }}</h1>
+                    <p class="max-w-2xl text-body-lg text-on-surface-variant">
+                        Kamu memiliki <strong>{{ $enrolledCourses->count() }}</strong> kursus yang telah dibeli.
+                        @if($totalSpent > 0)
+                            Total investasi pembelajaran: <strong>Rp {{ number_format($totalSpent, 0, ',', '.') }}</strong>.
+                        @endif
+                    </p>
                 </section>
 
                 <div class="grid grid-cols-1 gap-gutter xl:grid-cols-3">
                     <div class="flex flex-col gap-10 xl:col-span-2">
                         <section>
                             <div class="mb-6 flex items-center justify-between gap-4">
-                                <h3 class="font-headline-md text-headline-md text-on-surface">In-progress Courses</h3>
-                                <a class="text-label-md font-bold text-primary hover:underline" href="#">View All</a>
+                                <h3 class="font-headline-md text-headline-md text-on-surface">Kursus Saya</h3>
+                                @if($enrolledCourses->count() > 6)
+                                    <a class="text-label-md font-bold text-primary hover:underline" href="#">Lihat Semua</a>
+                                @endif
                             </div>
 
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <article class="bento-card flex flex-col gap-4 rounded-2xl border border-outline-variant bg-surface-container-lowest p-4">
-                                    <div class="h-32 overflow-hidden rounded-xl bg-surface-container-high">
-                                        <img alt="React Development" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDL2NyJflMmbdpG1ZEUv4XRImVleh5ZuYrH1Wg0LIhyau_HmSERQ-Y_b954Bq19rHG5Kp4X7_QsJWujF93QSFFjmAr92y8gU8uek3DB6bdyhjTEHt63mIBGtDpv8RsZiRiCVAeCTKRGpf3WVLgC8Sm7ScKpaCT5jZ6PmcCO3T79SaBYZpAakIWOv7Yo9YWTUTf9dexGbNCnjUM1KiAZhZxeeuUAwke_VSU513pk1Lt-dkW3ecPJTgoKmdoQpRx6lfLmxBqv0G67Ixo">
-                                    </div>
-                                    <div>
-                                        <span class="rounded-full bg-secondary-container px-3 py-1 text-[12px] font-bold text-on-secondary-container">Development</span>
-                                        <h4 class="mt-2 text-body-md font-bold text-on-surface">Advanced React Patterns</h4>
-                                        <p class="text-label-md text-on-surface-variant">Module 4: Performance Hooks</p>
-                                    </div>
-                                    <div class="mt-2">
-                                        <div class="mb-2 flex justify-between text-label-md">
-                                            <span class="text-on-surface-variant">Progress</span>
-                                            <span class="font-bold text-primary">78%</span>
-                                        </div>
-                                        <div class="h-2 w-full overflow-hidden rounded-full bg-surface-container-high">
-                                            <div class="h-full rounded-full bg-secondary" style="width: 78%"></div>
-                                        </div>
-                                    </div>
-                                </article>
-
-                                <article class="bento-card flex flex-col gap-4 rounded-2xl border border-outline-variant bg-surface-container-lowest p-4">
-                                    <div class="h-32 overflow-hidden rounded-xl bg-surface-container-high">
-                                        <img alt="UI/UX Design" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHTZwtM73qjZNXNO0d3m5vfiXPqsyTCZAmELBzpIdJ13msg8zmB7HsG6lnwIarHVVeFw_xtz5bLJy9d0XrcGZn6dV3E2P4rymLlNyKlJZB-cU-QOrt9OFOELqPTXUxUqRC6-5SxtBZHkjl_B-LgXoSWywxrONU4M-4ufk3SHn9Tp-1OmMR4yOqNr_PmGG9Ij3jarFNeKA6plXSFeShaU_1kMpBge_G7EBdb0Bc_17pxTzNcg5o6xD3pxLrU6F7hmPUMk5jZMDYakk">
-                                    </div>
-                                    <div>
-                                        <span class="rounded-full bg-primary-fixed px-3 py-1 text-[12px] font-bold text-on-primary-fixed">Design</span>
-                                        <h4 class="mt-2 text-body-md font-bold text-on-surface">Mastering Figma Auto-Layout</h4>
-                                        <p class="text-label-md text-on-surface-variant">Module 2: Responsive Components</p>
-                                    </div>
-                                    <div class="mt-2">
-                                        <div class="mb-2 flex justify-between text-label-md">
-                                            <span class="text-on-surface-variant">Progress</span>
-                                            <span class="font-bold text-primary">32%</span>
-                                        </div>
-                                        <div class="h-2 w-full overflow-hidden rounded-full bg-surface-container-high">
-                                            <div class="h-full rounded-full bg-secondary" style="width: 32%"></div>
-                                        </div>
-                                    </div>
-                                </article>
-                            </div>
+                            @forelse($enrolledCourses->take(6)->chunk(2) as $chunk)
+                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2{{ $loop->first ? '' : ' mt-6' }}">
+                                    @foreach($chunk as $course)
+                                        <article class="bento-card flex flex-col gap-4 rounded-2xl border border-outline-variant bg-surface-container-lowest p-4">
+                                            <div class="h-32 overflow-hidden rounded-xl bg-surface-container-high">
+                                                @if($course->cover_image_path)
+                                                    <img alt="{{ $course->title }}" class="h-full w-full object-cover" src="{{ asset('storage/' . $course->cover_image_path) }}">
+                                                @else
+                                                    <div class="flex h-full items-center justify-center text-on-surface-variant">
+                                                        <span class="material-symbols-outlined text-4xl">school</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div>
+                                                <h4 class="text-body-md font-bold text-on-surface">{{ $course->title }}</h4>
+                                                <p class="text-label-md text-on-surface-variant">Oleh {{ $course->teacher->name }}</p>
+                                                <p class="text-label-md text-on-surface-variant">{{ $course->modules_count }} modul</p>
+                                            </div>
+                                            <div class="mt-2">
+                                                <a href="#" class="mt-2 inline-flex items-center gap-1 text-label-md font-bold text-primary hover:underline">
+                                                    Lanjut Belajar
+                                                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                                                </a>
+                                            </div>
+                                        </article>
+                                    @endforeach
+                                </div>
+                            @empty
+                                <div class="rounded-2xl border border-outline-variant bg-surface-container-lowest p-8 text-center">
+                                    <span class="material-symbols-outlined mb-4 text-6xl text-on-surface-variant">shopping_cart</span>
+                                    <h4 class="text-body-md font-bold text-on-surface">Belum ada kursus yang dibeli</h4>
+                                    <p class="mt-2 text-label-md text-on-surface-variant">Mulai jelajahi kursus yang tersedia dan mulai pembelajaranmu.</p>
+                                </div>
+                            @endforelse
                         </section>
 
+                        @if($recommendedCourses->isNotEmpty())
                         <section>
                             <div class="mb-6 flex items-center justify-between gap-4">
-                                <h3 class="font-headline-md text-headline-md text-on-surface">Recommended for You</h3>
+                                <h3 class="font-headline-md text-headline-md text-on-surface">Rekomendasi Untukmu</h3>
+                                @if($recommendedCourses->count() > 2)
                                 <div class="flex gap-2">
                                     <button class="rounded-full border border-outline-variant p-2 transition-colors hover:bg-surface-container-high" type="button" aria-label="Previous recommendation">
                                         <span class="material-symbols-outlined">chevron_left</span>
@@ -96,129 +98,90 @@
                                         <span class="material-symbols-outlined">chevron_right</span>
                                     </button>
                                 </div>
+                                @endif
                             </div>
 
                             <div class="custom-scrollbar flex gap-6 overflow-x-auto pb-4">
+                                @foreach($recommendedCourses as $recommended)
                                 <article class="bento-card group min-w-[280px] cursor-pointer overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-lowest">
                                     <div class="relative h-40">
-                                        <img alt="Team Collaboration" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4g65Hd66dZ6U5v-DVFYWaNemDtNY8cOCPG-jC9Gh0xbOkJbgZvrygIb32gwEPDTvMTCkX1wQQkOlrQoQir_zJY-HDqmM3FnUWGHOJApUDG3-zp4swGsz8vpHQOjrKk8LstK8o6MVH38Rg4SOfIR6h3n82H1j12UPToX_n1jSxtKm89wjJI8KG0IYhwBVMY8s-Su_tqHInptmBOoyP3mNYZ16IO0IZMi4pi1VR0kYqPUYn7ygTIn5B2vQ5PMXVADN8o0_FPN6b1pI">
+                                        @if($recommended->cover_image_path)
+                                            <img alt="{{ $recommended->title }}" class="h-full w-full object-cover" src="{{ asset('storage/' . $recommended->cover_image_path) }}">
+                                        @else
+                                            <div class="flex h-full w-full items-center justify-center bg-surface-container-high text-on-surface-variant">
+                                                <span class="material-symbols-outlined text-4xl">menu_book</span>
+                                            </div>
+                                        @endif
                                         <div class="absolute inset-0 bg-primary/20 transition-all group-hover:bg-transparent"></div>
                                     </div>
                                     <div class="p-4">
                                         <div class="mb-2 flex items-start justify-between gap-3">
-                                            <h4 class="text-body-md font-bold text-on-surface">Agile Project Management</h4>
-                                            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+                                            <h4 class="text-body-md font-bold text-on-surface">{{ $recommended->title }}</h4>
+                                            @if($recommended->price > 0)
+                                                <span class="text-label-md font-bold text-on-surface-variant">Rp {{ number_format($recommended->price, 0, ',', '.') }}</span>
+                                            @else
+                                                <span class="text-label-md font-bold text-primary">Gratis</span>
+                                            @endif
                                         </div>
-                                        <p class="mb-4 text-label-md text-on-surface-variant">Master the frameworks used by top tech teams globally.</p>
+                                        <p class="mb-4 text-label-md text-on-surface-variant">{{ Str::limit($recommended->description, 80) }}</p>
                                         <div class="flex items-center justify-between gap-4">
-                                            <span class="font-bold text-primary">Free for {{ auth()->user()->name }}</span>
-                                            <button class="group flex items-center gap-1 text-label-md font-bold text-primary" type="button">
-                                                Preview <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
-                                            </button>
+                                            <span class="font-bold text-primary">{{ $recommended->teacher->name }}</span>
+                                            <a href="{{ route('courses.show', $recommended) }}" class="group flex items-center gap-1 text-label-md font-bold text-primary">
+                                                Detail <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                            </a>
                                         </div>
                                     </div>
                                 </article>
-
-                                <article class="bento-card group min-w-[280px] cursor-pointer overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-lowest">
-                                    <div class="relative h-40">
-                                        <img alt="Data Science" class="h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpI5jtVGDSxu_YNZiEz6j3dkxqjiZnFA7eyt0nrya8U0cHj5C_Ct-Glp1kwao7FdSCDsezOqOtdY_jOQwcRHSmHU9lxAl_F6ug4NKuFLr7tVpXJzT-yOOvF4PzMKYcno2phC_dUx8w-5S0y-1HbL4q1yE-lxqhA0OvqWq3Huu19YVefDqda-h4p34N8EwdszHlIwX8dcSo9MNmyZemxChfNqQ7t46ElTPArz2iuxU7MtV_PrxfdLdlT__2beEY_4PSE0uXJEkgK44">
-                                        <div class="absolute inset-0 bg-primary/20 transition-all group-hover:bg-transparent"></div>
-                                    </div>
-                                    <div class="p-4">
-                                        <div class="mb-2 flex items-start justify-between gap-3">
-                                            <h4 class="text-body-md font-bold text-on-surface">Data Visualisation with Python</h4>
-                                            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
-                                        </div>
-                                        <p class="mb-4 text-label-md text-on-surface-variant">Turn complex data into beautiful, insightful stories.</p>
-                                        <div class="flex items-center justify-between gap-4">
-                                            <span class="font-bold text-primary">Trending</span>
-                                            <button class="group flex items-center gap-1 text-label-md font-bold text-primary" type="button">
-                                                Preview <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </article>
+                                @endforeach
                             </div>
                         </section>
+                        @endif
                     </div>
 
                     <aside class="flex flex-col gap-gutter">
                         <section class="rounded-3xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm">
-                            <div class="mb-6 flex items-center justify-between gap-4">
-                                <h3 class="font-bold text-body-lg text-on-surface">June 2024</h3>
-                                <div class="flex gap-1">
-                                    <button class="text-on-surface-variant hover:text-primary" type="button" aria-label="Previous month">
-                                        <span class="material-symbols-outlined">chevron_left</span>
-                                    </button>
-                                    <button class="text-on-surface-variant hover:text-primary" type="button" aria-label="Next month">
-                                        <span class="material-symbols-outlined">chevron_right</span>
-                                    </button>
+                            <h3 class="mb-6 font-bold text-body-lg text-on-surface">Ringkasan Pembayaran</h3>
+                            @forelse($paidOrders->take(5) as $order)
+                                <div class="mb-4 flex items-center gap-3 border-b border-outline-variant pb-4 last:mb-0 last:border-b-0 last:pb-0">
+                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-success-container text-on-success-container">
+                                        <span class="material-symbols-outlined">check_circle</span>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="truncate font-bold text-label-md">{{ $order->course->title }}</p>
+                                        <p class="text-[12px] text-on-surface-variant">{{ $order->order_number }}</p>
+                                        <p class="text-[12px] text-on-surface-variant">{{ $order->paid_at?->format('d M Y, H:i') }}</p>
+                                    </div>
+                                    <span class="font-bold text-label-md text-on-surface">Rp {{ number_format($order->amount, 0, ',', '.') }}</span>
                                 </div>
-                            </div>
-
-                            <div class="mb-2 grid grid-cols-7 gap-2 text-center text-[12px] font-bold text-on-surface-variant">
-                                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-                            </div>
-                            <div class="grid grid-cols-7 gap-2">
-                                <div class="flex h-8 items-center justify-center text-label-md opacity-20">26</div>
-                                <div class="flex h-8 items-center justify-center text-label-md opacity-20">27</div>
-                                <div class="flex h-8 items-center justify-center text-label-md opacity-20">28</div>
-                                <div class="flex h-8 items-center justify-center text-label-md opacity-20">29</div>
-                                <div class="flex h-8 items-center justify-center text-label-md opacity-20">30</div>
-                                <div class="flex h-8 items-center justify-center text-label-md opacity-20">31</div>
-                                <div class="flex h-8 cursor-pointer items-center justify-center rounded-lg bg-surface-container-high text-label-md hover:bg-primary-fixed">1</div>
-                                <div class="flex h-8 cursor-pointer items-center justify-center rounded-lg bg-surface-container-high text-label-md hover:bg-primary-fixed">2</div>
-                                <div class="flex h-8 cursor-pointer items-center justify-center rounded-lg bg-surface-container-high text-label-md hover:bg-primary-fixed">3</div>
-                                <div class="relative flex h-8 cursor-pointer items-center justify-center rounded-lg bg-primary text-label-md text-on-primary">
-                                    4
-                                    <div class="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-secondary"></div>
+                            @empty
+                                <div class="text-center">
+                                    <span class="material-symbols-outlined mb-2 text-4xl text-on-surface-variant">receipt_long</span>
+                                    <p class="text-label-md text-on-surface-variant">Belum ada pembayaran</p>
                                 </div>
-                                <div class="flex h-8 cursor-pointer items-center justify-center rounded-lg bg-surface-container-high text-label-md hover:bg-primary-fixed">5</div>
-                                <div class="flex h-8 cursor-pointer items-center justify-center rounded-lg bg-surface-container-high text-label-md hover:bg-primary-fixed">6</div>
-                                <div class="flex h-8 cursor-pointer items-center justify-center rounded-lg bg-surface-container-high text-label-md hover:bg-primary-fixed">7</div>
-                                <div class="flex h-8 cursor-pointer items-center justify-center rounded-lg bg-surface-container-high text-label-md hover:bg-primary-fixed">8</div>
-                            </div>
-
-                            <div class="mt-6 border-t border-outline-variant pt-6">
-                                <div class="mb-4 flex items-center gap-3">
-                                    <div class="h-2 w-2 rounded-full bg-secondary"></div>
-                                    <span class="text-label-md font-bold">Today's Focus</span>
-                                </div>
-                                <div class="rounded-xl border-l-4 border-secondary bg-surface-container-low p-3">
-                                    <p class="text-[12px] font-bold text-on-surface">Assignment Due</p>
-                                    <p class="text-[12px] text-on-surface-variant">React Patterns: Lab 1</p>
-                                    <p class="mt-1 text-[12px] font-bold text-primary">Due in 4 hours</p>
-                                </div>
-                            </div>
+                            @endforelse
+                            @if($paidOrders->count() > 5)
+                                <button class="mt-4 w-full rounded-xl border border-outline py-3 text-label-md font-bold text-on-surface transition-colors hover:bg-surface-container-low" type="button">
+                                    Lihat Semua Riwayat
+                                </button>
+                            @endif
                         </section>
 
                         <section class="rounded-3xl border border-outline-variant bg-surface-container-lowest p-6 shadow-sm">
-                            <h3 class="mb-6 font-bold text-body-lg text-on-surface">Upcoming Deadlines</h3>
+                            <h3 class="mb-6 font-bold text-body-lg text-on-surface">Statistik Pembelajaran</h3>
                             <div class="flex flex-col gap-4">
-                                <div class="flex gap-4">
-                                    <div class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl bg-error-container text-on-error-container">
-                                        <span class="text-[10px] font-bold">JUN</span>
-                                        <span class="text-[16px] font-bold">06</span>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="truncate font-bold text-label-md">UX Research Quiz</p>
-                                        <p class="text-[12px] text-on-surface-variant">Design Thinking Course</p>
-                                    </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-label-md text-on-surface-variant">Kursus Dibeli</span>
+                                    <span class="font-bold text-body-md text-on-surface">{{ $paidOrders->count() }}</span>
                                 </div>
-                                <div class="flex gap-4">
-                                    <div class="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl bg-surface-container-high text-on-surface-variant">
-                                        <span class="text-[10px] font-bold">JUN</span>
-                                        <span class="text-[16px] font-bold">12</span>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="truncate font-bold text-label-md">Capstone Project Draft</p>
-                                        <p class="text-[12px] text-on-surface-variant">Mastering React</p>
-                                    </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-label-md text-on-surface-variant">Kursus Aktif</span>
+                                    <span class="font-bold text-body-md text-on-surface">{{ $enrolledCourses->count() }}</span>
+                                </div>
+                                <div class="flex items-center justify-between border-t border-outline-variant pt-4">
+                                    <span class="text-label-md text-on-surface-variant">Total Investasi</span>
+                                    <span class="font-bold text-body-md text-primary">Rp {{ number_format($totalSpent, 0, ',', '.') }}</span>
                                 </div>
                             </div>
-                            <button class="mt-6 w-full rounded-xl border border-outline py-3 text-label-md font-bold text-on-surface transition-colors hover:bg-surface-container-low" type="button">
-                                View Schedule
-                            </button>
                         </section>
                     </aside>
                 </div>

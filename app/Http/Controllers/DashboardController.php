@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -30,6 +31,31 @@ class DashboardController extends Controller
             ));
         }
 
-        return view('dashboard');
+        $enrolledCourses = $user->enrolledCourses()
+            ->with(['teacher', 'modules'])
+            ->withCount('modules')
+            ->orderByDesc('course_orders.paid_at')
+            ->get();
+
+        $paidOrders = $user->courseOrders()
+            ->where('status', 'paid')
+            ->with('course')
+            ->orderByDesc('paid_at')
+            ->get();
+
+        $totalSpent = $paidOrders->sum('amount');
+
+        $recommendedCourses = Course::where('status', 'published')
+            ->whereNotIn('id', $enrolledCourses->pluck('id'))
+            ->orderByDesc('created_at')
+            ->take(5)
+            ->get();
+
+        return view('dashboard', compact(
+            'enrolledCourses',
+            'paidOrders',
+            'totalSpent',
+            'recommendedCourses',
+        ));
     }
 }
