@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\Course;
+use App\Models\CourseModule;
 use App\Models\CourseOrder;
+use App\Models\Lesson;
 use App\Models\User;
 
 it('shows student dashboard with enrolled courses from paid orders', function () {
@@ -153,4 +155,133 @@ it('shows empty state on my-courses when no enrolled courses', function () {
     $response->assertOk();
     $response->assertSee('Belum ada kursus yang dibeli');
     $response->assertSee('Jelajahi Kursus');
+});
+
+it('shows learning page for enrolled student with YouTube lesson', function () {
+    $teacher = User::factory()->create(['role' => 'teacher']);
+    $student = User::factory()->create(['role' => 'user']);
+
+    $course = Course::factory()->create([
+        'teacher_id' => $teacher->id,
+        'status' => 'published',
+    ]);
+
+    $module = CourseModule::factory()->create([
+        'course_id' => $course->id,
+        'title' => 'Modul Pertama',
+    ]);
+
+    $lesson = Lesson::factory()->create([
+        'course_module_id' => $module->id,
+        'title' => 'Video Pengantar',
+        'content_type' => 'youtube',
+        'metadata' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        'position' => 1,
+    ]);
+
+    CourseOrder::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'status' => 'paid',
+        'amount' => 100000,
+        'paid_at' => now(),
+    ]);
+
+    $response = $this->actingAs($student)->get(route('student.learn', $course));
+
+    $response->assertOk();
+    $response->assertViewIs('student.learn');
+    $response->assertViewHas('course');
+    $response->assertViewHas('activeLesson');
+    $response->assertViewHas('youtubeId', 'dQw4w9WgXcQ');
+    $response->assertSee('Video Pengantar');
+    $response->assertSee('Modul Pertama');
+    $response->assertSee('youtube.com/embed/dQw4w9WgXcQ');
+});
+
+it('denies access to learning page for non-enrolled users', function () {
+    $teacher = User::factory()->create(['role' => 'teacher']);
+    $student = User::factory()->create(['role' => 'user']);
+
+    $course = Course::factory()->create([
+        'teacher_id' => $teacher->id,
+        'status' => 'published',
+    ]);
+
+    $response = $this->actingAs($student)->get(route('student.learn', $course));
+
+    $response->assertForbidden();
+});
+
+it('shows learning page with navigation between lessons', function () {
+    $teacher = User::factory()->create(['role' => 'teacher']);
+    $student = User::factory()->create(['role' => 'user']);
+
+    $course = Course::factory()->create([
+        'teacher_id' => $teacher->id,
+        'status' => 'published',
+    ]);
+
+    $module = CourseModule::factory()->create([
+        'course_id' => $course->id,
+        'title' => 'Modul',
+    ]);
+
+    $lesson1 = Lesson::factory()->create([
+        'course_module_id' => $module->id,
+        'title' => 'Lesson One',
+        'content_type' => 'youtube',
+        'metadata' => 'https://www.youtube.com/watch?v=aaa111bbb22',
+        'position' => 1,
+    ]);
+
+    $lesson2 = Lesson::factory()->create([
+        'course_module_id' => $module->id,
+        'title' => 'Lesson Two',
+        'content_type' => 'youtube',
+        'metadata' => 'https://www.youtube.com/watch?v=ccc333ddd44',
+        'position' => 2,
+    ]);
+
+    CourseOrder::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'status' => 'paid',
+        'amount' => 100000,
+        'paid_at' => now(),
+    ]);
+
+    $response = $this->actingAs($student)->get(route('student.learn', ['course' => $course, 'lesson' => $lesson1->id]));
+
+    $response->assertOk();
+    $response->assertSee('Lesson One');
+    $response->assertSee('Lesson Two');
+    $response->assertSee('Selanjutnya');
+    $response->assertDontSee('Sebelumnya');
+
+    $response = $this->actingAs($student)->get(route('student.learn', ['course' => $course, 'lesson' => $lesson2->id]));
+    $response->assertSee('Sebelumnya');
+});
+
+it('shows empty state when course has no modules', function () {
+    $teacher = User::factory()->create(['role' => 'teacher']);
+    $student = User::factory()->create(['role' => 'user']);
+
+    $course = Course::factory()->create([
+        'teacher_id' => $teacher->id,
+        'status' => 'published',
+    ]);
+
+    CourseOrder::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'status' => 'paid',
+        'amount' => 100000,
+        'paid_at' => now(),
+    ]);
+
+    $response = $this->actingAs($student)->get(route('student.learn', $course));
+
+    $response->assertOk();
+    $response->assertSee('belum memiliki materi');
 });

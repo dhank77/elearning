@@ -61,7 +61,7 @@
                                     </div>
 
                                     <div class="flex flex-wrap items-center gap-3">
-                                        <a href="#" class="inline-flex items-center gap-1 rounded-xl bg-primary px-5 py-2.5 text-label-md font-bold text-on-primary transition-colors hover:bg-primary/90">
+                                        <a href="{{ route('student.learn', $course) }}" class="inline-flex items-center gap-1 rounded-xl bg-primary px-5 py-2.5 text-label-md font-bold text-on-primary transition-colors hover:bg-primary/90">
                                             <span class="material-symbols-outlined text-[18px]">play_arrow</span>
                                             Lanjut Belajar
                                         </a>

@@ -68,7 +68,7 @@
                                                 <p class="text-label-md text-on-surface-variant">{{ $course->modules_count }} modul</p>
                                             </div>
                                             <div class="mt-2">
-                                                <a href="#" class="mt-2 inline-flex items-center gap-1 text-label-md font-bold text-primary hover:underline">
+                                                <a href="{{ route('student.learn', $course) }}" class="mt-2 inline-flex items-center gap-1 text-label-md font-bold text-primary hover:underline">
                                                     Lanjut Belajar
                                                     <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                                                 </a>

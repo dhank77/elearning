@@ -152,7 +152,9 @@
                                     @endif
                                 </div>
                                 <div class="p-5">
-                                    <h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-2">{{ $course->title }}</h3>
+                                    <a href="{{ route('courses.show', $course->id) }}" class="block">
+                                        <h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-2">{{ $course->title }}</h3>
+                                    </a>
                                     <p class="font-label-md text-label-md text-on-surface-variant mb-1">
                                         <span class="material-symbols-outlined text-[16px] align-middle mr-1">person</span>
                                         {{ $course->teacher->name }}

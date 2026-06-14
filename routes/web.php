@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('my-courses', [StudentCourseController::class, 'index'])->name('student.courses');
+    Route::get('learn/{course}/{lesson?}', [StudentCourseController::class, 'show'])->name('student.learn');
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('profile/password', [ProfileController::class, 'editPassword'])->name('profile.password.edit');
