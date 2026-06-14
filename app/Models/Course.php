@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['teacher_id', 'title', 'description', 'cover_image_path', 'status', 'completion_percentage', 'last_saved_at'])]
+#[Fillable(['teacher_id', 'title', 'description', 'cover_image_path', 'status', 'price', 'completion_percentage', 'last_saved_at'])]
 class Course extends Model
 {
     /** @use HasFactory<CourseFactory> */
@@ -25,9 +25,15 @@ class Course extends Model
         return $this->hasMany(CourseModule::class)->orderBy('position');
     }
 
+    public function orders(): HasMany
+    {
+        return $this->hasMany(CourseOrder::class);
+    }
+
     protected function casts(): array
     {
         return [
+            'price' => 'decimal:2',
             'completion_percentage' => 'integer',
             'last_saved_at' => 'datetime',
         ];

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Agent(Explore)",
+      "Bash(vendor/bin/pint *)"
+    ]
+  },
+  "$version": 4
+}

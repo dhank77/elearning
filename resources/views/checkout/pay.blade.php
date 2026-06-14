@@ -1,0 +1,90 @@
+@extends('layouts.app')
+
+@section('title', 'Checkout - ' . config('app.name', 'EduMentor'))
+@section('bodyClass', 'min-h-screen bg-background font-body-md text-on-background antialiased')
+
+@section('body')
+    <main class="min-h-screen flex flex-col">
+        {{-- Header --}}
+        <header class="mx-auto flex max-w-container-max w-full items-center justify-between gap-4 px-margin-mobile md:px-margin-desktop py-6">
+            <a href="{{ route('welcome') }}" class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                    <span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+                </div>
+                <span class="font-headline-md text-headline-md text-primary tracking-tight">{{ config('app.name', 'EduMentor') }}</span>
+            </a>
+        </header>
+
+        {{-- Checkout Content --}}
+        <section class="mx-auto max-w-container-max w-full px-margin-mobile md:px-margin-desktop py-10 flex-1">
+            <div class="max-w-2xl mx-auto">
+                <h1 class="font-headline-lg text-headline-lg text-on-surface mb-8">Checkout</h1>
+
+                {{-- Order Summary --}}
+                <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 mb-6">
+                    <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Ringkasan Pesanan</h2>
+                    
+                    <div class="flex gap-4 mb-4">
+                        <div class="w-24 aspect-video rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
+                            @if ($order->course->cover_image_path)
+                                <img src="{{ asset('storage/' . $order->course->cover_image_path) }}" alt="{{ $order->course->title }}" class="h-full w-full object-cover">
+                            @else
+                                <div class="h-full w-full flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-on-surface-variant/30 text-[32px]">menu_book</span>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-label-lg text-label-lg text-on-surface mb-1">{{ $order->course->title }}</h3>
+                            <p class="font-label-md text-label-md text-on-surface-variant">oleh {{ $order->course->teacher->name }}</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-outline-variant pt-4">
+                        <div class="flex justify-between items-center">
+                            <span class="font-body-md text-body-md text-on-surface-variant">Nomor Pesanan</span>
+                            <span class="font-label-md text-label-md text-on-surface font-mono">{{ $order->order_number }}</span>
+                        </div>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="font-body-md text-body-md text-on-surface-variant">Total Pembayaran</span>
+                            <span class="font-headline-sm text-headline-sm text-primary font-bold">Rp {{ number_format($order->amount, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Payment Instructions --}}
+                <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 mb-6">
+                    <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Instruksi Pembayaran</h2>
+                    
+                    <div class="space-y-3 font-body-md text-body-md text-on-surface-variant">
+                        <p>Silakan transfer ke rekening berikut:</p>
+                        <div class="rounded-lg bg-surface-container p-4 border border-outline-variant">
+                            <p class="font-bold text-on-surface">Bank: <span class="font-normal">BCA</span></p>
+                            <p class="font-bold text-on-surface mt-1">No. Rekening: <span class="font-normal">1234567890</span></p>
+                            <p class="font-bold text-on-surface mt-1">Atas Nama: <span class="font-normal">EduMentor</span></p>
+                        </div>
+                        <p class="text-amber-600">
+                            <span class="material-symbols-outlined text-[18px] align-middle mr-1">warning</span>
+                            Setelah melakukan transfer, klik tombol "Konfirmasi Pembayaran" di bawah.
+                        </p>
+                    </div>
+                </div>
+
+                {{-- Confirm Button --}}
+                <form action="{{ route('checkout.complete', $order) }}" method="POST" class="flex gap-3">
+                    @csrf
+                    <a href="{{ route('welcome') }}" class="flex-1 inline-flex items-center justify-center rounded-xl px-6 py-4 font-label-md text-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-all duration-200">
+                        Batal
+                    </a>
+                    <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-label-md text-label-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-container transition-all duration-300 active:scale-[0.98]">
+                        <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                        Konfirmasi Pembayaran
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        {{-- Footer --}}
+        <x-shared.footer />
+    </main>
+@endsection

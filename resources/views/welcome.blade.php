@@ -131,6 +131,61 @@
                 </div>
             </section>
 
+            {{-- Courses Section --}}
+            <section class="mx-auto max-w-container-max w-full px-margin-mobile md:px-margin-desktop py-20 relative z-10">
+                <div class="text-center mb-12">
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-3">Kursus Tersedia</h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">Pilih kursus yang ingin kamu pelajari dan mulai perjalanan belajarmu.</p>
+                </div>
+
+                @if ($courses->count() > 0)
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                        @foreach ($courses as $course)
+                            <div class="bento-card rounded-xl border border-outline-variant bg-surface-container-lowest overflow-hidden shadow-[0px_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0px_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300">
+                                <div class="aspect-video w-full overflow-hidden bg-surface-container">
+                                    @if ($course->cover_image_path)
+                                        <img src="{{ asset('storage/' . $course->cover_image_path) }}" alt="{{ $course->title }}" class="h-full w-full object-cover">
+                                    @else
+                                        <div class="h-full w-full flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-on-surface-variant/30 text-[64px]">menu_book</span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="p-5">
+                                    <h3 class="font-headline-md text-headline-md text-on-surface mb-2 line-clamp-2">{{ $course->title }}</h3>
+                                    <p class="font-label-md text-label-md text-on-surface-variant mb-1">
+                                        <span class="material-symbols-outlined text-[16px] align-middle mr-1">person</span>
+                                        {{ $course->teacher->name }}
+                                    </p>
+                                    <div class="mt-4 flex items-center justify-between">
+                                        <span class="font-headline-sm text-headline-sm text-primary font-bold">
+                                            Rp {{ number_format($course->price, 0, ',', '.') }}
+                                        </span>
+                                        <form action="{{ auth() ? route('checkout.store', $course) : route('login') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="payment_method" value="manual_transfer">
+                                            <button type="submit" class="inline-flex items-center gap-1 rounded-lg px-4 py-2 font-label-md text-label-md bg-primary text-on-primary hover:bg-primary-container transition-all duration-200">
+                                                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+                                                {{ auth() ? 'Beli' : 'Login untuk Beli' }}
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mt-10 flex justify-center">
+                        {{ $courses->links() }}
+                    </div>
+                @else
+                    <div class="text-center py-12">
+                        <span class="material-symbols-outlined text-on-surface-variant/50 text-[64px]">menu_book</span>
+                        <p class="mt-4 font-body-lg text-body-lg text-on-surface-variant">Belum ada kursus yang tersedia.</p>
+                    </div>
+                @endif
+            </section>
+
             {{-- Features Section --}}
             <section class="mx-auto max-w-container-max w-full px-margin-mobile md:px-margin-desktop py-20 relative z-10">
                 <div class="text-center mb-16">

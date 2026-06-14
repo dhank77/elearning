@@ -3,18 +3,24 @@
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CourseOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Teacher\CourseSettingsController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
+Route::get('/courses/{course}', [WelcomeController::class, 'show'])->name('courses.show');
 
 Route::middleware('auth')->group(function () {
+    Route::post('checkout/{course}', [CourseOrderController::class, 'store'])->name('checkout.store');
+    Route::get('checkout/{order}/pay', [CourseOrderController::class, 'pay'])->name('checkout.pay');
+    Route::post('checkout/{order}/complete', [CourseOrderController::class, 'complete'])->name('checkout.complete');
+
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -50,6 +56,7 @@ Route::middleware('guest')->group(function () {
 
     Route::get('register', [RegisterController::class, 'create'])->name('register');
     Route::post('register', [RegisterController::class, 'store']);
-});
 
-Route::post('logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
+    Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+    Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+});

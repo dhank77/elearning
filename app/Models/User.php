@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role'])]
+#[Fillable(['name', 'email', 'password', 'role', 'google_id', 'google_token', 'google_refresh_token'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -21,6 +21,17 @@ class User extends Authenticatable
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class, 'teacher_id');
+    }
+
+    public function courseOrders(): HasMany
+    {
+        return $this->hasMany(CourseOrder::class);
+    }
+
+    public function enrolledCourses(): HasMany
+    {
+        return $this->hasManyThrough(Course::class, CourseOrder::class, 'user_id', 'id', 'id', 'course_id')
+            ->where('course_orders.status', 'paid');
     }
 
     /**

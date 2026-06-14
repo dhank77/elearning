@@ -12,6 +12,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - php - 8.4
 - laravel/framework (LARAVEL) - v13
 - laravel/prompts (PROMPTS) - v0
+- laravel/socialite (SOCIALITE) - v5
 - laravel/boost (BOOST) - v2
 - laravel/mcp (MCP) - v0
 - laravel/pail (PAIL) - v1
@@ -29,17 +30,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
-
-## Design System
-
-- Whenever creating or changing any UI, page, component, layout, visual state, or frontend styling, you MUST first inspect the relevant design guide in `design/**/DESIGN.md`.
-- The active design guide is `design/clarity_learning/DESIGN.md` unless the user explicitly points to another design folder.
-- Implement designs using the tokens and rules from the design guide: colors, typography, spacing, rounded corners, grid/container behavior, elevation, component states, and brand/style direction.
-- Do not invent a new visual language when a design token or component rule exists. If an exact token is unavailable, choose the closest value that preserves the guide's Modern / Corporate, Trusted Mentor style.
-- Keep UI changes consistent with the guide's Clarity Learning palette: Royal Blue for primary actions/navigation, Teal for progress/success/interactive learning elements, Amber for notifications or gamification, and Slate neutrals for hierarchy and borders.
-- Use Inter typography, the 8px spacing rhythm, the 1280px desktop container, 24px desktop gutters, 16px mobile margins, and the documented rounded shape scale unless existing code requires a compatible equivalent.
-- Cards, buttons, inputs, chips, progress indicators, hover states, and focus states must follow the component guidance in the design guide.
-- Before finalizing frontend work, review the changed UI against the design guide and adjust any mismatched colors, spacing, typography, radius, or component behavior.
 
 ## Verification Scripts
 
@@ -123,6 +113,13 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - The application is served by Laravel Herd at `https?://[kebab-case-project-dir].test`. Use the `get-absolute-url` tool to generate valid URLs. Never run commands to serve the site. It is always available.
 - Use the `herd` CLI to manage services, PHP versions, and sites (e.g. `herd sites`, `herd services:start <service>`, `herd php:list`). Run `herd list` to discover all available commands.
+
+=== tests rules ===
+
+# Test Enforcement
+
+- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
+- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test --compact` with a specific filename or filter.
 
 === laravel/core rules ===
 
