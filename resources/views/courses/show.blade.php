@@ -49,7 +49,7 @@
 
                         <form action="{{ auth() ? route('checkout.store', $course) : route('login') }}" method="POST" class="mb-6">
                             @csrf
-                            <input type="hidden" name="payment_method" value="manual_transfer">
+                            <input type="hidden" name="payment_method" value="xendit">
                             <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4 font-label-md text-label-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-container transition-all duration-300 active:scale-[0.98]">
                                 <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
                                 {{ auth() ? 'Beli Kursus' : 'Login untuk Beli' }}

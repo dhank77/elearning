@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['user_id', 'course_id', 'order_number', 'amount', 'status', 'payment_method', 'paid_at'])]
+#[Fillable(['user_id', 'course_id', 'order_number', 'amount', 'status', 'payment_method', 'xendit_invoice_id', 'xendit_payment_url', 'paid_at'])]
 class CourseOrder extends Model
 {
     /** @use HasFactory<CourseOrderFactory> */

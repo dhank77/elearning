@@ -11,11 +11,15 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\StudentCourseController;
 use App\Http\Controllers\Teacher\CourseSettingsController;
+use App\Http\Controllers\Webhook\XenditWebhookController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/courses/{course}', [WelcomeController::class, 'show'])->name('courses.show');
+
+// Xendit webhook (no auth required - verified via signature)
+Route::post('webhooks/xendit', XenditWebhookController::class)->name('webhooks.xendit');
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
@@ -23,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::post('checkout/{course}', [CourseOrderController::class, 'store'])->name('checkout.store');
     Route::get('checkout/{order}/pay', [CourseOrderController::class, 'pay'])->name('checkout.pay');
     Route::post('checkout/{order}/complete', [CourseOrderController::class, 'complete'])->name('checkout.complete');
+    Route::get('checkout/{order}/success', [CourseOrderController::class, 'success'])->name('checkout.success');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('my-courses', [StudentCourseController::class, 'index'])->name('student.courses');

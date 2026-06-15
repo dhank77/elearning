@@ -4,7 +4,10 @@
       "Agent(Explore)",
       "Bash(vendor/bin/pint *)",
       "Bash(php *)",
-      "Bash(git stash)"
+      "Bash(git stash)",
+      "Bash(mkdir *)",
+      "Skill(laravel-best-practices)",
+      "Bash(composer *)"
     ]
   },
   "$version": 4

@@ -23,7 +23,7 @@
                 {{-- Order Summary --}}
                 <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 mb-6">
                     <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Ringkasan Pesanan</h2>
-                    
+
                     <div class="flex gap-4 mb-4">
                         <div class="w-24 aspect-video rounded-lg overflow-hidden bg-surface-container flex-shrink-0">
                             @if ($order->course->cover_image_path)
@@ -49,38 +49,70 @@
                             <span class="font-body-md text-body-md text-on-surface-variant">Total Pembayaran</span>
                             <span class="font-headline-sm text-headline-sm text-primary font-bold">Rp {{ number_format($order->amount, 0, ',', '.') }}</span>
                         </div>
-                    </div>
-                </div>
-
-                {{-- Payment Instructions --}}
-                <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 mb-6">
-                    <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Instruksi Pembayaran</h2>
-                    
-                    <div class="space-y-3 font-body-md text-body-md text-on-surface-variant">
-                        <p>Silakan transfer ke rekening berikut:</p>
-                        <div class="rounded-lg bg-surface-container p-4 border border-outline-variant">
-                            <p class="font-bold text-on-surface">Bank: <span class="font-normal">BCA</span></p>
-                            <p class="font-bold text-on-surface mt-1">No. Rekening: <span class="font-normal">1234567890</span></p>
-                            <p class="font-bold text-on-surface mt-1">Atas Nama: <span class="font-normal">EduMentor</span></p>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="font-body-md text-body-md text-on-surface-variant">Metode Pembayaran</span>
+                            <span class="font-label-md text-label-md text-on-surface font-bold">{{ $order->payment_method === 'xendit' ? 'Xendit' : 'Transfer Bank Manual' }}</span>
                         </div>
-                        <p class="text-amber-600">
-                            <span class="material-symbols-outlined text-[18px] align-middle mr-1">warning</span>
-                            Setelah melakukan transfer, klik tombol "Konfirmasi Pembayaran" di bawah.
-                        </p>
                     </div>
                 </div>
 
-                {{-- Confirm Button --}}
-                <form action="{{ route('checkout.complete', $order) }}" method="POST" class="flex gap-3">
-                    @csrf
-                    <a href="{{ route('welcome') }}" class="flex-1 inline-flex items-center justify-center rounded-xl px-6 py-4 font-label-md text-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-all duration-200">
-                        Batal
-                    </a>
-                    <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-label-md text-label-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-container transition-all duration-300 active:scale-[0.98]">
-                        <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                        Konfirmasi Pembayaran
-                    </button>
-                </form>
+                @if ($order->payment_method === 'xendit')
+                    {{-- Xendit Payment --}}
+                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 mb-6">
+                        <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Pembayaran via Xendit</h2>
+
+                        <div class="space-y-4 font-body-md text-body-md text-on-surface-variant">
+                            <p>Anda akan dialihkan ke halaman pembayaran Xendit untuk menyelesaikan pembayaran.</p>
+                            <div class="rounded-lg bg-primary-container/50 p-4 border border-primary">
+                                <p class="text-primary">
+                                    <span class="material-symbols-outlined text-[18px] align-middle mr-1">info</span>
+                                    Klik tombol "Bayar Sekarang" di bawah untuk melanjutkan ke halaman pembayaran.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Pay Button --}}
+                    <div class="flex gap-3">
+                        <a href="{{ route('welcome') }}" class="flex-1 inline-flex items-center justify-center rounded-xl px-6 py-4 font-label-md text-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-all duration-200">
+                            Batal
+                        </a>
+                        <a href="{{ route('checkout.pay', $order) }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-label-md text-label-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-container transition-all duration-300 active:scale-[0.98]">
+                            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">payments</span>
+                            Bayar Sekarang
+                        </a>
+                    </div>
+                @else
+                    {{-- Manual Bank Transfer --}}
+                    <div class="rounded-xl border border-outline-variant bg-surface-container-lowest p-6 mb-6">
+                        <h2 class="font-headline-md text-headline-md text-on-surface mb-4">Instruksi Pembayaran</h2>
+
+                        <div class="space-y-3 font-body-md text-body-md text-on-surface-variant">
+                            <p>Silakan transfer ke rekening berikut:</p>
+                            <div class="rounded-lg bg-surface-container p-4 border border-outline-variant">
+                                <p class="font-bold text-on-surface">Bank: <span class="font-normal">BCA</span></p>
+                                <p class="font-bold text-on-surface mt-1">No. Rekening: <span class="font-normal">1234567890</span></p>
+                                <p class="font-bold text-on-surface mt-1">Atas Nama: <span class="font-normal">EduMentor</span></p>
+                            </div>
+                            <p class="text-amber-600">
+                                <span class="material-symbols-outlined text-[18px] align-middle mr-1">warning</span>
+                                Setelah melakukan transfer, klik tombol "Konfirmasi Pembayaran" di bawah.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Confirm Button --}}
+                    <form action="{{ route('checkout.complete', $order) }}" method="POST" class="flex gap-3">
+                        @csrf
+                        <a href="{{ route('welcome') }}" class="flex-1 inline-flex items-center justify-center rounded-xl px-6 py-4 font-label-md text-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-all duration-200">
+                            Batal
+                        </a>
+                        <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-label-md text-label-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-container transition-all duration-300 active:scale-[0.98]">
+                            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            Konfirmasi Pembayaran
+                        </button>
+                    </form>
+                @endif
             </div>
         </section>
 
