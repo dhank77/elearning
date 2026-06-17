@@ -218,3 +218,231 @@
                     </div>
                 </div>
             </section>
+
+            {{-- Chatbot Widget --}}
+            <div id="chatbot" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+                {{-- Chat Panel --}}
+                <div id="chat-panel" class="hidden w-[380px] max-h-[520px] rounded-2xl border border-outline-variant bg-surface-container-lowest shadow-[0px_8px_40px_rgba(0,0,0,0.15)] overflow-hidden flex-col">
+                    {{-- Header --}}
+                    <div class="flex items-center justify-between gap-3 bg-primary px-5 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="flex size-9 items-center justify-center rounded-full bg-white/20">
+                                <span class="material-symbols-outlined text-white text-[20px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                            </div>
+                            <div>
+                                <p class="font-label-md text-label-md text-on-primary font-bold">EduBot</p>
+                                <p class="font-label-sm text-label-sm text-on-primary/80">Online</p>
+                            </div>
+                        </div>
+                        <button id="chat-close" class="rounded-lg p-1.5 text-on-primary hover:bg-white/20 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">close</span>
+                        </button>
+                    </div>
+
+                    {{-- Messages --}}
+                    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 min-h-[320px] max-h-[380px] bg-surface">
+                        <div class="flex gap-2">
+                            <div class="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                                <span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                            </div>
+                            <div class="max-w-[80%] rounded-2xl rounded-tl-md bg-surface-container-low px-4 py-2.5 border border-outline-variant/50">
+                                <p class="font-body-md text-body-md text-on-surface">Halo! 👋 Saya EduBot, asisten virtual EduMentor. Ada yang bisa saya bantu?</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <div class="w-7 shrink-0"></div>
+                            <div class="max-w-[80%] rounded-2xl rounded-tl-md bg-surface-container-low px-4 py-2.5 border border-outline-variant/50">
+                                <p class="font-body-md text-body-md text-on-surface">Anda bisa bertanya tentang:</p>
+                                <ul class="mt-2 space-y-1 font-body-sm text-body-sm text-on-surface-variant">
+                                    <li>• Cara mendaftar kursus</li>
+                                    <li>• Metode pembayaran</li>
+                                    <li>• Sertifikat</li>
+                                    <li>• Fitur platform</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Quick Replies --}}
+                    <div id="quick-replies" class="flex gap-2 px-4 pb-2 bg-surface overflow-x-auto">
+                        <button data-query="cara daftar" class="shrink-0 rounded-full border border-outline-variant bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">Cara Daftar</button>
+                        <button data-query="metode pembayaran" class="shrink-0 rounded-full border border-outline-variant bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">Pembayaran</button>
+                        <button data-query="sertifikat" class="shrink-0 rounded-full border border-outline-variant bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">Sertifikat</button>
+                        <button data-query="fitur" class="shrink-0 rounded-full border border-outline-variant bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">Fitur</button>
+                    </div>
+
+                    {{-- Input --}}
+                    <div class="flex items-center gap-2 border-t border-outline-variant/50 bg-surface-container-low p-3">
+                        <input id="chat-input" type="text" placeholder="Ketik pertanyaan..." class="flex-1 rounded-xl border border-outline-variant bg-surface px-4 py-2.5 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 transition-colors">
+                        <button id="chat-send" class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-colors">
+                            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">send</span>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Toggle Button --}}
+                <button id="chat-toggle" class="flex size-14 items-center justify-center rounded-full bg-primary text-on-primary shadow-lg shadow-primary/30 hover:bg-primary-container hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 active:scale-95">
+                    <span id="chat-icon" class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">chat</span>
+                </button>
+            </div>
+        </main>
+
+        @push('scripts')
+        <script>
+        (function() {
+            const toggle = document.getElementById('chat-toggle');
+            const panel = document.getElementById('chat-panel');
+            const closeBtn = document.getElementById('chat-close');
+            const input = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send');
+            const messages = document.getElementById('chat-messages');
+            const icon = document.getElementById('chat-icon');
+            const quickReplies = document.getElementById('quick-replies');
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content
+                ?? document.querySelector('input[name="_token"]')?.value
+                ?? '';
+
+            async function fetchAnswer(query) {
+                try {
+                    const res = await fetch("{{ route('chatbot.ask') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ question: query }),
+                    });
+
+                    if (!res.ok) {
+                        const err = await res.json().catch(() => ({}));
+                        return err.answer ?? 'Maaf, saya tidak dapat menjawab saat ini. Silakan coba beberapa saat lagi.';
+                    }
+
+                    const data = await res.json();
+                    return data.answer ?? 'Maaf, saya tidak dapat menjawab saat ini.';
+                } catch (e) {
+                    return 'Maaf, terjadi kesalahan koneksi. Periksa internet Anda dan coba lagi.';
+                }
+            }
+
+            function addMessage(text, isUser = false) {
+                const msg = document.createElement('div');
+                msg.className = 'flex gap-2 ' + (isUser ? 'justify-end' : '');
+
+                if (isUser) {
+                    msg.innerHTML = `
+                        <div class="max-w-[80%] rounded-2xl rounded-tr-md bg-primary px-4 py-2.5">
+                            <p class="font-body-md text-body-md text-on-primary">${escapeHtml(text)}</p>
+                        </div>
+                    `;
+                } else {
+                    const formatted = formatBotResponse(text);
+                    msg.innerHTML = `
+                        <div class="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                            <span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                        </div>
+                        <div class="max-w-[80%] rounded-2xl rounded-tl-md bg-surface-container-low px-4 py-2.5 border border-outline-variant/50">
+                            <p class="font-body-md text-body-md text-on-surface">${formatted}</p>
+                        </div>
+                    `;
+                }
+
+                messages.appendChild(msg);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            function addTypingIndicator() {
+                const typing = document.createElement('div');
+                typing.id = 'typing-indicator';
+                typing.className = 'flex gap-2';
+                typing.innerHTML = `
+                    <div class="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                        <span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                    </div>
+                    <div class="rounded-2xl rounded-tl-md bg-surface-container-low px-4 py-2.5 border border-outline-variant/50">
+                        <div class="flex gap-1">
+                            <span class="size-2 rounded-full bg-on-surface-variant/30 animate-bounce" style="animation-delay: 0ms"></span>
+                            <span class="size-2 rounded-full bg-on-surface-variant/30 animate-bounce" style="animation-delay: 150ms"></span>
+                            <span class="size-2 rounded-full bg-on-surface-variant/30 animate-bounce" style="animation-delay: 300ms"></span>
+                        </div>
+                    </div>
+                `;
+                messages.appendChild(typing);
+                messages.scrollTop = messages.scrollHeight;
+            }
+
+            function removeTypingIndicator() {
+                const el = document.getElementById('typing-indicator');
+                if (el) el.remove();
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function formatBotResponse(text) {
+                let html = escapeHtml(text);
+                html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\n/g, '<br>');
+                return html;
+            }
+
+            async function sendMessage(query) {
+                if (!query.trim()) return;
+
+                addMessage(query, true);
+                input.value = '';
+
+                addTypingIndicator();
+
+                const answer = await fetchAnswer(query);
+                removeTypingIndicator();
+                addMessage(answer);
+            }
+
+            let isOpen = false;
+
+            function openChat() {
+                isOpen = true;
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+                icon.textContent = 'close';
+                quickReplies.style.display = 'flex';
+                setTimeout(() => input.focus(), 100);
+            }
+
+            function closeChat() {
+                isOpen = false;
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+                icon.textContent = 'chat';
+                quickReplies.style.display = 'none';
+            }
+
+            toggle.addEventListener('click', () => {
+                if (isOpen) closeChat();
+                else openChat();
+            });
+
+            closeBtn.addEventListener('click', closeChat);
+
+            sendBtn.addEventListener('click', () => sendMessage(input.value));
+
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage(input.value);
+            });
+
+            quickReplies.addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-query]');
+                if (btn) {
+                    sendMessage(btn.dataset.query);
+                }
+            });
+        })();
+        </script>
+        @endpush
+    @endsection

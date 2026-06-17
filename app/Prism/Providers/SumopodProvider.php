@@ -61,8 +61,6 @@ class SumopodProvider extends Provider
 
         $response = $client->post('chat/completions', $payload);
 
-        $this->handleRequestException($request->model(), $response);
-
         $data = $response->json();
         $content = data_get($data, 'choices.0.message.content', '');
 
@@ -102,7 +100,7 @@ class SumopodProvider extends Provider
             toolResults: [],
             usage: $usage,
             meta: $meta,
-            messages: $request->messages(),
+            messages: collect($request->messages()),
             additionalContent: [],
             raw: $data,
         );

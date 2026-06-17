@@ -13,7 +13,8 @@
       "Bash(mv *)",
       "Bash(rm *)",
       "Bash(find *)",
-      "mcp__laravel-boost__search-docs"
+      "mcp__laravel-boost__search-docs",
+      "Bash(grep *)"
     ]
   },
   "$version": 4
