@@ -35,6 +35,8 @@ class GoogleController extends Controller
 
             return redirect()->intended(route('dashboard', absolute: false));
         } catch (Throwable $e) {
+            dd($e->getMessage());
+
             return redirect()->route('register')->withErrors(['email' => 'Google login failed. Please try again.']);
         }
     }

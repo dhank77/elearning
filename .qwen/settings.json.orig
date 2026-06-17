@@ -7,7 +7,12 @@
       "Bash(git stash)",
       "Bash(mkdir *)",
       "Skill(laravel-best-practices)",
-      "Bash(composer *)"
+      "Bash(composer *)",
+      "Bash(ls *)",
+      "Bash(git checkout *)",
+      "Bash(mv *)",
+      "Bash(rm *)",
+      "Bash(find *)"
     ]
   },
   "$version": 4

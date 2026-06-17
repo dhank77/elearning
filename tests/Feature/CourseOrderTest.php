@@ -4,9 +4,8 @@ use App\Models\Course;
 use App\Models\CourseOrder;
 use App\Models\User;
 use App\Services\XenditService;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Xendit\Invoice\Invoice;
 
 uses(LazilyRefreshDatabase::class);
 
@@ -20,7 +19,7 @@ test('user can create order with xendit payment method', function () {
     $course = Course::factory()->published()->create(['price' => 100000]);
 
     $this->actingAs($user)
-        ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+        ->withoutMiddleware([ValidateCsrfToken::class])
         ->post(route('checkout.store', $course), [
             'payment_method' => 'xendit',
         ])
@@ -40,7 +39,7 @@ test('user cannot purchase unpublished course', function () {
     $course = Course::factory()->draft()->create();
 
     $this->actingAs($user)
-        ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+        ->withoutMiddleware([ValidateCsrfToken::class])
         ->post(route('checkout.store', $course), [
             'payment_method' => 'xendit',
         ])
@@ -59,7 +58,7 @@ test('user cannot duplicate paid order', function () {
     ]);
 
     $this->actingAs($user)
-        ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+        ->withoutMiddleware([ValidateCsrfToken::class])
         ->post(route('checkout.store', $course), [
             'payment_method' => 'xendit',
         ])
@@ -79,7 +78,7 @@ test('redirects to existing pending order', function () {
     ]);
 
     $this->actingAs($user)
-        ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+        ->withoutMiddleware([ValidateCsrfToken::class])
         ->post(route('checkout.store', $course), [
             'payment_method' => 'xendit',
         ])
@@ -149,7 +148,24 @@ test('paid order redirects to dashboard', function () {
         ->assertRedirect(route('dashboard'));
 });
 
-test('success redirects to complete page', function () {
+test('success redirects to dashboard when already paid', function () {
+    $user = User::factory()->create();
+    $course = Course::factory()->published()->create();
+
+    $order = CourseOrder::factory()->create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => 'paid',
+        'paid_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('checkout.success', $order))
+        ->assertRedirect(route('dashboard'))
+        ->assertSessionHas('success');
+});
+
+test('success for pending xendit order redirects back to pay with info', function () {
     $user = User::factory()->create();
     $course = Course::factory()->published()->create();
 
@@ -162,31 +178,13 @@ test('success redirects to complete page', function () {
 
     $this->actingAs($user)
         ->get(route('checkout.success', $order))
-        ->assertRedirect(route('checkout.complete', $order));
-});
-
-test('complete marks order as paid', function () {
-    $user = User::factory()->create();
-    $course = Course::factory()->published()->create();
-
-    $order = CourseOrder::factory()->create([
-        'user_id' => $user->id,
-        'course_id' => $course->id,
-        'status' => 'pending',
-        'payment_method' => 'xendit',
-    ]);
-
-    $this->actingAs($user)
-        ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
-        ->post(route('checkout.complete', $order))
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('checkout.pay', $order))
+        ->assertSessionHas('info');
 
     $this->assertDatabaseHas('course_orders', [
         'id' => $order->id,
-        'status' => 'paid',
+        'status' => 'pending',
     ]);
-
-    expect($order->fresh()->paid_at)->not()->toBeNull();
 });
 
 test('webhook marks order as paid', function () {
@@ -201,20 +199,25 @@ test('webhook marks order as paid', function () {
         'payment_method' => 'xendit',
     ]);
 
-    $payload = json_encode([
+    $payload = [
         'external_id' => 'ORD-TEST123',
         'status' => 'SETTLED',
         'amount' => 100000,
-    ]);
+    ];
 
-    $signature = hash_hmac('sha256', $payload, config('services.xendit.webhook_token'));
+    $payloadJson = json_encode($payload);
+    $signature = hash_hmac('sha256', $payloadJson, config('services.xendit.webhook_token'));
 
-    $this->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+    $response = $this->withoutMiddleware([ValidateCsrfToken::class])
         ->withHeaders([
             'Content-Type' => 'application/json',
             'x-xendit-webhook-token' => $signature,
-        ])->post(route('webhooks.xendit'), json_decode($payload, true))
-        ->assertOk();
+        ])->call('POST', route('webhooks.xendit'), [], [], [], [], $payloadJson);
+
+    // Debug: uncomment to see response content
+    // dump($response->getContent());
+
+    $response->assertOk();
 
     $this->assertDatabaseHas('course_orders', [
         'id' => $order->id,
@@ -223,25 +226,33 @@ test('webhook marks order as paid', function () {
 });
 
 test('webhook rejects invalid signature', function () {
-    $this->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+    $payload = json_encode([
+        'external_id' => 'ORD-TEST123',
+        'status' => 'SETTLED',
+    ]);
+
+    $this->withoutMiddleware([ValidateCsrfToken::class])
         ->withHeaders([
             'Content-Type' => 'application/json',
             'x-xendit-webhook-token' => 'invalid_signature',
-        ])->post(route('webhooks.xendit'), [
-            'external_id' => 'ORD-TEST123',
-            'status' => 'SETTLED',
-        ])->assertUnauthorized();
+        ])->call('POST', route('webhooks.xendit'), [], [], [], [], $payload)
+        ->assertUnauthorized();
 });
 
 test('webhook ignores non settled payment', function () {
-    $this->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+    $payload = json_encode([
+        'external_id' => 'ORD-TEST123',
+        'status' => 'PENDING',
+    ]);
+
+    $signature = hash_hmac('sha256', $payload, config('services.xendit.webhook_token'));
+
+    $this->withoutMiddleware([ValidateCsrfToken::class])
         ->withHeaders([
             'Content-Type' => 'application/json',
-            'x-xendit-webhook-token' => 'valid_signature',
-        ])->post(route('webhooks.xendit'), [
-            'external_id' => 'ORD-TEST123',
-            'status' => 'PENDING',
-        ])->assertOk();
+            'x-xendit-webhook-token' => $signature,
+        ])->call('POST', route('webhooks.xendit'), [], [], [], [], $payload)
+        ->assertOk();
 });
 
 test('manual transfer payment method still works', function () {
@@ -249,7 +260,7 @@ test('manual transfer payment method still works', function () {
     $course = Course::factory()->published()->create(['price' => 50000]);
 
     $this->actingAs($user)
-        ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+        ->withoutMiddleware([ValidateCsrfToken::class])
         ->post(route('checkout.store', $course), [
             'payment_method' => 'manual_transfer',
         ])
@@ -268,7 +279,7 @@ test('invalid payment method rejected', function () {
     $course = Course::factory()->published()->create();
 
     $this->actingAs($user)
-        ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+        ->withoutMiddleware([ValidateCsrfToken::class])
         ->post(route('checkout.store', $course), [
             'payment_method' => 'invalid_method',
         ])

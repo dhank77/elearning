@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\CourseOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
@@ -17,16 +18,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 Route::get('/courses/{course}', [WelcomeController::class, 'show'])->name('courses.show');
+Route::post('/chatbot/ask', [ChatbotController::class, 'ask'])->name('chatbot.ask');
+Route::post('/chatbot/stream', [ChatbotController::class, 'stream'])->name('chatbot.stream');
 
 // Xendit webhook (no auth required - verified via signature)
-Route::post('webhooks/xendit', XenditWebhookController::class)->name('webhooks.xendit');
+// Route::post('webhooks/xendit', XenditWebhookController::class)->name('webhooks.xendit');
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 
     Route::post('checkout/{course}', [CourseOrderController::class, 'store'])->name('checkout.store');
     Route::get('checkout/{order}/pay', [CourseOrderController::class, 'pay'])->name('checkout.pay');
-    Route::post('checkout/{order}/complete', [CourseOrderController::class, 'complete'])->name('checkout.complete');
     Route::get('checkout/{order}/success', [CourseOrderController::class, 'success'])->name('checkout.success');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

@@ -218,9 +218,3 @@
                     </div>
                 </div>
             </section>
-
-            {{-- Footer --}}
-
-            <x-shared.footer />
-        </main>
-@endsection

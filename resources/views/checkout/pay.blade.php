@@ -95,23 +95,17 @@
                                 <p class="font-bold text-on-surface mt-1">Atas Nama: <span class="font-normal">EduMentor</span></p>
                             </div>
                             <p class="text-amber-600">
-                                <span class="material-symbols-outlined text-[18px] align-middle mr-1">warning</span>
-                                Setelah melakukan transfer, klik tombol "Konfirmasi Pembayaran" di bawah.
+                                <span class="material-symbols-outlined text-[18px] align-middle mr-1">info</span>
+                                Setelah melakukan transfer, hubungi admin untuk konfirmasi pembayaran.
                             </p>
                         </div>
                     </div>
 
-                    {{-- Confirm Button --}}
-                    <form action="{{ route('checkout.complete', $order) }}" method="POST" class="flex gap-3">
-                        @csrf
+                    <div class="flex gap-3">
                         <a href="{{ route('welcome') }}" class="flex-1 inline-flex items-center justify-center rounded-xl px-6 py-4 font-label-md text-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-all duration-200">
-                            Batal
+                            Kembali
                         </a>
-                        <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-label-md text-label-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-container transition-all duration-300 active:scale-[0.98]">
-                            <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                            Konfirmasi Pembayaran
-                        </button>
-                    </form>
+                    </div>
                 @endif
             </div>
         </section>
