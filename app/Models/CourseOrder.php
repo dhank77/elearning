@@ -14,6 +14,37 @@ class CourseOrder extends Model
     /** @use HasFactory<CourseOrderFactory> */
     use HasFactory;
 
+    protected static function booted()
+    {
+        $sendNotification = function (CourseOrder $order) {
+            if ($order->status === 'paid') {
+                $user = $order->user;
+                if ($user && $user->phone) {
+                    $appName = config('app.name', 'EduMentor');
+                    $amountFormatted = number_format($order->amount, 0, ',', '.');
+                    
+                    $message = "Halo *{$user->name}*,\n\nPembayaran Anda untuk kelas *{$order->course->title}* telah berhasil dikonfirmasi!\n\n*Detail Pesanan:*\n- Nomor Pesanan: {$order->order_number}\n- Kelas: {$order->course->title}\n- Total Pembayaran: Rp {$amountFormatted}\n- Metode: " . ($order->payment_method === 'xendit' ? 'Xendit' : ($order->payment_method === 'free' ? 'Gratis' : 'Transfer Bank Manual')) . "\n\nSekarang Anda sudah bisa mengakses kelas ini melalui Dashboard. Selamat belajar!\n\n--\n*{$appName}*";
+                    
+                    try {
+                        app(\App\Services\FonnteService::class)->sendMessage($user->phone, $message);
+                    } catch (\Exception $e) {
+                        \Illuminate\Support\Facades\Log::error('Fonnte dispatch error: ' . $e->getMessage());
+                    }
+                }
+            }
+        };
+
+        static::created(function (CourseOrder $order) use ($sendNotification) {
+            $sendNotification($order);
+        });
+
+        static::updated(function (CourseOrder $order) use ($sendNotification) {
+            if ($order->isDirty('status')) {
+                $sendNotification($order);
+            }
+        });
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

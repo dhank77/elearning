@@ -3,6 +3,7 @@
 use App\Models\Course;
 use App\Models\CourseOrder;
 use App\Models\User;
+use App\Services\FonnteService;
 use App\Services\XenditService;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
@@ -380,4 +381,30 @@ test('invalid payment method rejected', function () {
             'payment_method' => 'invalid_method',
         ])
         ->assertSessionHasErrors('payment_method');
+});
+
+test('order updates to paid sends whatsapp notification via fonnte', function () {
+    config(['services.fonnte.token' => 'test_fonnte_token']);
+
+    $user = User::factory()->create(['phone' => '08123456789']);
+    $course = Course::factory()->published()->create(['title' => 'Laravel Masterclass']);
+
+    $order = CourseOrder::factory()->create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => 'pending',
+        'payment_method' => 'xendit',
+        'amount' => 150000,
+    ]);
+
+    $this->mock(FonnteService::class)
+        ->shouldReceive('sendMessage')
+        ->once()
+        ->withArgs(function ($target, $message) {
+            return $target === '08123456789'
+                && str_contains($message, 'Pembayaran Anda untuk kelas *Laravel Masterclass* telah berhasil dikonfirmasi');
+        })
+        ->andReturn(true);
+
+    $order->update(['status' => 'paid']);
 });

@@ -28,7 +28,7 @@
                     Kembali ke Dashboard
                 </a>
                 <h1 class="font-headline-lg text-headline-lg text-on-surface">Profil Saya</h1>
-                <p class="mt-2 font-body-md text-body-md text-on-surface-variant">Perbarui nama dan email akun Anda.</p>
+                <p class="mt-2 font-body-md text-body-md text-on-surface-variant">Perbarui nama, email, dan nomor WhatsApp akun Anda.</p>
             </div>
 
             @if (session('success'))
@@ -54,6 +54,14 @@
                         <label for="email" class="mb-2 block font-label-md text-label-md font-bold text-on-surface">Email</label>
                         <input id="email" type="email" name="email" value="{{ old('email', auth()->user()->email) }}" class="w-full rounded-lg border border-outline-variant bg-white px-4 py-3 font-body-md text-body-md text-on-surface transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" placeholder="nama@email.com">
                         @error('email')
+                            <p class="mt-2 font-label-md text-label-md text-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="phone" class="mb-2 block font-label-md text-label-md font-bold text-on-surface">Nomor WhatsApp</label>
+                        <input id="phone" type="text" name="phone" value="{{ old('phone', auth()->user()->phone) }}" class="w-full rounded-lg border border-outline-variant bg-white px-4 py-3 font-body-md text-body-md text-on-surface transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" placeholder="Contoh: 081234567890">
+                        @error('phone')
                             <p class="mt-2 font-label-md text-label-md text-error">{{ $message }}</p>
                         @enderror
                     </div>

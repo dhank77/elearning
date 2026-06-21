@@ -47,4 +47,8 @@ return [
         'callback_token' => env('XENDIT_CALLBACK_TOKEN'),
     ],
 
+    'fonnte' => [
+        'token' => env('FONTTE_TOKEN'),
+    ],
+
 ];
