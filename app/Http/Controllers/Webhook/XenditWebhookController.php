@@ -17,12 +17,13 @@ class XenditWebhookController extends Controller
 
     public function __invoke(Request $request)
     {
-        $signature = $request->header('x-xendit-webhook-token');
+        $callbackToken = $request->header('x-callback-token');
 
-        if (!$signature || !$this->xenditService->verifyWebhookSignature($request->getContent(), $signature)) {
-            Log::warning('Invalid Xendit webhook signature.', ['ip' => $request->ip()]);
-
-            return new Response('Invalid signature', Response::HTTP_UNAUTHORIZED);
+        if (! $this->xenditService->verifyCallback($callbackToken ?? '')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid callback token',
+            ], Response::HTTP_FORBIDDEN);
         }
 
         $payload = $request->all();

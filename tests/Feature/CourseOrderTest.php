@@ -12,6 +12,14 @@ uses(LazilyRefreshDatabase::class);
 beforeEach(function () {
     config(['services.xendit.api_key' => 'xnd_test_key']);
     config(['services.xendit.webhook_token' => 'xnd_test_token']);
+    config(['services.xendit.callback_token' => 'xnd_test_callback_token']);
+});
+
+test('xendit service verifies callback token', function () {
+    $service = new XenditService();
+
+    expect($service->verifyCallback('xnd_test_callback_token'))->toBeTrue();
+    expect($service->verifyCallback('wrong-token'))->toBeFalse();
 });
 
 test('user can create order with xendit payment method', function () {
@@ -206,12 +214,11 @@ test('webhook marks order as paid', function () {
     ];
 
     $payloadJson = json_encode($payload);
-    $signature = hash_hmac('sha256', $payloadJson, config('services.xendit.webhook_token'));
 
     $response = $this->withoutMiddleware([ValidateCsrfToken::class])
         ->withHeaders([
             'Content-Type' => 'application/json',
-            'x-xendit-webhook-token' => $signature,
+            'x-callback-token' => config('services.xendit.callback_token'),
         ])->call('POST', route('webhooks.xendit'), [], [], [], [], $payloadJson);
 
     // Debug: uncomment to see response content
@@ -234,9 +241,13 @@ test('webhook rejects invalid signature', function () {
     $this->withoutMiddleware([ValidateCsrfToken::class])
         ->withHeaders([
             'Content-Type' => 'application/json',
-            'x-xendit-webhook-token' => 'invalid_signature',
+            'x-callback-token' => 'invalid_callback_token',
         ])->call('POST', route('webhooks.xendit'), [], [], [], [], $payload)
-        ->assertUnauthorized();
+        ->assertForbidden()
+        ->assertJson([
+            'success' => false,
+            'message' => 'Invalid callback token',
+        ]);
 });
 
 test('webhook ignores non settled payment', function () {
@@ -245,12 +256,10 @@ test('webhook ignores non settled payment', function () {
         'status' => 'PENDING',
     ]);
 
-    $signature = hash_hmac('sha256', $payload, config('services.xendit.webhook_token'));
-
     $this->withoutMiddleware([ValidateCsrfToken::class])
         ->withHeaders([
             'Content-Type' => 'application/json',
-            'x-xendit-webhook-token' => $signature,
+            'x-callback-token' => config('services.xendit.callback_token'),
         ])->call('POST', route('webhooks.xendit'), [], [], [], [], $payload)
         ->assertOk();
 });
@@ -271,6 +280,51 @@ test('manual transfer payment method still works', function () {
         'course_id' => $course->id,
         'payment_method' => 'manual_transfer',
         'status' => 'pending',
+    ]);
+});
+
+test('free course auto-enrolls without payment', function () {
+    $user = User::factory()->create();
+    $course = Course::factory()->published()->create(['price' => 0]);
+
+    $this->actingAs($user)
+        ->withoutMiddleware([ValidateCsrfToken::class])
+        ->post(route('checkout.store', $course), [
+            'payment_method' => 'xendit',
+        ])
+        ->assertRedirect(route('dashboard'))
+        ->assertSessionHas('success');
+
+    $this->assertDatabaseHas('course_orders', [
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => 'paid',
+        'payment_method' => 'free',
+        'amount' => 0,
+    ]);
+});
+
+test('pay page auto-completes zero-amount pending order', function () {
+    $user = User::factory()->create();
+    $course = Course::factory()->published()->create(['price' => 0]);
+
+    $order = CourseOrder::factory()->create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => 'pending',
+        'amount' => 0,
+        'payment_method' => 'xendit',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('checkout.pay', $order))
+        ->assertRedirect(route('dashboard'))
+        ->assertSessionHas('success');
+
+    $this->assertDatabaseHas('course_orders', [
+        'id' => $order->id,
+        'status' => 'paid',
+        'payment_method' => 'free',
     ]);
 });
 

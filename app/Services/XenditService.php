@@ -10,9 +10,10 @@ use Xendit\Invoice\CustomerObject;
 
 class XenditService
 {
-    public function __construct()
+    public function __construct(protected string $callbackToken = '')
     {
         Configuration::setXenditKey(config('services.xendit.api_key'));
+        $this->callbackToken = config('services.xendit.callback_token', '');
     }
 
     public function createInvoice(CourseOrder $order): array
@@ -56,5 +57,13 @@ class XenditService
         $expectedSignature = hash_hmac('sha256', $payload, config('services.xendit.webhook_token'));
 
         return hash_equals($expectedSignature, $signature);
+    }
+
+    /**
+     * Verify callback token.
+     */
+    public function verifyCallback(string $token): bool
+    {
+        return $token === $this->callbackToken;
     }
 }

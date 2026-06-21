@@ -36,6 +36,21 @@ class CourseOrderController extends Controller
             return redirect()->route('checkout.pay', $existingOrder);
         }
 
+        if ($course->price <= 0) {
+            $order = CourseOrder::create([
+                'user_id' => $request->user()->id,
+                'course_id' => $course->id,
+                'order_number' => $this->generateOrderNumber(),
+                'amount' => 0,
+                'status' => 'paid',
+                'payment_method' => 'free',
+                'paid_at' => now(),
+            ]);
+
+            return redirect()->route('dashboard')
+                ->with('success', 'You have been enrolled in this free course!');
+        }
+
         $order = CourseOrder::create([
             'user_id' => $request->user()->id,
             'course_id' => $course->id,
@@ -57,6 +72,17 @@ class CourseOrderController extends Controller
         if ($order->status === 'paid') {
             return redirect()->route('dashboard')
                 ->with('info', 'This course is already paid.');
+        }
+
+        if ($order->amount <= 0) {
+            $order->update([
+                'status' => 'paid',
+                'payment_method' => 'free',
+                'paid_at' => now(),
+            ]);
+
+            return redirect()->route('dashboard')
+                ->with('success', 'You have been enrolled in this free course!');
         }
 
         if ($order->payment_method === 'xendit' && ! $order->xendit_invoice_id) {
