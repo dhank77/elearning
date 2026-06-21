@@ -123,7 +123,7 @@
                                                 <span class="text-label-md font-bold text-primary">Gratis</span>
                                             @endif
                                         </div>
-                                        <p class="mb-4 text-label-md text-on-surface-variant">{{ Str::limit($recommended->description, 80) }}</p>
+                                        <p class="mb-4 text-label-md text-on-surface-variant">{!! Str::limit($recommended->description, 80) !!}</p>
                                         <div class="flex items-center justify-between gap-4">
                                             <span class="font-bold text-primary">{{ $recommended->teacher->name }}</span>
                                             <a href="{{ route('courses.show', $recommended) }}" class="group flex items-center gap-1 text-label-md font-bold text-primary">
