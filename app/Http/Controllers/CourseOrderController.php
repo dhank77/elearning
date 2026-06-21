@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\CourseOrder;
 use App\Services\XenditService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CourseOrderController extends Controller
@@ -112,8 +113,27 @@ class CourseOrderController extends Controller
                 ->with('success', 'Payment confirmed! The course has been added to "My Courses".');
         }
 
+        if ($order->payment_method === 'xendit' && $order->xendit_invoice_id) {
+            try {
+                $invoice = $this->xenditService->getInvoice($order->xendit_invoice_id);
+                $invoiceStatus = (string) $invoice->getStatus();
+
+                if ($invoiceStatus === 'PAID' || $invoiceStatus === 'SETTLED') {
+                    $order->update([
+                        'status' => 'paid',
+                        'paid_at' => now(),
+                    ]);
+
+                    return redirect()->route('dashboard')
+                        ->with('success', 'Payment confirmed! The course has been added to "My Courses".');
+                }
+            } catch (\Exception $e) {
+                Log::error('Failed to get Xendit invoice status: '.$e->getMessage());
+            }
+        }
+
         if ($order->payment_method === 'xendit') {
-            return redirect()->route('checkout.pay', $order)
+            return redirect()->route('dashboard')
                 ->with('info', 'Your payment is being processed. Please wait for confirmation.');
         }
 

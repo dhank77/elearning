@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Services\XenditService;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Xendit\Invoice\Invoice;
+use Xendit\Invoice\InvoiceStatus;
 
 uses(LazilyRefreshDatabase::class);
 
@@ -16,7 +18,7 @@ beforeEach(function () {
 });
 
 test('xendit service verifies callback token', function () {
-    $service = new XenditService();
+    $service = new XenditService;
 
     expect($service->verifyCallback('xnd_test_callback_token'))->toBeTrue();
     expect($service->verifyCallback('wrong-token'))->toBeFalse();
@@ -173,7 +175,7 @@ test('success redirects to dashboard when already paid', function () {
         ->assertSessionHas('success');
 });
 
-test('success for pending xendit order redirects back to pay with info', function () {
+test('success for pending xendit order redirects to dashboard with info when xendit api returns pending', function () {
     $user = User::factory()->create();
     $course = Course::factory()->published()->create();
 
@@ -182,16 +184,62 @@ test('success for pending xendit order redirects back to pay with info', functio
         'course_id' => $course->id,
         'status' => 'pending',
         'payment_method' => 'xendit',
+        'xendit_invoice_id' => 'xnd_123',
     ]);
+
+    $invoiceMock = Mockery::mock(Invoice::class);
+    $invoiceStatusMock = Mockery::mock(InvoiceStatus::class);
+    $invoiceStatusMock->shouldReceive('__toString')->andReturn('PENDING');
+    $invoiceMock->shouldReceive('getStatus')->andReturn($invoiceStatusMock);
+
+    $this->mock(XenditService::class)
+        ->shouldReceive('getInvoice')
+        ->with('xnd_123')
+        ->once()
+        ->andReturn($invoiceMock);
 
     $this->actingAs($user)
         ->get(route('checkout.success', $order))
-        ->assertRedirect(route('checkout.pay', $order))
+        ->assertRedirect(route('dashboard'))
         ->assertSessionHas('info');
 
     $this->assertDatabaseHas('course_orders', [
         'id' => $order->id,
         'status' => 'pending',
+    ]);
+});
+
+test('success for pending xendit order updates status and redirects to dashboard with success when xendit api returns paid', function () {
+    $user = User::factory()->create();
+    $course = Course::factory()->published()->create();
+
+    $order = CourseOrder::factory()->create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => 'pending',
+        'payment_method' => 'xendit',
+        'xendit_invoice_id' => 'xnd_123',
+    ]);
+
+    $invoiceMock = Mockery::mock(Invoice::class);
+    $invoiceStatusMock = Mockery::mock(InvoiceStatus::class);
+    $invoiceStatusMock->shouldReceive('__toString')->andReturn('PAID');
+    $invoiceMock->shouldReceive('getStatus')->andReturn($invoiceStatusMock);
+
+    $this->mock(XenditService::class)
+        ->shouldReceive('getInvoice')
+        ->with('xnd_123')
+        ->once()
+        ->andReturn($invoiceMock);
+
+    $this->actingAs($user)
+        ->get(route('checkout.success', $order))
+        ->assertRedirect(route('dashboard'))
+        ->assertSessionHas('success');
+
+    $this->assertDatabaseHas('course_orders', [
+        'id' => $order->id,
+        'status' => 'paid',
     ]);
 });
 
@@ -213,16 +261,10 @@ test('webhook marks order as paid', function () {
         'amount' => 100000,
     ];
 
-    $payloadJson = json_encode($payload);
-
     $response = $this->withoutMiddleware([ValidateCsrfToken::class])
-        ->withHeaders([
-            'Content-Type' => 'application/json',
+        ->postJson(route('webhooks.xendit'), $payload, [
             'x-callback-token' => config('services.xendit.callback_token'),
-        ])->call('POST', route('webhooks.xendit'), [], [], [], [], $payloadJson);
-
-    // Debug: uncomment to see response content
-    // dump($response->getContent());
+        ]);
 
     $response->assertOk();
 
@@ -233,17 +275,17 @@ test('webhook marks order as paid', function () {
 });
 
 test('webhook rejects invalid signature', function () {
-    $payload = json_encode([
+    $payload = [
         'external_id' => 'ORD-TEST123',
         'status' => 'SETTLED',
-    ]);
+    ];
 
-    $this->withoutMiddleware([ValidateCsrfToken::class])
-        ->withHeaders([
-            'Content-Type' => 'application/json',
+    $response = $this->withoutMiddleware([ValidateCsrfToken::class])
+        ->postJson(route('webhooks.xendit'), $payload, [
             'x-callback-token' => 'invalid_callback_token',
-        ])->call('POST', route('webhooks.xendit'), [], [], [], [], $payload)
-        ->assertForbidden()
+        ]);
+
+    $response->assertForbidden()
         ->assertJson([
             'success' => false,
             'message' => 'Invalid callback token',
@@ -251,17 +293,17 @@ test('webhook rejects invalid signature', function () {
 });
 
 test('webhook ignores non settled payment', function () {
-    $payload = json_encode([
+    $payload = [
         'external_id' => 'ORD-TEST123',
         'status' => 'PENDING',
-    ]);
+    ];
 
-    $this->withoutMiddleware([ValidateCsrfToken::class])
-        ->withHeaders([
-            'Content-Type' => 'application/json',
+    $response = $this->withoutMiddleware([ValidateCsrfToken::class])
+        ->postJson(route('webhooks.xendit'), $payload, [
             'x-callback-token' => config('services.xendit.callback_token'),
-        ])->call('POST', route('webhooks.xendit'), [], [], [], [], $payload)
-        ->assertOk();
+        ]);
+
+    $response->assertOk();
 });
 
 test('manual transfer payment method still works', function () {

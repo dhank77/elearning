@@ -6,6 +6,7 @@ use App\Models\CourseOrder;
 use Xendit\Configuration;
 use Xendit\Invoice\CreateInvoiceRequest;
 use Xendit\Invoice\CustomerObject;
+use Xendit\Invoice\Invoice;
 use Xendit\Invoice\InvoiceApi;
 
 class XenditService
@@ -65,5 +66,15 @@ class XenditService
     public function verifyCallback(string $token): bool
     {
         return $token === $this->callbackToken;
+    }
+
+    /**
+     * Get invoice status from Xendit API.
+     */
+    public function getInvoice(string $invoiceId): Invoice
+    {
+        $apiInstance = new InvoiceApi;
+
+        return $apiInstance->getInvoiceById($invoiceId);
     }
 }
