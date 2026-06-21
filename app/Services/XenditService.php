@@ -4,16 +4,16 @@ namespace App\Services;
 
 use App\Models\CourseOrder;
 use Xendit\Configuration;
-use Xendit\Invoice\InvoiceApi;
 use Xendit\Invoice\CreateInvoiceRequest;
 use Xendit\Invoice\CustomerObject;
+use Xendit\Invoice\InvoiceApi;
 
 class XenditService
 {
     public function __construct(protected string $callbackToken = '')
     {
         Configuration::setXenditKey(config('services.xendit.api_key'));
-        $this->callbackToken = config('services.xendit.callback_token', '');
+        $this->callbackToken = config('services.xendit.callback_token') ?? '';
     }
 
     public function createInvoice(CourseOrder $order): array
@@ -43,7 +43,7 @@ class XenditService
             ],
         ]);
 
-        $apiInstance = new InvoiceApi();
+        $apiInstance = new InvoiceApi;
         $invoice = $apiInstance->createInvoice($createInvoiceRequest);
 
         return [
