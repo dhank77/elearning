@@ -15,7 +15,9 @@ test('login requires captcha validation', function () {
             'captcha' => 'invalid-captcha',
         ]);
 
-    $response->assertSessionHasErrors('captcha');
+    $response->assertSessionHasErrors([
+        'captcha' => 'Kode verifikasi tidak sesuai.',
+    ]);
 });
 
 test('login succeeds with valid captcha', function () {
@@ -48,7 +50,9 @@ test('register requires captcha validation', function () {
             'captcha' => 'invalid-captcha',
         ]);
 
-    $response->assertSessionHasErrors('captcha');
+    $response->assertSessionHasErrors([
+        'captcha' => 'Kode verifikasi tidak sesuai.',
+    ]);
 });
 
 test('register succeeds with valid captcha', function () {
