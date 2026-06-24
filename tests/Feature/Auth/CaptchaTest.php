@@ -46,6 +46,7 @@ test('register requires captcha validation', function () {
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
+            'role' => 'user',
             'terms' => 'on',
             'captcha' => 'invalid-captcha',
         ]);
@@ -55,7 +56,7 @@ test('register requires captcha validation', function () {
     ]);
 });
 
-test('register succeeds with valid captcha', function () {
+test('register requires role validation', function () {
     Captcha::shouldReceive('check')->once()->andReturn(true);
 
     $response = $this->withoutMiddleware([PreventRequestForgery::class])
@@ -68,8 +69,49 @@ test('register succeeds with valid captcha', function () {
             'captcha' => '123',
         ]);
 
+    $response->assertSessionHasErrors([
+        'role' => 'Isian role wajib diisi.',
+    ]);
+});
+
+test('register succeeds as student (user) with valid captcha', function () {
+    Captcha::shouldReceive('check')->once()->andReturn(true);
+
+    $response = $this->withoutMiddleware([PreventRequestForgery::class])
+        ->post(route('register'), [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'role' => 'user',
+            'terms' => 'on',
+            'captcha' => '123',
+        ]);
+
     $response->assertRedirect(route('dashboard'));
     $this->assertDatabaseHas('users', [
         'email' => 'test@example.com',
+        'role' => 'user',
+    ]);
+});
+
+test('register succeeds as teacher with valid captcha', function () {
+    Captcha::shouldReceive('check')->once()->andReturn(true);
+
+    $response = $this->withoutMiddleware([PreventRequestForgery::class])
+        ->post(route('register'), [
+            'name' => 'Test Teacher',
+            'email' => 'teacher@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+            'role' => 'teacher',
+            'terms' => 'on',
+            'captcha' => '123',
+        ]);
+
+    $response->assertRedirect(route('dashboard'));
+    $this->assertDatabaseHas('users', [
+        'email' => 'teacher@example.com',
+        'role' => 'teacher',
     ]);
 });

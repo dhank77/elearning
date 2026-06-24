@@ -20,7 +20,7 @@ class DashboardController extends Controller
         if ($user->role === 'teacher') {
             $courses = $user->courses()->withCount('modules')->orderByDesc('created_at')->get();
             $activeCoursesCount = $user->courses()->where('status', 'published')->count();
-            $totalStudentsCount = User::where('role', 'student')->count();
+            $totalStudentsCount = User::where('role', 'user')->count();
             $pendingAssignmentsCount = 0;
 
             return view('teacher-dashboard', compact(

@@ -58,6 +58,35 @@
                             @csrf
 
                             <div class="flex flex-col gap-2">
+                                <label class="ml-1 font-label-md text-label-md text-on-surface">Daftar Sebagai</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <label class="flex cursor-pointer items-center justify-between rounded-xl border border-outline bg-surface p-4 transition-all hover:border-primary has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary">
+                                        <div class="flex items-center gap-3">
+                                            <span class="material-symbols-outlined text-primary">school</span>
+                                            <div class="text-left">
+                                                <p class="font-label-md text-label-md font-bold text-on-surface">Siswa</p>
+                                                <p class="text-[11px] text-on-surface-variant">Belajar materi & kelas</p>
+                                            </div>
+                                        </div>
+                                        <input type="radio" name="role" value="user" class="h-4 w-4 text-primary focus:ring-primary" {{ old('role', 'user') === 'user' ? 'checked' : '' }}>
+                                    </label>
+                                    <label class="flex cursor-pointer items-center justify-between rounded-xl border border-outline bg-surface p-4 transition-all hover:border-primary has-[:checked]:border-primary has-[:checked]:ring-1 has-[:checked]:ring-primary">
+                                        <div class="flex items-center gap-3">
+                                            <span class="material-symbols-outlined text-secondary">co_present</span>
+                                            <div class="text-left">
+                                                <p class="font-label-md text-label-md font-bold text-on-surface">Pengajar</p>
+                                                <p class="text-[11px] text-on-surface-variant">Buat & kelola kelas</p>
+                                            </div>
+                                        </div>
+                                        <input type="radio" name="role" value="teacher" class="h-4 w-4 text-primary focus:ring-primary" {{ old('role') === 'teacher' ? 'checked' : '' }}>
+                                    </label>
+                                </div>
+                                @error('role')
+                                    <p class="ml-1 text-sm text-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="flex flex-col gap-2">
                                 <label class="ml-1 font-label-md text-label-md text-on-surface" for="name">Full Name</label>
                                 <input id="name" name="name" type="text" value="{{ old('name') }}" placeholder="John Doe" required autofocus autocomplete="name" class="w-full rounded-xl border border-outline-variant bg-surface px-4 py-3 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary">
                                 @error('name')
@@ -121,7 +150,7 @@
 
                         <div class="mt-8 border-t border-outline-variant pt-8">
                             <p class="mb-4 text-center text-sm text-on-surface-variant">Or sign up with</p>
-                            <a href="{{ route('auth.google') }}" class="flex w-full items-center justify-center gap-2 rounded-xl border border-outline-variant py-3 transition-colors hover:bg-surface-container-low">
+                            <a id="google-signup-link" href="{{ route('auth.google') }}" class="flex w-full items-center justify-center gap-2 rounded-xl border border-outline-variant py-3 transition-colors hover:bg-surface-container-low">
                                 <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
                                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
                                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.64l-3.57-2.77c-1.01.69-2.39 1.1-3.71 1.1-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
@@ -149,5 +178,23 @@
                     img.src = '{{ url('captcha/flat') }}?' + Math.random();
                 }
             }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const googleLink = document.getElementById('google-signup-link');
+                const roleInputs = document.querySelectorAll('input[name="role"]');
+                
+                function updateGoogleLink() {
+                    const selectedRole = document.querySelector('input[name="role"]:checked').value;
+                    const baseUrl = "{{ route('auth.google') }}";
+                    googleLink.href = `${baseUrl}?role=${selectedRole}`;
+                }
+                
+                roleInputs.forEach(input => {
+                    input.addEventListener('change', updateGoogleLink);
+                });
+                
+                // Initialize URL
+                updateGoogleLink();
+            });
         </script>
 @endsection

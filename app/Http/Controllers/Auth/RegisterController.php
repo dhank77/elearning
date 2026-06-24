@@ -22,6 +22,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'role' => ['required', 'string', 'in:user,teacher'],
             'captcha' => ['required', 'captcha'],
         ]);
 
@@ -29,7 +30,7 @@ class RegisterController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
-        $user = User::create($request->only('name', 'email', 'password'));
+        $user = User::create($request->only('name', 'email', 'password', 'role'));
 
         Auth::login($user);
 
