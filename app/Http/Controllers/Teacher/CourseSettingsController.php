@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use App\Models\Coupon;
 use App\Models\Course;
 use App\Models\CourseModule;
 use App\Models\Lesson;
@@ -86,6 +87,50 @@ class CourseSettingsController extends Controller
         return redirect()
             ->route('teacher.course-settings', ['course' => $course, 'tab' => 'settings'])
             ->with('success', 'Course settings updated successfully.');
+    }
+
+    public function updatePricing(Request $request, Course $course): RedirectResponse
+    {
+        $this->ensureTeacherOwnsCourse($request, $course);
+
+        $validated = $request->validate([
+            'price' => ['required', 'numeric', 'min:0'],
+            'promo_code' => [
+                'nullable',
+                'string',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $coupon = Coupon::where('code', $value)->first();
+                    if (! $coupon) {
+                        $fail('Kode promo tidak valid.');
+
+                        return;
+                    }
+                    if (! $coupon->is_active) {
+                        $fail('Kode promo sudah tidak aktif.');
+
+                        return;
+                    }
+                    if ($coupon->expires_at && $coupon->expires_at->isPast()) {
+                        $fail('Kode promo sudah kedaluwarsa.');
+                    }
+                },
+            ],
+        ]);
+
+        $couponId = null;
+        if (! empty($validated['promo_code'])) {
+            $couponId = Coupon::where('code', $validated['promo_code'])->first()->id;
+        }
+
+        $course->update([
+            'price' => $validated['price'],
+            'coupon_id' => $couponId,
+            'last_saved_at' => now(),
+        ]);
+
+        return redirect()
+            ->route('teacher.course-settings', ['course' => $course, 'tab' => 'pricing'])
+            ->with('success', 'Course pricing updated successfully.');
     }
 
     public function saveDraft(Request $request, Course $course): RedirectResponse

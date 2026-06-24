@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['teacher_id', 'title', 'description', 'cover_image_path', 'status', 'price', 'completion_percentage', 'last_saved_at'])]
+#[Fillable(['teacher_id', 'title', 'description', 'cover_image_path', 'status', 'price', 'coupon_id', 'completion_percentage', 'last_saved_at'])]
 class Course extends Model
 {
     /** @use HasFactory<CourseFactory> */
@@ -18,6 +18,11 @@ class Course extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function coupon(): BelongsTo
+    {
+        return $this->belongsTo(Coupon::class);
     }
 
     public function modules(): HasMany

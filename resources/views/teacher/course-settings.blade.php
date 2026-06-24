@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Clarity Learning - Course Management')
+@section('title', 'Course Management')
 @section('bodyClass', 'min-h-screen overflow-x-hidden bg-background font-body-md text-on-background antialiased')
 
 @push('head')
@@ -18,7 +18,7 @@
 
     <aside class="fixed left-0 top-0 z-50 hidden h-screen w-80 flex-col border-r border-outline-variant/20 bg-surface-container-lowest px-5 py-8 lg:flex">
         <div class="px-2">
-            <h1 class="font-headline-lg text-[30px] font-bold leading-9 text-primary">Clarity Learning</h1>
+            <h1 class="font-headline-lg text-[30px] font-bold leading-9 text-primary">EduMentor</h1>
             <p class="mt-1 text-body-md text-on-surface-variant">Instructor Portal</p>
         </div>
 
@@ -59,7 +59,7 @@
     </aside>
 
     <header class="fixed left-0 right-0 top-0 z-40 flex h-24 items-center bg-background px-margin-mobile lg:left-80 lg:px-10">
-        <a class="font-headline-md text-headline-md text-primary lg:hidden" href="{{ route('dashboard') }}">Clarity Learning</a>
+        <a class="font-headline-md text-headline-md text-primary lg:hidden" href="{{ route('dashboard') }}">EduMentor</a>
 
         <form class="hidden h-16 w-[480px] items-center gap-4 rounded-full bg-surface-container-low px-6 md:flex" method="GET" action="{{ route('teacher.course-settings') }}">
             <span class="material-symbols-outlined text-[30px] text-on-surface-variant">search</span>
@@ -401,10 +401,45 @@
                         </div>
 
                         <div class="tab-panel {{ $activeTab === 'pricing' ? '' : 'hidden' }}" data-tab-panel="pricing">
-                            <div class="p-12 text-center">
-                                <p class="text-[30px] font-bold text-on-surface">Pricing & Coupons</p>
-                                <p class="mt-2 text-body-md text-on-surface-variant">This feature will be available soon.</p>
-                            </div>
+                            <form id="course-pricing-form" method="POST" action="{{ route('teacher.course-settings.pricing.update', $activeCourse) }}">
+                                @csrf
+                                @method('PATCH')
+
+                                <div class="flex flex-col gap-8 rounded-2xl border border-outline-variant bg-surface-container-low p-8 shadow-sm">
+                                    <div>
+                                        <h3 class="text-headline-sm font-bold text-on-surface">Pricing & Coupons</h3>
+                                        <p class="mt-1 text-body-md text-on-surface-variant">Atur harga kursus Anda dan kaitkan kode promo kupon.</p>
+                                    </div>
+
+                                    <div class="grid gap-6 md:grid-cols-2">
+                                        <label class="block">
+                                            <span class="mb-2 block text-label-md font-bold text-on-surface">Harga Kursus (Rp)</span>
+                                            <input class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="price" type="text" id="price-input" value="{{ old('price', (int) $activeCourse->price) }}">
+                                            @error('price')
+                                                <p class="mt-1 text-label-md text-error">{{ $message }}</p>
+                                            @enderror
+                                        </label>
+
+                                        <label class="block">
+                                            <span class="mb-2 block text-label-md font-bold text-on-surface">Kode Promo / Kupon</span>
+                                            <input class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-4 py-3 text-body-md text-on-surface focus:border-primary focus:ring-2 focus:ring-primary/20" name="promo_code" type="text" placeholder="Masukkan kode promo" value="{{ old('promo_code', $activeCourse->coupon?->code) }}">
+                                            @error('promo_code')
+                                                <p class="mt-1 text-label-md text-error">{{ $message }}</p>
+                                            @enderror
+                                            @if ($activeCourse->coupon)
+                                                <p class="mt-1 text-[12px] text-primary">Kupon aktif: diskon {{ (int) $activeCourse->coupon->discount_percentage }}%</p>
+                                            @endif
+                                        </label>
+                                    </div>
+
+                                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-end border-t border-outline-variant/30 pt-6">
+                                        <p class="text-label-md italic text-on-surface">
+                                            Last saved {{ $activeCourse->last_saved_at?->diffForHumans() ?? $activeCourse->updated_at->diffForHumans() }}
+                                        </p>
+                                        <button class="rounded-full bg-primary px-9 py-3.5 text-body-lg font-medium text-on-primary shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5" type="submit">Save Pricing</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
 
                         <div class="tab-panel {{ $activeTab === 'students' ? '' : 'hidden' }}" data-tab-panel="students">
@@ -562,6 +597,36 @@
     const successToast = document.getElementById('success-toast');
     if (successToast) {
         setTimeout(() => { successToast.classList.add('hidden'); }, 3000);
+    }
+
+    // Format Price input with thousands separators
+    const priceInput = document.getElementById('price-input');
+    const coursePricingForm = document.getElementById('course-pricing-form');
+
+    function formatRupiah(value) {
+        if (!value && value !== 0) return '';
+        // Remove all non-digits
+        const num = value.toString().replace(/[^0-9]/g, '');
+        // Add thousands separator
+        return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    if (priceInput) {
+        // Initial format
+        priceInput.value = formatRupiah(priceInput.value);
+
+        priceInput.addEventListener('input', function() {
+            this.value = formatRupiah(this.value);
+        });
+    }
+
+    if (coursePricingForm) {
+        coursePricingForm.addEventListener('submit', function() {
+            if (priceInput) {
+                // Strip dots before submitting so it is saved as an integer
+                priceInput.value = priceInput.value.replace(/[^0-9]/g, '');
+            }
+        });
     }
 </script>
 @endpush

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Coupon;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -258,4 +259,53 @@ test('teachers return to the opened module after deleting lesson content', funct
         ]).'#module-'.$module->id);
 
     expect($module->lessons()->whereKey($lesson)->exists())->toBeFalse();
+});
+
+test('teachers can update course pricing with a valid coupon', function () {
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create([
+        'price' => 0,
+    ]);
+    $coupon = Coupon::create([
+        'code' => 'PROMO50',
+        'discount_percentage' => 50.00,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($teacher)
+        ->patch(route('teacher.course-settings.pricing.update', $course), [
+            'price' => 200000,
+            'promo_code' => 'PROMO50',
+        ])
+        ->assertRedirect(route('teacher.course-settings', ['course' => $course, 'tab' => 'pricing']));
+
+    $course->refresh();
+
+    expect($course->price)->toEqual(200000)
+        ->and($course->coupon_id)->toBe($coupon->id);
+});
+
+test('teachers cannot update course pricing with invalid coupon', function () {
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->create([
+        'price' => 0,
+    ]);
+
+    $this->actingAs($teacher)
+        ->from(route('teacher.course-settings', ['course' => $course, 'tab' => 'pricing']))
+        ->patch(route('teacher.course-settings.pricing.update', $course), [
+            'price' => 200000,
+            'promo_code' => 'INVALIDCODE',
+        ])
+        ->assertRedirect(route('teacher.course-settings', ['course' => $course, 'tab' => 'pricing']))
+        ->assertSessionHasErrors('promo_code');
+
+    $course->refresh();
+
+    expect($course->price)->toEqual(0)
+        ->and($course->coupon_id)->toBeNull();
 });

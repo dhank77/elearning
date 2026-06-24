@@ -50,6 +50,7 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     Route::get('course-settings', [CourseSettingsController::class, 'index'])->name('course-settings');
     Route::post('course-settings', [CourseSettingsController::class, 'store'])->name('course-settings.store');
     Route::patch('course-settings/{course}/settings', [CourseSettingsController::class, 'updateSettings'])->name('course-settings.settings.update');
+    Route::patch('course-settings/{course}/pricing', [CourseSettingsController::class, 'updatePricing'])->name('course-settings.pricing.update');
     Route::patch('course-settings/{course}/draft', [CourseSettingsController::class, 'saveDraft'])->name('course-settings.draft');
     Route::patch('course-settings/{course}/publish', [CourseSettingsController::class, 'publish'])->name('course-settings.publish');
     Route::post('course-settings/{course}/modules', [CourseSettingsController::class, 'storeModule'])->name('course-settings.modules.store');
