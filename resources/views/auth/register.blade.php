@@ -92,6 +92,22 @@
                                 <input id="password_confirmation" name="password_confirmation" type="password" placeholder="••••••••" required autocomplete="new-password" class="w-full rounded-xl border border-outline-variant bg-surface px-4 py-3 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary">
                             </div>
 
+                            <div class="flex flex-col gap-2">
+                                <label class="ml-1 font-label-md text-label-md text-on-surface" for="captcha">Verification Code</label>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex shrink-0 items-center overflow-hidden rounded-xl border border-outline-variant bg-surface-container-low">
+                                        <img src="{!! captcha_src('flat') !!}" alt="captcha" id="captcha-img" class="h-[45px] w-[120px] object-cover">
+                                        <button type="button" onclick="refreshCaptcha()" class="flex h-[45px] w-[45px] items-center justify-center border-l border-outline-variant text-on-surface-variant transition-colors hover:text-primary" aria-label="Refresh Captcha">
+                                            <span class="material-symbols-outlined text-[20px]">refresh</span>
+                                        </button>
+                                    </div>
+                                    <input id="captcha" name="captcha" type="text" required placeholder="3-digit code" class="w-full rounded-xl border border-outline-variant bg-surface px-4 py-3 outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary">
+                                </div>
+                                @error('captcha')
+                                    <p class="ml-1 text-sm text-error">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <label class="flex items-start gap-3 py-2 font-label-md text-label-md text-on-surface-variant" for="terms">
                                 <input id="terms" name="terms" type="checkbox" required class="mt-1 h-5 w-5 cursor-pointer rounded border-outline-variant text-primary focus:ring-primary">
                                 <span>I agree to the <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.</span>
@@ -125,4 +141,13 @@
         </main>
 
         <x-shared.footer variant="band" show-contact />
+
+        <script>
+            function refreshCaptcha() {
+                const img = document.getElementById('captcha-img');
+                if (img) {
+                    img.src = '{{ url('captcha/flat') }}?' + Math.random();
+                }
+            }
+        </script>
 @endsection

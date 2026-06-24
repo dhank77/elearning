@@ -88,6 +88,22 @@
                             @enderror
                         </div>
 
+                        <div class="space-y-2">
+                            <label for="captcha" class="ml-1 block font-label-md text-label-md text-on-surface-variant">Verification Code</label>
+                            <div class="flex items-center gap-4">
+                                <div class="flex shrink-0 items-center overflow-hidden rounded-xl border border-outline-variant bg-surface-container-low">
+                                    <img src="{!! captcha_src('flat') !!}" alt="captcha" id="captcha-img" class="h-[45px] w-[120px] object-cover">
+                                    <button type="button" onclick="refreshCaptcha()" class="flex h-[45px] w-[45px] items-center justify-center border-l border-outline-variant text-outline transition-colors hover:text-primary" aria-label="Refresh Captcha">
+                                        <span class="material-symbols-outlined text-[20px]">refresh</span>
+                                    </button>
+                                </div>
+                                <input id="captcha" name="captcha" type="text" required placeholder="3-digit code" class="w-full rounded-xl border border-outline-variant bg-surface py-3 px-4 outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20">
+                            </div>
+                            @error('captcha')
+                                <p class="ml-1 text-sm text-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <div class="flex items-center justify-between gap-4 py-1">
                             <label for="remember" class="group flex cursor-pointer items-center gap-2">
                                 <span class="relative flex items-center">
@@ -113,4 +129,13 @@
         </main>
 
         <x-shared.footer variant="contained" />
+
+        <script>
+            function refreshCaptcha() {
+                const img = document.getElementById('captcha-img');
+                if (img) {
+                    img.src = '{{ url('captcha/flat') }}?' + Math.random();
+                }
+            }
+        </script>
 @endsection

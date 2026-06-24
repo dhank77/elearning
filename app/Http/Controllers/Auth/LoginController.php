@@ -21,6 +21,7 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'captcha' => ['required', 'captcha'],
         ]);
 
         if ($validator->fails()) {
