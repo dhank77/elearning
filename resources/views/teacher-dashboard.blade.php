@@ -23,7 +23,7 @@
                     <span class="material-symbols-outlined">school</span>
                     <span class="font-body-md text-body-md">My Courses</span>
                 </a>
-                <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-on-surface-variant transition-colors hover:bg-surface-container" href="#">
+                <a class="flex items-center gap-3 rounded-lg px-4 py-3 text-on-surface-variant transition-colors hover:bg-surface-container" href="{{ route('teacher.students') }}">
                     <span class="material-symbols-outlined">group</span>
                     <span class="font-body-md text-body-md">Students</span>
                 </a>

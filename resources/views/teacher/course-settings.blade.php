@@ -31,7 +31,7 @@
                 <span class="material-symbols-outlined text-[28px]">school</span>
                 <span class="text-body-lg">My Courses</span>
             </a>
-            <a class="flex items-center gap-4 rounded-lg px-5 py-3 text-[22px] text-on-surface-variant transition-colors hover:bg-surface-container" href="#">
+            <a class="flex items-center gap-4 rounded-lg px-5 py-3 text-[22px] text-on-surface-variant transition-colors hover:bg-surface-container" href="{{ route('teacher.students') }}">
                 <span class="material-symbols-outlined text-[28px]">group</span>
                 <span class="text-body-lg">Students</span>
             </a>
@@ -187,8 +187,8 @@
                 </aside>
 
                 <section class="rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm">
-                    <div class="grid grid-cols-4 overflow-hidden rounded-t-xl border-b border-outline-variant text-center">
-                        @foreach (['curriculum' => 'Curriculum', 'settings' => 'Course Settings', 'pricing' => 'Pricing & Coupons', 'students' => 'Students List'] as $tabKey => $tabLabel)
+                    <div class="grid grid-cols-3 overflow-hidden rounded-t-xl border-b border-outline-variant text-center">
+                        @foreach (['curriculum' => 'Curriculum', 'settings' => 'Course Settings', 'pricing' => 'Pricing & Coupons'] as $tabKey => $tabLabel)
                             <button class="tab-btn {{ $activeTab === $tabKey ? 'border-b-2 border-primary font-bold text-primary' : 'text-on-surface' }} px-4 py-5 text-body-md transition-colors hover:text-primary" data-tab="{{ $tabKey }}" type="button">{{ $tabLabel }}</button>
                         @endforeach
                     </div>
@@ -440,13 +440,6 @@
                                     </div>
                                 </div>
                             </form>
-                        </div>
-
-                        <div class="tab-panel {{ $activeTab === 'students' ? '' : 'hidden' }}" data-tab-panel="students">
-                            <div class="p-12 text-center">
-                                <p class="text-[30px] font-bold text-on-surface">Students List</p>
-                                <p class="mt-2 text-body-md text-on-surface-variant">This feature will be available soon.</p>
-                            </div>
                         </div>
                     @else
                         <div class="p-12 text-center">

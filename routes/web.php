@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\StudentCourseController;
 use App\Http\Controllers\Teacher\CourseSettingsController;
+use App\Http\Controllers\Teacher\StudentController;
 use App\Http\Controllers\Webhook\XenditWebhookController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,7 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     Route::post('course-settings/modules/{module}/lessons', [CourseSettingsController::class, 'storeLesson'])->name('course-settings.lessons.store');
     Route::patch('course-settings/lessons/{lesson}', [CourseSettingsController::class, 'updateLesson'])->name('course-settings.lessons.update');
     Route::delete('course-settings/lessons/{lesson}', [CourseSettingsController::class, 'destroyLesson'])->name('course-settings.lessons.destroy');
+    Route::get('students', [StudentController::class, 'index'])->name('students');
 });
 
 Route::middleware('guest')->group(function () {
