@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\LoginController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\CourseOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\StudentCourseController;
+use App\Http\Controllers\StudentOrderController;
 use App\Http\Controllers\Teacher\CourseSettingsController;
 use App\Http\Controllers\Teacher\StudentController;
 use App\Http\Controllers\Webhook\XenditWebhookController;
@@ -34,6 +36,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('my-courses', [StudentCourseController::class, 'index'])->name('student.courses');
+    Route::get('my-orders', [StudentOrderController::class, 'index'])->name('student.orders.index');
     Route::get('learn/{course}/{lesson?}', [StudentCourseController::class, 'show'])->name('student.learn');
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -45,6 +48,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('coupons', CouponController::class)->except(['show']);
     Route::get('users', [UserController::class, 'index'])->name('users.index');
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
 });
 
 Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->group(function () {

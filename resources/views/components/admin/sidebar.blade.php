@@ -19,6 +19,7 @@
                 ['key' => 'categories', 'label' => 'Kategori', 'icon' => 'database', 'href' => route('categories.index')],
                 ['key' => 'coupons', 'label' => 'Kupon', 'icon' => 'sell', 'href' => route('coupons.index')],
                 ['key' => 'users', 'label' => 'Users', 'icon' => 'group', 'href' => route('users.index')],
+                ['key' => 'orders', 'label' => 'Orders', 'icon' => 'shopping_cart', 'href' => route('orders.index')],
                 ['key' => 'courses', 'label' => 'Courses', 'icon' => 'school', 'href' => '#'],
                 ['key' => 'settings', 'label' => 'Settings', 'icon' => 'settings', 'href' => '#'],
             ];
@@ -26,6 +27,7 @@
             $navItems = [
                 ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'href' => route('dashboard')],
                 ['key' => 'courses', 'label' => 'Kursus Saya', 'icon' => 'school', 'href' => route('student.courses')],
+                ['key' => 'orders', 'label' => 'Riwayat Order', 'icon' => 'receipt', 'href' => route('student.orders.index')],
                 ['key' => 'learning', 'label' => 'Pembelajaran', 'icon' => 'menu_book', 'href' => '#'],
                 ['key' => 'assignments', 'label' => 'Tugas', 'icon' => 'assignment', 'href' => '#'],
                 ['key' => 'grades', 'label' => 'Nilai', 'icon' => 'grade', 'href' => '#'],
