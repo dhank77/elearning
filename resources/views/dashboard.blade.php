@@ -106,8 +106,8 @@
 
                             <div class="custom-scrollbar flex gap-6 overflow-x-auto pb-4">
                                 @foreach($recommendedCourses as $recommended)
-                                <article class="bento-card group flex min-w-[280px] flex-col overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-lowest">
-                                    <div class="relative h-40 shrink-0 w-full overflow-hidden bg-surface-container-high">
+                                <article class="bento-card group flex w-[300px] shrink-0 flex-col overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-lowest">
+                                    <div class="relative h-40 shrink-0 w-full overflow-hidden bg-surface-container-high border-b border-outline-variant">
                                         @if($recommended->cover_image_path)
                                             <img alt="{{ $recommended->title }}" class="h-full w-full object-cover" src="{{ asset('storage/' . $recommended->cover_image_path) }}">
                                         @else
