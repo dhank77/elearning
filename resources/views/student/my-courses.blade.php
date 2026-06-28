@@ -4,23 +4,8 @@
 @section('bodyClass', 'overflow-x-hidden bg-background font-body-md text-on-background antialiased')
 
 @section('body')
-        @php
-            $studentNavItems = [
-                ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'href' => route('dashboard')],
-                ['key' => 'courses', 'label' => 'Kursus Saya', 'icon' => 'school', 'href' => route('student.courses')],
-                ['key' => 'learning', 'label' => 'Pembelajaran', 'icon' => 'menu_book', 'href' => '#'],
-                ['key' => 'assignments', 'label' => 'Tugas', 'icon' => 'assignment', 'href' => '#'],
-                ['key' => 'grades', 'label' => 'Nilai', 'icon' => 'grade', 'href' => '#'],
-                ['key' => 'certificates', 'label' => 'Sertifikat', 'icon' => 'workspace_premium', 'href' => '#'],
-                ['key' => 'profile', 'label' => 'Profil', 'icon' => 'person', 'href' => route('profile.edit')],
-            ];
-        @endphp
-
         <x-admin.sidebar
             active="courses"
-            :nav-items="$studentNavItems"
-            portal-label="Student Portal"
-            user-role-label="Student"
             action-label="Lanjut Belajar"
             action-icon="play_circle"
         />

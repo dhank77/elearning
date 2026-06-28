@@ -3,19 +3,37 @@
     'actionLabel' => null,
     'actionIcon' => null,
     'navItems' => null,
-    'portalLabel' => 'Admin Console',
-    'userRoleLabel' => 'Administrator',
+    'portalLabel' => null,
+    'userRoleLabel' => null,
 ])
 
 @php
-    $navItems ??= [
-        ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'href' => route('dashboard')],
-        ['key' => 'categories', 'label' => 'Kategori', 'icon' => 'database', 'href' => route('categories.index')],
-        ['key' => 'coupons', 'label' => 'Kupon', 'icon' => 'sell', 'href' => route('coupons.index')],
-        ['key' => 'users', 'label' => 'Users', 'icon' => 'group', 'href' => route('users.index')],
-        ['key' => 'courses', 'label' => 'Courses', 'icon' => 'school', 'href' => '#'],
-        ['key' => 'settings', 'label' => 'Settings', 'icon' => 'settings', 'href' => '#'],
-    ];
+    $role = auth()->user()?->role;
+    $portalLabel ??= ($role === 'admin' ? 'Admin Console' : 'Student Portal');
+    $userRoleLabel ??= ($role === 'admin' ? 'Administrator' : 'Student');
+
+    if (!isset($navItems)) {
+        if ($role === 'admin') {
+            $navItems = [
+                ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'href' => route('dashboard')],
+                ['key' => 'categories', 'label' => 'Kategori', 'icon' => 'database', 'href' => route('categories.index')],
+                ['key' => 'coupons', 'label' => 'Kupon', 'icon' => 'sell', 'href' => route('coupons.index')],
+                ['key' => 'users', 'label' => 'Users', 'icon' => 'group', 'href' => route('users.index')],
+                ['key' => 'courses', 'label' => 'Courses', 'icon' => 'school', 'href' => '#'],
+                ['key' => 'settings', 'label' => 'Settings', 'icon' => 'settings', 'href' => '#'],
+            ];
+        } else {
+            $navItems = [
+                ['key' => 'dashboard', 'label' => 'Dashboard', 'icon' => 'dashboard', 'href' => route('dashboard')],
+                ['key' => 'courses', 'label' => 'Kursus Saya', 'icon' => 'school', 'href' => route('student.courses')],
+                ['key' => 'learning', 'label' => 'Pembelajaran', 'icon' => 'menu_book', 'href' => '#'],
+                ['key' => 'assignments', 'label' => 'Tugas', 'icon' => 'assignment', 'href' => '#'],
+                ['key' => 'grades', 'label' => 'Nilai', 'icon' => 'grade', 'href' => '#'],
+                ['key' => 'certificates', 'label' => 'Sertifikat', 'icon' => 'workspace_premium', 'href' => '#'],
+                ['key' => 'profile', 'label' => 'Profil', 'icon' => 'person', 'href' => route('profile.edit')],
+            ];
+        }
+    }
 @endphp
 
 <aside class="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r border-outline-variant bg-surface p-base lg:flex">

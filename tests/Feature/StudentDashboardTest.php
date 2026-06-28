@@ -5,6 +5,9 @@ use App\Models\CourseModule;
 use App\Models\CourseOrder;
 use App\Models\Lesson;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 it('shows student dashboard with enrolled courses from paid orders', function () {
     $teacher = User::factory()->create(['role' => 'teacher']);
