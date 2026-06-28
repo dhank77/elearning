@@ -351,6 +351,21 @@ class CourseSettingsController extends Controller
             ->with('success', 'Content removed successfully.');
     }
 
+    public function destroy(Request $request, Course $course): RedirectResponse
+    {
+        $this->ensureTeacherOwnsCourse($request, $course);
+
+        if ($course->cover_image_path) {
+            Storage::disk('public')->delete($course->cover_image_path);
+        }
+
+        $course->delete();
+
+        return redirect()
+            ->route('teacher.course-settings')
+            ->with('success', 'Course deleted successfully.');
+    }
+
     private function ensureTeacherOwnsCourse(Request $request, Course $course): void
     {
         abort_if($course->teacher_id !== $request->user()->id, 403);

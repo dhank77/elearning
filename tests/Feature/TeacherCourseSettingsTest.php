@@ -309,3 +309,47 @@ test('teachers cannot update course pricing with invalid coupon', function () {
     expect($course->price)->toEqual(0)
         ->and($course->coupon_id)->toBeNull();
 });
+
+test('teachers can delete their courses and clean up cover image', function () {
+    Storage::fake('public');
+
+    $teacher = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+
+    $coverPath = 'course-covers/fake-cover.png';
+    Storage::disk('public')->put($coverPath, 'dummy contents');
+
+    $course = Course::factory()->for($teacher, 'teacher')->create([
+        'cover_image_path' => $coverPath,
+    ]);
+
+    $this->actingAs($teacher)
+        ->delete(route('teacher.course-settings.destroy', $course))
+        ->assertRedirect(route('teacher.course-settings'));
+
+    $this->assertDatabaseMissing('courses', [
+        'id' => $course->id,
+    ]);
+
+    Storage::disk('public')->assertMissing($coverPath);
+});
+
+test('teachers cannot delete other teachers courses', function () {
+    $teacherOne = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+    $teacherTwo = User::factory()->create([
+        'role' => 'teacher',
+    ]);
+
+    $course = Course::factory()->for($teacherTwo, 'teacher')->create();
+
+    $this->actingAs($teacherOne)
+        ->delete(route('teacher.course-settings.destroy', $course))
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('courses', [
+        'id' => $course->id,
+    ]);
+});

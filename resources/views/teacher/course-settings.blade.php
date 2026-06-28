@@ -70,7 +70,21 @@
                                     @else
                                         <span class="{{ $course->status === 'published' ? 'bg-secondary-fixed-dim text-on-secondary-fixed' : 'bg-surface-container text-on-surface' }} rounded px-3 py-1 text-[12px] font-bold uppercase">{{ $course->status }}</span>
                                     @endif
-                                    <span class="{{ $isActive ? 'text-primary' : 'text-outline' }} material-symbols-outlined text-[22px]">more_vert</span>
+                                    <div class="relative z-10">
+                                        <button type="button" class="course-menu-btn flex h-8 w-8 items-center justify-center rounded-full hover:bg-surface-container transition-colors" data-course-id="{{ $course->id }}">
+                                            <span class="{{ $isActive ? 'text-primary' : 'text-outline' }} material-symbols-outlined text-[22px]">more_vert</span>
+                                        </button>
+                                        <div id="course-menu-{{ $course->id }}" class="course-menu-dropdown absolute right-0 mt-1 hidden w-48 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-lg z-20 overflow-hidden">
+                                            <form method="POST" action="{{ route('teacher.course-settings.destroy', $course) }}" class="js-confirm-delete" data-confirm-title="Hapus Kursus?" data-confirm-text="Apakah Anda yakin ingin menghapus kursus '{{ $course->title }}'? Semua modul, materi, dan data terkait akan dihapus secara permanen." data-confirm-button="Hapus Kursus">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="w-full text-left px-4 py-3 text-body-md text-error hover:bg-error-container hover:text-on-error-container flex items-center gap-2 transition-colors">
+                                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                                    <span>Hapus Kursus</span>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <h4 class="{{ $isActive ? 'text-primary' : 'text-on-surface' }} break-words text-body-lg font-semibold sm:text-[22px] sm:leading-7">{{ $course->title }}</h4>
@@ -487,7 +501,7 @@
                 text: this.dataset.confirmText ?? 'Tindakan ini tidak dapat dibatalkan.',
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Hapus Konten',
+                confirmButtonText: this.dataset.confirmButton ?? 'Hapus Konten',
                 cancelButtonText: 'Batal',
                 reverseButtons: true,
                 buttonsStyling: false,
@@ -502,6 +516,37 @@
                     this.submit();
                 }
             });
+        });
+    });
+
+    // Course dropdown toggle logic
+    document.querySelectorAll('.course-menu-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const courseId = this.dataset.courseId;
+            const dropdown = document.getElementById('course-menu-' + courseId);
+
+            document.querySelectorAll('.course-menu-dropdown').forEach(d => {
+                if (d !== dropdown) {
+                    d.classList.add('hidden');
+                }
+            });
+
+            dropdown.classList.toggle('hidden');
+        });
+    });
+
+    document.querySelectorAll('.course-menu-dropdown').forEach(dropdown => {
+        dropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.course-menu-dropdown').forEach(d => {
+            d.classList.add('hidden');
         });
     });
 

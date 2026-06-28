@@ -55,6 +55,7 @@ Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->gro
     Route::resource('coupons', CouponController::class)->except(['show']);
     Route::get('course-settings', [CourseSettingsController::class, 'index'])->name('course-settings');
     Route::post('course-settings', [CourseSettingsController::class, 'store'])->name('course-settings.store');
+    Route::delete('course-settings/{course}', [CourseSettingsController::class, 'destroy'])->name('course-settings.destroy');
     Route::patch('course-settings/{course}/settings', [CourseSettingsController::class, 'updateSettings'])->name('course-settings.settings.update');
     Route::patch('course-settings/{course}/pricing', [CourseSettingsController::class, 'updatePricing'])->name('course-settings.pricing.update');
     Route::patch('course-settings/{course}/draft', [CourseSettingsController::class, 'saveDraft'])->name('course-settings.draft');
