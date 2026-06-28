@@ -6,6 +6,21 @@
         @endisset
 
         <div>
+            <label for="course_id" class="mb-2 block font-label-md text-label-md font-bold text-on-surface">Pilih Kursus</label>
+            <select id="course_id" name="course_id" class="w-full rounded-lg border border-outline-variant bg-white px-4 py-3 font-body-md text-body-md text-on-surface transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                <option value="">-- Pilih Kursus yang Ingin Diberi Kupon --</option>
+                @foreach ($courses as $course)
+                    <option value="{{ $course->id }}" {{ old('course_id', $coupon?->courses->first()?->id) == $course->id ? 'selected' : '' }}>
+                        {{ $course->title }}
+                    </option>
+                @endforeach
+            </select>
+            @error('course_id')
+                <p class="mt-2 font-label-md text-label-md text-error">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
             <label for="code" class="mb-2 block font-label-md text-label-md font-bold text-on-surface">Kode Kupon</label>
             <input id="code" type="text" name="code" value="{{ old('code', $coupon?->code) }}" class="w-full rounded-lg border border-outline-variant bg-white px-4 py-3 font-body-md text-body-md text-on-surface transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" placeholder="Masukkan kode kupon (e.g. DISKON50)">
             @error('code')
@@ -50,7 +65,7 @@
                 <span class="material-symbols-outlined text-[20px]">save</span>
                 Simpan
             </button>
-            <a href="{{ route('coupons.index') }}" class="inline-flex items-center justify-center rounded-lg border border-outline-variant px-6 py-3 font-label-md text-label-md font-bold text-on-surface-variant transition hover:bg-surface-container-low">Batal</a>
+            <a href="{{ route('teacher.coupons.index') }}" class="inline-flex items-center justify-center rounded-lg border border-outline-variant px-6 py-3 font-label-md text-label-md font-bold text-on-surface-variant transition hover:bg-surface-container-low">Batal</a>
         </div>
     </form>
 </section>

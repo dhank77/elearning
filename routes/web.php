@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Teacher\CouponController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\GoogleController;
@@ -46,12 +46,12 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('categories', CategoryController::class)->except(['show']);
-    Route::resource('coupons', CouponController::class)->except(['show']);
     Route::get('users', [UserController::class, 'index'])->name('users.index');
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
 });
 
 Route::middleware(['auth', 'teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+    Route::resource('coupons', CouponController::class)->except(['show']);
     Route::get('course-settings', [CourseSettingsController::class, 'index'])->name('course-settings');
     Route::post('course-settings', [CourseSettingsController::class, 'store'])->name('course-settings.store');
     Route::patch('course-settings/{course}/settings', [CourseSettingsController::class, 'updateSettings'])->name('course-settings.settings.update');

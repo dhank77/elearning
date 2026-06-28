@@ -10,7 +10,7 @@ class UpdateCouponRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->role === 'admin';
+        return $this->user()->role === 'teacher';
     }
 
     /**
@@ -19,6 +19,7 @@ class UpdateCouponRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'course_id' => ['required', Rule::exists('courses', 'id')->where('teacher_id', $this->user()->id)],
             'code' => ['required', 'string', 'max:255', Rule::unique('coupons', 'code')->ignore($this->coupon)],
             'discount_percentage' => ['required', 'numeric', 'min:0', 'max:100'],
             'description' => ['nullable', 'string'],

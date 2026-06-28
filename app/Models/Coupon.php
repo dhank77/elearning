@@ -20,4 +20,13 @@ class Coupon extends Model
             'expires_at' => 'datetime',
         ];
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Course, $this>
+     */
+    public function courses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Course::class);
+    }
 }
+

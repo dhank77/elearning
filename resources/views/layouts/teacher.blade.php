@@ -22,6 +22,10 @@
                 <span class="material-symbols-outlined">school</span>
                 <span class="font-body-md text-body-md">My Courses</span>
             </a>
+            <a class="flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200 {{ request()->routeIs('teacher.coupons*') ? 'border-r-4 border-primary bg-surface-container-low font-bold text-primary active:scale-[0.98]' : 'text-on-surface-variant hover:bg-surface-container' }}" href="{{ route('teacher.coupons.index') }}">
+                <span class="material-symbols-outlined">sell</span>
+                <span class="font-body-md text-body-md">Kupon</span>
+            </a>
             <a class="flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200 {{ request()->routeIs('teacher.students*') ? 'border-r-4 border-primary bg-surface-container-low font-bold text-primary active:scale-[0.98]' : 'text-on-surface-variant hover:bg-surface-container' }}" href="{{ route('teacher.students') }}">
                 <span class="material-symbols-outlined">group</span>
                 <span class="font-body-md text-body-md">Students</span>
