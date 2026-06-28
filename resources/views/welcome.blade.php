@@ -222,7 +222,7 @@
                                     <div class="mt-4 pt-4 border-t border-outline-variant/30 flex items-center justify-between">
                                         <div>
                                             <span class="block text-[11px] text-on-surface-variant font-semibold uppercase tracking-wider">Harga Kursus</span>
-                                            <span class="font-headline-sm text-headline-sm text-primary font-extrabold">
+                                            <span class="font-headline-sm text-headline-sm text-primary font-extrabold block">
                                                 Rp {{ number_format($course->price, 0, ',', '.') }}
                                             </span>
                                         </div>

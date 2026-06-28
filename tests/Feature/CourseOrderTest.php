@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Coupon;
 use App\Models\Course;
 use App\Models\CourseOrder;
 use App\Models\User;
@@ -42,6 +43,36 @@ test('user can create order with xendit payment method', function () {
         'payment_method' => 'xendit',
         'status' => 'pending',
         'amount' => 100000,
+    ]);
+});
+
+test('user can create order with applied coupon discount', function () {
+    $user = User::factory()->create();
+    $teacher = User::factory()->create(['role' => 'teacher']);
+    $coupon = Coupon::create([
+        'code' => 'DISCOUNT30',
+        'discount_percentage' => 30.00,
+        'is_active' => true,
+    ]);
+    $course = Course::factory()->for($teacher, 'teacher')->published()->create([
+        'price' => 100000,
+        'coupon_id' => $coupon->id,
+    ]);
+
+    $this->actingAs($user)
+        ->withoutMiddleware([ValidateCsrfToken::class])
+        ->post(route('checkout.store', $course), [
+            'payment_method' => 'xendit',
+            'promo_code' => 'DISCOUNT30',
+        ])
+        ->assertRedirect();
+
+    $this->assertDatabaseHas('course_orders', [
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'payment_method' => 'xendit',
+        'status' => 'pending',
+        'amount' => 70000,
     ]);
 });
 
@@ -407,4 +438,32 @@ test('order updates to paid sends whatsapp notification via fonnte', function ()
         ->andReturn(true);
 
     $order->update(['status' => 'paid']);
+});
+
+test('user can apply coupon to pending order', function () {
+    $user = User::factory()->create();
+    $course = Course::factory()->published()->create(['price' => 100000]);
+    $order = CourseOrder::factory()->create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => 'pending',
+        'amount' => 100000,
+        'payment_method' => 'manual_transfer',
+    ]);
+
+    $coupon = Coupon::create([
+        'code' => 'PROMO30',
+        'discount_percentage' => 30.00,
+        'is_active' => true,
+    ]);
+
+    $this->actingAs($user)
+        ->withoutMiddleware([ValidateCsrfToken::class])
+        ->post(route('checkout.apply-coupon', $order), [
+            'coupon_code' => 'PROMO30',
+        ])
+        ->assertRedirect();
+
+    $order->refresh();
+    expect($order->amount)->toEqual(70000);
 });

@@ -39,7 +39,19 @@
                 <div class="lg:col-span-1">
                     <div class="bento-card rounded-2xl border border-outline-variant bg-surface-container-lowest p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.06)] lg:sticky lg:top-24">
                         <div class="mb-6">
-                            <span class="font-headline-sm text-headline-sm text-primary font-bold">Rp {{ number_format($course->price, 0, ',', '.') }}</span>
+                            @if (isset($appliedCoupon) && $appliedCoupon)
+                                @php
+                                    $discountedPrice = $course->price * (1 - $appliedCoupon->discount_percentage / 100);
+                                @endphp
+                                <div class="flex items-baseline flex-wrap gap-2">
+                                    <span class="font-headline-sm text-headline-sm text-primary font-bold">Rp {{ number_format($discountedPrice, 0, ',', '.') }}</span>
+                                    <span class="text-on-surface-variant line-through text-[14px]">Rp {{ number_format($course->price, 0, ',', '.') }}</span>
+                                </div>
+                                <span class="inline-block mt-2 text-secondary text-[12px] font-bold bg-secondary-container px-2 py-0.5 rounded">{{ (int) $appliedCoupon->discount_percentage }}% OFF</span>
+                            @else
+                                <span class="font-headline-sm text-headline-sm text-primary font-bold">Rp {{ number_format($course->price, 0, ',', '.') }}</span>
+                            @endif
+                            
                             @if ($course->price > 0)
                                 <p class="font-label-md text-label-md text-on-surface-variant mt-1">Harga one-time payment</p>
                             @else
@@ -50,6 +62,9 @@
                         <form action="{{ auth() ? route('checkout.store', $course) : route('login') }}" method="POST" class="mb-6">
                             @csrf
                             <input type="hidden" name="payment_method" value="xendit">
+                            @if (isset($appliedCoupon) && $appliedCoupon)
+                                <input type="hidden" name="promo_code" value="{{ $appliedCoupon->code }}">
+                            @endif
                             <button type="submit" class="inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-4 font-label-md text-label-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-container transition-all duration-300 active:scale-[0.98]">
                                 <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
                                 {{ auth() ? 'Beli Kursus' : 'Login untuk Beli' }}

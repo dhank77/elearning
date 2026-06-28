@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use App\Models\Course;
 
 class WelcomeController extends Controller
@@ -25,6 +26,20 @@ class WelcomeController extends Controller
 
         $course->load(['teacher', 'modules.lessons']);
 
-        return view('courses.show', compact('course'));
+        $promoCode = request()->query('promo');
+        $appliedCoupon = null;
+        if ($promoCode) {
+            $coupon = Coupon::where('code', $promoCode)
+                ->where('is_active', true)
+                ->where(function ($query) {
+                    $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                })
+                ->first();
+            if ($coupon && $course->coupon_id === $coupon->id) {
+                $appliedCoupon = $coupon;
+            }
+        }
+
+        return view('courses.show', compact('course', 'appliedCoupon'));
     }
 }

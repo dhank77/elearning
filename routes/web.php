@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Teacher\CouponController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\GoogleController;
@@ -13,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\StudentCourseController;
 use App\Http\Controllers\StudentOrderController;
+use App\Http\Controllers\Teacher\CouponController;
 use App\Http\Controllers\Teacher\CourseSettingsController;
 use App\Http\Controllers\Teacher\StudentController;
 use App\Http\Controllers\Webhook\XenditWebhookController;
@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('checkout/{course}', [CourseOrderController::class, 'store'])->name('checkout.store');
     Route::get('checkout/{order}/pay', [CourseOrderController::class, 'pay'])->name('checkout.pay');
+    Route::post('checkout/{order}/apply-coupon', [CourseOrderController::class, 'applyCoupon'])->name('checkout.apply-coupon');
     Route::get('checkout/{order}/success', [CourseOrderController::class, 'success'])->name('checkout.success');
 
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

@@ -40,11 +40,44 @@
                         </div>
                     </div>
 
+                    {{-- Coupon Form --}}
+                    @if ($order->status === 'pending')
+                        <div class="border-t border-outline-variant py-4">
+                            @if (session('success'))
+                                <div class="mb-4 rounded-lg bg-secondary-container/30 border border-secondary px-4 py-2 text-label-md text-secondary font-bold">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+                            <form action="{{ route('checkout.apply-coupon', $order) }}" method="POST" class="flex gap-2">
+                                @csrf
+                                <div class="flex-1">
+                                    <input type="text" name="coupon_code" placeholder="Masukkan kode kupon (e.g. DISKON50)" class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" value="{{ old('coupon_code') }}">
+                                    @error('coupon_code')
+                                        <p class="mt-1 text-[12px] text-error font-medium">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <button type="submit" class="rounded-lg bg-secondary px-4 py-2 font-label-md text-label-md font-bold text-on-secondary hover:bg-secondary-container transition-all active:scale-95">
+                                    Terapkan
+                                </button>
+                            </form>
+                        </div>
+                    @endif
+
                     <div class="border-t border-outline-variant pt-4">
                         <div class="flex justify-between items-center">
                             <span class="font-body-md text-body-md text-on-surface-variant">Nomor Pesanan</span>
                             <span class="font-label-md text-label-md text-on-surface font-mono">{{ $order->order_number }}</span>
                         </div>
+                        @if ($order->amount < $order->course->price)
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="font-body-md text-body-md text-on-surface-variant">Harga Asli</span>
+                                <span class="font-label-md text-label-md text-on-surface-variant line-through">Rp {{ number_format($order->course->price, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="font-body-md text-body-md text-on-surface-variant font-medium">Potongan Kupon</span>
+                                <span class="font-label-md text-label-md text-secondary font-bold">- Rp {{ number_format($order->course->price - $order->amount, 0, ',', '.') }}</span>
+                            </div>
+                        @endif
                         <div class="flex justify-between items-center mt-2">
                             <span class="font-body-md text-body-md text-on-surface-variant">Total Pembayaran</span>
                             <span class="font-headline-sm text-headline-sm text-primary font-bold">Rp {{ number_format($order->amount, 0, ',', '.') }}</span>
