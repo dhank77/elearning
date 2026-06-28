@@ -110,7 +110,7 @@
                         <a href="{{ route('welcome') }}" class="flex-1 inline-flex items-center justify-center rounded-xl px-6 py-4 font-label-md text-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container-low transition-all duration-200">
                             Batal
                         </a>
-                        <a href="{{ route('checkout.pay', $order) }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-label-md text-label-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-container transition-all duration-300 active:scale-[0.98]">
+                        <a href="{{ route('checkout.pay', [$order, 'process' => 1]) }}" class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl px-6 py-4 font-label-md text-label-md bg-primary text-on-primary shadow-lg shadow-primary/20 hover:bg-primary-container transition-all duration-300 active:scale-[0.98]">
                             <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">payments</span>
                             Bayar Sekarang
                         </a>

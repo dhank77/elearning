@@ -71,6 +71,26 @@
                             </button>
                         </form>
 
+                        @if ($course->price > 0 && !(auth()->user() && auth()->user()->courses()->where('course_id', $course->id)->exists()))
+                            <div class="border-t border-outline-variant pt-5 mt-2 mb-6">
+                                <form action="{{ url()->current() }}" method="GET" class="flex gap-2">
+                                    <div class="flex-1">
+                                        <input type="text" name="promo" placeholder="Punya kode kupon?" class="w-full rounded-lg border border-outline-variant bg-surface-container-lowest px-3 py-2 text-body-md text-on-surface focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" value="{{ request('promo') }}">
+                                    </div>
+                                    <button type="submit" class="rounded-lg bg-secondary px-4 py-2 font-label-md text-label-md font-bold text-on-secondary hover:bg-secondary-container transition-all active:scale-95">
+                                        Terapkan
+                                    </button>
+                                </form>
+                                @if (request('promo'))
+                                    @if (isset($appliedCoupon) && $appliedCoupon)
+                                        <p class="mt-2 text-[12px] text-secondary font-bold">Kupon "{{ $appliedCoupon->code }}" berhasil diterapkan!</p>
+                                    @else
+                                        <p class="mt-2 text-[12px] text-error font-bold">Kode kupon tidak valid.</p>
+                                    @endif
+                                @endif
+                            </div>
+                        @endif
+
                         <div class="space-y-4 border-t border-outline-variant pt-5">
                             <div class="flex items-center gap-3">
                                 <div class="flex size-10 items-center justify-center rounded-xl bg-primary-container">

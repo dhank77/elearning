@@ -147,7 +147,7 @@ test('pay page creates xendit invoice and redirects to payment url', function ()
         ]);
 
     $this->actingAs($user)
-        ->get(route('checkout.pay', $order))
+        ->get(route('checkout.pay', [$order, 'process' => 1]))
         ->assertRedirect('https://checkout.xendit.co/invoice/test123');
 
     $this->assertDatabaseHas('course_orders', [
@@ -155,6 +155,24 @@ test('pay page creates xendit invoice and redirects to payment url', function ()
         'xendit_invoice_id' => 'xnd_invoice_123',
         'xendit_payment_url' => 'https://checkout.xendit.co/invoice/test123',
     ]);
+});
+
+test('pay page displays checkout screen with coupon form', function () {
+    $user = User::factory()->create();
+    $course = Course::factory()->published()->create(['price' => 150000]);
+
+    $order = CourseOrder::factory()->create([
+        'user_id' => $user->id,
+        'course_id' => $course->id,
+        'status' => 'pending',
+        'payment_method' => 'manual_transfer',
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('checkout.pay', $order))
+        ->assertSuccessful()
+        ->assertSee('Masukkan kode kupon')
+        ->assertSee('Total Pembayaran');
 });
 
 test('user cannot access other user order pay page', function () {

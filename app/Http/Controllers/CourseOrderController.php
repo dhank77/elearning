@@ -78,7 +78,7 @@ class CourseOrderController extends Controller
         return redirect()->route('checkout.pay', $order);
     }
 
-    public function pay(CourseOrder $order)
+    public function pay(Request $request, CourseOrder $order)
     {
         if ($order->user_id !== auth()->id()) {
             abort(403);
