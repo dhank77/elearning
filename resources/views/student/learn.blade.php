@@ -21,10 +21,16 @@
                             {{ $currentIndex + 1 }} / {{ $totalLessons }}
                         </span>
                     @endif
+                    <button id="learn-sidebar-toggle" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-primary lg:hidden" type="button" aria-label="Toggle Course Content">
+                        <span class="material-symbols-outlined">menu_open</span>
+                    </button>
                 </div>
             </header>
 
-            <div class="flex flex-1 overflow-hidden">
+            <div class="flex flex-1 overflow-hidden relative">
+                {{-- Sidebar Backdrop --}}
+                <div id="learn-sidebar-backdrop" class="fixed inset-0 z-30 hidden bg-black/40 lg:hidden"></div>
+
                 {{-- Main Content --}}
                 <main class="flex flex-1 flex-col overflow-y-auto">
                     @if($activeLesson && $youtubeId)
@@ -80,11 +86,11 @@
                                     @endphp
                                     <a
                                         href="{{ route('student.learn', ['course' => $course, 'lesson' => $prevLesson->id]) }}"
-                                        class="flex items-center gap-2 rounded-xl border border-outline-variant px-4 py-3 text-label-md font-bold text-on-surface transition-colors hover:bg-surface-container-low"
+                                        class="flex items-center gap-2 rounded-xl border border-outline-variant px-3 py-2.5 sm:px-4 sm:py-3 text-label-md font-bold text-on-surface transition-colors hover:bg-surface-container-low"
                                     >
-                                        <span class="material-symbols-outlined">chevron_left</span>
-                                        <span class="hidden sm:inline">Sebelumnya</span>
-                                        <span class="max-w-[150px] truncate text-on-surface-variant sm:max-w-[200px]">{{ $prevLesson->title }}</span>
+                                        <span class="material-symbols-outlined text-[20px]">chevron_left</span>
+                                        <span>Sebelumnya</span>
+                                        <span class="hidden sm:inline max-w-[100px] md:max-w-[150px] lg:max-w-[200px] truncate text-on-surface-variant font-normal">| {{ $prevLesson->title }}</span>
                                     </a>
                                 @else
                                     <div></div>
@@ -98,11 +104,11 @@
                                     @endphp
                                     <a
                                         href="{{ route('student.learn', ['course' => $course, 'lesson' => $nextLesson->id]) }}"
-                                        class="flex items-center gap-2 rounded-xl bg-primary px-4 py-3 text-label-md font-bold text-on-primary transition-colors hover:bg-primary/90"
+                                        class="flex items-center gap-2 rounded-xl bg-primary px-3 py-2.5 sm:px-4 sm:py-3 text-label-md font-bold text-on-primary transition-colors hover:bg-primary/90"
                                     >
-                                        <span class="max-w-[150px] truncate sm:max-w-[200px]">{{ $nextLesson->title }}</span>
-                                        <span class="hidden sm:inline">Selanjutnya</span>
-                                        <span class="material-symbols-outlined">chevron_right</span>
+                                        <span class="hidden sm:inline max-w-[100px] md:max-w-[150px] lg:max-w-[200px] truncate text-on-primary/90 font-normal">{{ $nextLesson->title }} |</span>
+                                        <span>Selanjutnya</span>
+                                        <span class="material-symbols-outlined text-[20px]">chevron_right</span>
                                     </a>
                                 @endif
                             </div>
@@ -111,10 +117,15 @@
                 </main>
 
                 {{-- Sidebar --}}
-                <aside class="hidden w-80 shrink-0 flex-col border-l border-outline-variant bg-surface-container-lowest lg:flex">
-                    <div class="border-b border-outline-variant p-4">
-                        <h3 class="text-label-md font-bold text-on-surface">Konten Kursus</h3>
-                        <p class="text-label-md text-on-surface-variant">{{ $totalLessons }} materi</p>
+                <aside id="learn-sidebar" class="fixed right-0 top-0 bottom-0 z-40 flex w-80 translate-x-full shrink-0 flex-col border-l border-outline-variant bg-surface-container-lowest transition-transform duration-300 lg:static lg:translate-x-0 lg:flex h-full">
+                    <div class="flex items-center justify-between border-b border-outline-variant p-4">
+                        <div>
+                            <h3 class="text-label-md font-bold text-on-surface">Konten Kursus</h3>
+                            <p class="text-label-md text-on-surface-variant">{{ $totalLessons }} materi</p>
+                        </div>
+                        <button id="learn-sidebar-close" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-primary lg:hidden" type="button" aria-label="Tutup Menu">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
                     </div>
 
                     <div class="flex-1 overflow-y-auto">
@@ -156,3 +167,40 @@
             </div>
         </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('learn-sidebar');
+        const toggleBtn = document.getElementById('learn-sidebar-toggle');
+        const closeBtn = document.getElementById('learn-sidebar-close');
+        const backdrop = document.getElementById('learn-sidebar-backdrop');
+
+        if (sidebar && toggleBtn) {
+            const openSidebar = () => {
+                sidebar.classList.remove('translate-x-full');
+                if (backdrop) {
+                    backdrop.classList.remove('hidden');
+                }
+                document.body.classList.add('overflow-hidden');
+            };
+
+            const closeSidebar = () => {
+                sidebar.classList.add('translate-x-full');
+                if (backdrop) {
+                    backdrop.classList.add('hidden');
+                }
+                document.body.classList.remove('overflow-hidden');
+            };
+
+            toggleBtn.addEventListener('click', openSidebar);
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeSidebar);
+            }
+            if (backdrop) {
+                backdrop.addEventListener('click', closeSidebar);
+            }
+        }
+    });
+</script>
+@endpush
