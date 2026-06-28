@@ -6,8 +6,6 @@
 @section('body')
         <x-admin.sidebar
             active="dashboard"
-            action-label="Lanjut Belajar"
-            action-icon="play_circle"
         />
 
         <x-admin.header placeholder="Cari kursus, tugas, atau materi..." show-notifications />
@@ -191,7 +189,6 @@
                     </aside>
                 </div>
             </div>
+            <x-shared.footer variant="band" show-brand show-contact />
         </main>
-
-        <x-shared.footer variant="band" show-brand show-contact />
 @endsection

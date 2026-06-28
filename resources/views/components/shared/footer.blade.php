@@ -13,7 +13,7 @@
 @endphp
 
 @if ($variant === 'band')
-    <footer class="{{ $footerClass }}">
+    <footer {{ $attributes->class([$footerClass]) }}>
         <div class="mx-auto flex max-w-container-max flex-col items-center justify-between gap-4 px-margin-mobile py-8 md:flex-row md:px-margin-desktop">
             @if ($showBrand)
                 <div class="mb-4 md:mb-0">
@@ -32,8 +32,9 @@
         </div>
     </footer>
 @else
-    <footer class="{{ $footerClass }}">
+    <footer {{ $attributes->class([$footerClass]) }}>
         <p class="font-label-md text-label-md text-on-surface-variant">&copy; {{ now()->year }} {{ config('app.name', 'EduMentor') }}{{ $variant === 'contained' ? ' Learning' : '' }}. All rights reserved.</p>
         <x-shared.footer-links :show-contact="$showContact" />
     </footer>
 @endif
+

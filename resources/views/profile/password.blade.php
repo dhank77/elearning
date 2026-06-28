@@ -1,27 +1,14 @@
 @extends('layouts.app')
 
 @section('title', config('app.name', 'EduMentor') . ' - Ubah Password')
-@section('bodyClass', 'min-h-screen bg-background font-body-md text-on-surface antialiased')
+@section('bodyClass', 'overflow-x-hidden bg-background font-body-md text-on-background antialiased')
 
 @section('body')
-    @php
-        $isAdmin = auth()->user()->role === 'admin';
-    @endphp
+    <x-admin.sidebar active="profile" />
+    <x-admin.header placeholder="Cari..." />
 
-    @if ($isAdmin)
-        <x-admin.sidebar active="profile" />
-        <x-admin.header placeholder="Cari..." show-admin-label />
-    @else
-        <x-user.header />
-    @endif
-
-    @unless ($isAdmin)
-        <div class="mx-auto flex max-w-container-max">
-            <x-user.sidebar active="profile" />
-    @endunless
-
-    <main class="min-h-screen {{ $isAdmin ? 'pt-16 lg:ml-64' : 'min-w-0 flex-1' }}">
-        <div class="{{ $isAdmin ? 'mx-auto max-w-[1280px]' : '' }} p-margin-mobile md:p-margin-desktop">
+    <main class="min-h-screen pt-16 lg:ml-64">
+        <div class="mx-auto max-w-[1280px] p-margin-mobile md:p-margin-desktop">
             <div class="mb-8">
                 <a href="{{ route('profile.edit') }}" class="mb-4 inline-flex items-center gap-2 font-label-md text-label-md font-bold text-primary">
                     <span class="material-symbols-outlined text-[20px]">arrow_back</span>
@@ -83,9 +70,6 @@
                 </form>
             </section>
         </div>
+        <x-shared.footer variant="band" show-brand show-contact />
     </main>
-
-    @unless ($isAdmin)
-        </div>
-    @endunless
 @endsection
