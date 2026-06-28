@@ -14,6 +14,24 @@
 
         <main class="min-h-screen pt-16 lg:ml-64">
             <div class="mx-auto max-w-[1280px] p-margin-mobile md:p-margin-desktop">
+                @if (session('success'))
+                    <div class="mb-6 rounded-xl border border-secondary-container bg-secondary-container/30 px-6 py-4 font-label-md text-label-md text-on-secondary-container">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('info'))
+                    <div class="mb-6 rounded-xl border border-primary-container bg-primary-container/20 px-6 py-4 font-label-md text-label-md text-primary">
+                        {{ session('info') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="mb-6 rounded-xl border border-error/20 bg-error/10 px-6 py-4 font-label-md text-label-md text-error">
+                        {{ session('error') }}
+                    </div>
+                @endif
+
                 <section class="mb-10">
                     <h1 class="mb-2 font-headline-lg text-headline-lg text-on-surface">Selamat Datang, {{ auth()->user()->name }}</h1>
                     <p class="max-w-2xl text-body-lg text-on-surface-variant">
