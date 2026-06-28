@@ -414,7 +414,7 @@
                 {{-- Chat Panel --}}
                 <div id="chat-panel" class="hidden w-[380px] max-h-[520px] rounded-2xl border border-outline-variant bg-surface-container-lowest shadow-[0px_8px_40px_rgba(0,0,0,0.15)] overflow-hidden flex-col">
                     {{-- Header --}}
-                    <div class="flex items-center justify-between gap-3 bg-primary px-5 py-4">
+                    <div class="flex items-center justify-between gap-3 bg-primary px-5 py-4 shrink-0">
                         <div class="flex items-center gap-3">
                             <div class="flex size-9 items-center justify-center rounded-full bg-white/20">
                                 <span class="material-symbols-outlined text-white text-[20px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
@@ -454,7 +454,7 @@
                     </div>
 
                     {{-- Quick Replies --}}
-                    <div id="quick-replies" class="flex gap-2 px-4 pb-2 bg-surface overflow-x-auto">
+                    <div id="quick-replies" class="flex shrink-0 gap-2 px-4 pb-2 bg-surface overflow-x-auto">
                         <button data-query="cara daftar" class="shrink-0 rounded-full border border-outline-variant bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">Cara Daftar</button>
                         <button data-query="metode pembayaran" class="shrink-0 rounded-full border border-outline-variant bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">Pembayaran</button>
                         <button data-query="sertifikat" class="shrink-0 rounded-full border border-outline-variant bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-colors">Sertifikat</button>
@@ -462,7 +462,7 @@
                     </div>
 
                     {{-- Input --}}
-                    <div class="flex items-center gap-2 border-t border-outline-variant/50 bg-surface-container-low p-3">
+                    <div class="flex items-center gap-2 border-t border-outline-variant/50 bg-surface-container-low p-3 shrink-0">
                         <input id="chat-input" type="text" placeholder="Ketik pertanyaan..." class="flex-1 rounded-xl border border-outline-variant bg-surface px-4 py-2.5 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 transition-colors">
                         <button id="chat-send" class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-on-primary hover:bg-primary-container transition-colors">
                             <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">send</span>
@@ -529,7 +529,7 @@
                 }
             }
 
-            function addMessage(text, isUser = false) {
+            function addMessage(text, isUser = false, save = true) {
                 const msg = document.createElement('div');
                 msg.className = 'flex gap-2 ' + (isUser ? 'justify-end' : '');
 
@@ -553,6 +553,16 @@
 
                 messages.appendChild(msg);
                 messages.scrollTop = messages.scrollHeight;
+
+                if (save) {
+                    try {
+                        const history = JSON.parse(localStorage.getItem('edubot_chat_history') || '[]');
+                        history.push({ text, isUser });
+                        localStorage.setItem('edubot_chat_history', JSON.stringify(history));
+                    } catch (e) {
+                        console.error('Failed to save chat history', e);
+                    }
+                }
             }
 
             function addTypingIndicator() {
@@ -614,6 +624,7 @@
                 panel.classList.add('flex');
                 icon.textContent = 'close';
                 quickReplies.style.display = 'flex';
+                messages.scrollTop = messages.scrollHeight;
                 setTimeout(() => input.focus(), 100);
             }
 
@@ -644,6 +655,16 @@
                     sendMessage(btn.dataset.query);
                 }
             });
+
+            // Load saved history on load
+            try {
+                const history = JSON.parse(localStorage.getItem('edubot_chat_history') || '[]');
+                history.forEach(msg => {
+                    addMessage(msg.text, msg.isUser, false);
+                });
+            } catch (e) {
+                console.error('Failed to load chat history', e);
+            }
         })();
         </script>
         @endpush
