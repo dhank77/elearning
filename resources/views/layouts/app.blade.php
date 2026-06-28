@@ -31,6 +31,31 @@
                     button.querySelector('.material-symbols-outlined').textContent = nextType === 'password' ? 'visibility' : 'visibility_off';
                 });
             });
+
+            // Mobile Sidebar Toggle
+            document.addEventListener('DOMContentLoaded', () => {
+                const sidebar = document.getElementById('admin-sidebar');
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+                if (sidebar && sidebarToggle) {
+                    const toggleSidebar = () => {
+                        const isOpen = !sidebar.classList.contains('-translate-x-full');
+                        if (isOpen) {
+                            sidebar.classList.add('-translate-x-full');
+                            if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+                        } else {
+                            sidebar.classList.remove('-translate-x-full');
+                            if (sidebarBackdrop) sidebarBackdrop.classList.remove('hidden');
+                        }
+                    };
+
+                    sidebarToggle.addEventListener('click', toggleSidebar);
+                    if (sidebarBackdrop) {
+                        sidebarBackdrop.addEventListener('click', toggleSidebar);
+                    }
+                }
+            });
         </script>
     </body>
 </html>

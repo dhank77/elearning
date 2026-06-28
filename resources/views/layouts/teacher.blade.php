@@ -3,8 +3,11 @@
 @section('bodyClass', 'bg-background font-body-md text-on-background antialiased')
 
 @section('body')
+    <!-- Sidebar Backdrop -->
+    <div id="sidebar-backdrop" class="fixed inset-0 z-30 hidden bg-black/40 lg:hidden"></div>
+
     <!-- Sidebar -->
-    <aside class="fixed left-0 top-0 z-50 hidden h-screen w-64 flex-col bg-surface-container-lowest px-4 py-6 shadow-sm lg:flex">
+    <aside id="admin-sidebar" class="fixed left-0 top-0 z-50 flex h-screen w-64 -translate-x-full flex-col bg-surface-container-lowest px-4 py-6 shadow-sm transition-transform duration-300 lg:translate-x-0 lg:flex">
         <div class="mb-10 px-2">
             <h1 class="font-headline-md text-headline-md text-primary">{{ config('app.name', 'EduMentor') }}</h1>
             <p class="font-body-md text-body-md text-on-surface-variant opacity-70">Instructor Portal</p>
@@ -55,7 +58,12 @@
 
     <!-- Header -->
     <header class="fixed left-0 right-0 top-0 z-40 flex h-16 items-center justify-between bg-surface px-margin-mobile lg:left-64 lg:px-12">
-        <a class="font-headline-md text-headline-md text-primary lg:hidden" href="{{ route('dashboard') }}">{{ config('app.name', 'EduMentor') }}</a>
+        <div class="flex items-center gap-2">
+            <button id="sidebar-toggle" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-primary lg:hidden" type="button" aria-label="Toggle Menu">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <a class="font-headline-md text-headline-md text-primary lg:hidden" href="{{ route('dashboard') }}">{{ config('app.name', 'EduMentor') }}</a>
+        </div>
         
         <div class="flex-1 md:flex items-center">
             @yield('header_left')

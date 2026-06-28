@@ -38,7 +38,9 @@
     }
 @endphp
 
-<aside class="fixed left-0 top-0 z-40 hidden h-screen w-64 flex-col border-r border-outline-variant bg-surface p-base lg:flex">
+<div id="sidebar-backdrop" class="fixed inset-0 z-30 hidden bg-black/40 lg:hidden"></div>
+
+<aside id="admin-sidebar" class="fixed left-0 top-0 z-40 flex h-screen w-64 -translate-x-full flex-col border-r border-outline-variant bg-surface p-base transition-transform duration-300 lg:translate-x-0 lg:flex">
     <div class="px-4 py-6">
         <h1 class="font-headline-md text-headline-md font-bold text-primary">{{ config('app.name', 'EduMentor') }}</h1>
         <p class="font-label-md text-label-md text-on-surface-variant">{{ $portalLabel }}</p>
