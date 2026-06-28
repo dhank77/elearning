@@ -30,7 +30,7 @@ class XenditWebhookController extends Controller
         $externalId = $payload['external_id'] ?? null;
         $status = $payload['status'] ?? null;
 
-        if (!$externalId || $status !== 'SETTLED') {
+        if (!$externalId || $status !== 'SETTLED' || $status !== 'PAID') {
             return new Response('Ignored', Response::HTTP_OK);
         }
 
