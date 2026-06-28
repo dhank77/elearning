@@ -71,7 +71,7 @@
                             </button>
                         </form>
 
-                        @if ($course->price > 0 && !(auth()->user() && auth()->user()->courses()->where('course_id', $course->id)->exists()))
+                        @if ($course->price > 0 && !(auth()->user() && auth()->user()->enrolledCourses()->where('courses.id', $course->id)->exists()))
                             <div class="border-t border-outline-variant pt-5 mt-2 mb-6">
                                 <form action="{{ url()->current() }}" method="GET" class="flex gap-2">
                                     <div class="flex-1">
