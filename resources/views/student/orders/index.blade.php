@@ -54,11 +54,11 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             @if ($order->status === 'paid')
-                                                <span class="inline-flex items-center rounded-full bg-success-container px-2.5 py-0.5 text-[12px] font-bold text-on-success-container">Berhasil</span>
+                                                <span class="inline-flex items-center rounded-full bg-secondary-container/30 px-2.5 py-0.5 text-[12px] font-bold text-secondary">Berhasil</span>
                                             @elseif ($order->status === 'pending')
-                                                <span class="inline-flex items-center rounded-full bg-warning-container px-2.5 py-0.5 text-[12px] font-bold text-on-warning-container">Menunggu</span>
+                                                <span class="inline-flex items-center rounded-full bg-tertiary-fixed/40 px-2.5 py-0.5 text-[12px] font-bold text-on-tertiary-fixed-variant">Menunggu</span>
                                             @else
-                                                <span class="inline-flex items-center rounded-full bg-error-container px-2.5 py-0.5 text-[12px] font-bold text-on-error-container">{{ ucfirst($order->status) }}</span>
+                                                <span class="inline-flex items-center rounded-full bg-error-container/30 px-2.5 py-0.5 text-[12px] font-bold text-error">{{ ucfirst($order->status) }}</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">{{ $order->created_at->format('d M Y H:i') }}</td>

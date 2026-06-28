@@ -11,7 +11,7 @@ class OrderController extends Controller
     public function index(): View
     {
         $orders = CourseOrder::query()
-            ->with(['user', 'course'])
+            ->with(['user', 'course.teacher'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 

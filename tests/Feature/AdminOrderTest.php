@@ -10,7 +10,8 @@ uses(RefreshDatabase::class);
 test('admin can view orders list', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $student = User::factory()->create(['role' => 'student', 'name' => 'Ahmad Student']);
-    $course = Course::factory()->create(['title' => 'Advanced PHP Laravel']);
+    $teacher = User::factory()->create(['role' => 'teacher', 'name' => 'Pak Dosen']);
+    $course = Course::factory()->for($teacher, 'teacher')->create(['title' => 'Advanced PHP Laravel']);
 
     $order = CourseOrder::factory()->create([
         'user_id' => $student->id,
@@ -29,6 +30,7 @@ test('admin can view orders list', function () {
     $response->assertSee('ORD-12345');
     $response->assertSee('Rp 150.000');
     $response->assertSee('Berhasil');
+    $response->assertSee('Pengajar: Pak Dosen');
 });
 
 test('non-admin cannot view admin orders list', function () {
