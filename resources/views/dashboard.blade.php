@@ -106,30 +106,32 @@
 
                             <div class="custom-scrollbar flex gap-6 overflow-x-auto pb-4">
                                 @foreach($recommendedCourses as $recommended)
-                                <article class="bento-card group min-w-[280px] cursor-pointer overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-lowest">
-                                    <div class="relative h-40">
+                                <article class="bento-card group flex min-w-[280px] flex-col overflow-hidden rounded-2xl border border-outline-variant bg-surface-container-lowest">
+                                    <div class="relative h-40 shrink-0 w-full overflow-hidden bg-surface-container-high">
                                         @if($recommended->cover_image_path)
                                             <img alt="{{ $recommended->title }}" class="h-full w-full object-cover" src="{{ asset('storage/' . $recommended->cover_image_path) }}">
                                         @else
-                                            <div class="flex h-full w-full items-center justify-center bg-surface-container-high text-on-surface-variant">
+                                            <div class="flex h-full w-full items-center justify-center text-on-surface-variant">
                                                 <span class="material-symbols-outlined text-4xl">menu_book</span>
                                             </div>
                                         @endif
                                         <div class="absolute inset-0 bg-primary/20 transition-all group-hover:bg-transparent"></div>
                                     </div>
-                                    <div class="p-4">
-                                        <div class="mb-2 flex items-start justify-between gap-3">
-                                            <h4 class="text-body-md font-bold text-on-surface">{{ $recommended->title }}</h4>
-                                            @if($recommended->price > 0)
-                                                <span class="text-label-md font-bold text-on-surface-variant">Rp {{ number_format($recommended->price, 0, ',', '.') }}</span>
-                                            @else
-                                                <span class="text-label-md font-bold text-primary">Gratis</span>
-                                            @endif
+                                    <div class="flex flex-1 flex-col justify-between p-4">
+                                        <div>
+                                            <div class="mb-2 flex items-start justify-between gap-3">
+                                                <h4 class="line-clamp-2 text-body-md font-bold text-on-surface">{{ $recommended->title }}</h4>
+                                                @if($recommended->price > 0)
+                                                    <span class="shrink-0 text-label-md font-bold text-on-surface-variant">Rp {{ number_format($recommended->price, 0, ',', '.') }}</span>
+                                                @else
+                                                    <span class="shrink-0 text-label-md font-bold text-primary">Gratis</span>
+                                                @endif
+                                            </div>
+                                            <p class="mb-4 line-clamp-2 text-label-md text-on-surface-variant">{!! Str::limit($recommended->description, 80) !!}</p>
                                         </div>
-                                        <p class="mb-4 text-label-md text-on-surface-variant">{!! Str::limit($recommended->description, 80) !!}</p>
                                         <div class="flex items-center justify-between gap-4">
-                                            <span class="font-bold text-primary">{{ $recommended->teacher->name }}</span>
-                                            <a href="{{ route('courses.show', $recommended) }}" class="group flex items-center gap-1 text-label-md font-bold text-primary">
+                                            <span class="truncate font-bold text-primary">{{ $recommended->teacher->name }}</span>
+                                            <a href="{{ route('courses.show', $recommended) }}" class="group shrink-0 flex items-center gap-1 text-label-md font-bold text-primary">
                                                 Detail <span class="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">arrow_forward</span>
                                             </a>
                                         </div>
