@@ -10,7 +10,16 @@ class UpdateCouponRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->role === 'teacher';
+        if ($this->user()->role !== 'teacher') {
+            return false;
+        }
+
+        $coupon = $this->route('coupon');
+        if ($coupon) {
+            return $coupon->courses()->where('teacher_id', $this->user()->id)->exists();
+        }
+
+        return true;
     }
 
     /**
